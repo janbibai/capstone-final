@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoredepartmentRequest extends FormRequest
+class StoreAppointmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoredepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-                  
+           'patient_id' => 'required',
+           'service_id' => 'required',
+           'schedule' => 'required|date',
         ];
     }
 }

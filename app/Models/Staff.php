@@ -9,8 +9,8 @@ class Staff extends Model
      protected $fillable = [
         'user_id',
         'department_id',
-        'employee_id',
         'position',
+        'role_id',
         'phone',
         'is_active',
     ];
@@ -27,6 +27,11 @@ class Staff extends Model
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
     
 }

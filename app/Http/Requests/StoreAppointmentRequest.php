@@ -25,6 +25,7 @@ class StoreAppointmentRequest extends FormRequest
            'patient_id' => 'required',
            'service_id' => 'required',
            'schedule' => 'required|date',
+           'schedule_time' => 'required|date_format:H:i',
         ];
     }
 }

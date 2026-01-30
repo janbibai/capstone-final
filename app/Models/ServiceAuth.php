@@ -23,4 +23,6 @@ class ServiceAuth extends Model
     public function role(){
         return $this->hasMany(Role::class);
     }
+    
+    
 }

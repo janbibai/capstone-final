@@ -1,117 +1,59 @@
-<header class="bg-white shadow-sm border-b border-green-100 sticky top-0 z-50">
+<header class="sticky top-0 z-50 bg-white border-b border-black/5">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="flex justify-between items-center h-20">
+        <div class="flex items-center justify-between py-4">
 
-            <!-- Logo Section -->
-            <div class="flex items-center space-x-3">
-                <div class="bg-green-600 p-3 rounded-2xl shadow-md">
-                    <!-- Medical Cross -->
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 4v16m8-8H4" />
-                    </svg>
+            {{-- Logo --}}
+            <a href="{{ url('/') }}" class="flex items-center gap-3">
+                <div class="bg-primary text-white w-10 h-10 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-2xl">health_and_safety</span>
                 </div>
+                <span class="font-semibold text-lg text-gray-800">
+                    RuralHealth Unit
+                </span>
+            </a>
 
-                <div>
-                    <h1 class="text-xl font-bold text-green-700">
-                        Rural Health Unit
-                    </h1>
-                    <p class="text-xs text-gray-500">
-                        Online Appointment & Smart Queuing
-                    </p>
-                </div>
-            </div>
-
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex items-center space-x-10">
-
-                <a href="#" class="text-gray-600 hover:text-green-600 font-medium transition">
-                    Home
-                </a>
-
-                <a href="#" class="text-gray-600 hover:text-green-600 font-medium transition">
-                    Our Services
-                </a>
-
-                <a href="#" class="text-gray-600 hover:text-green-600 font-medium transition">
-                    Doctors
-                </a>
-
-                <a href="#" class="text-gray-600 hover:text-green-600 font-medium transition">
-                    Contact
-                </a>
-
-                <!-- CTA Buttons -->
-                <a href="{{ route('staff.login') }}"  
-                   class="text-green-600 font-semibold hover:underline">
-                    Login
-                </a>
-
-                <a href="{{ route('appointment.create') }}" 
-                   class="bg-green-600 text-white px-6 py-2.5 rounded-xl shadow-md hover:bg-green-700 transition font-semibold">
-                    Book Appointment
-                </a>
-
+            {{-- Desktop Nav --}}
+            <nav class="hidden md:flex items-center gap-8 text-gray-600 font-medium">
+                <a href="{{ url('/') }}" class="hover:text-primary transition">Home</a>
+                <a href="{{ url('/#services') }}" class="hover:text-primary transition">Our Services</a>
+                <a href="{{ url('/#doctors') }}" class="hover:text-primary transition">Doctors</a>
+                <a href="{{ url('/#contact') }}" class="hover:text-primary transition">Contact</a>
+                <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a>
             </nav>
 
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="menu-btn" class="text-green-700 focus:outline-none">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
+            {{-- Desktop CTA --}}
+            <a href="{{ route('appointment.create') }}"
+               class="hidden md:inline-flex bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm">
+                Book Appointment
+            </a>
+
+            {{-- Mobile Menu Button --}}
+            <button
+                type="button"
+                class="md:hidden text-gray-700"
+                aria-label="Open menu"
+                onclick="document.getElementById('mobileNav').classList.toggle('hidden')"
+            >
+                <span class="material-symbols-outlined text-3xl">menu</span>
+            </button>
 
         </div>
-    </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-green-50 border-t border-green-100">
-        <div class="px-6 py-5 space-y-4">
+        {{-- Mobile Nav --}}
+        <div id="mobileNav" class="md:hidden hidden pb-4">
+            <div class="flex flex-col gap-3 text-gray-700 font-medium">
+                <a href="{{ url('/') }}" class="py-2 border-b border-black/5">Home</a>
+                <a href="{{ url('/#services') }}" class="py-2 border-b border-black/5">Our Services</a>
+                <a href="{{ url('/#doctors') }}" class="py-2 border-b border-black/5">Doctors</a>
+                <a href="{{ url('/#contact') }}" class="py-2 border-b border-black/5">Contact</a>
+                <a href="{{ route('staff.login') }}" class="py-2 border-b border-black/5">Login</a>
 
-            <a href="#" class="block text-gray-700 hover:text-green-600 font-medium">
-                Home
-            </a>
-
-            <a href="#" class="block text-gray-700 hover:text-green-600 font-medium">
-                Our Services
-            </a>
-
-            <a href="#" class="block text-gray-700 hover:text-green-600 font-medium">
-                Doctors
-            </a>
-
-            <a href="#" class="block text-gray-700 hover:text-green-600 font-medium">
-                Contact
-            </a>
-
-            <div class="pt-4 border-t border-green-200 space-y-3">
-                <a href="#" 
-                   class="block text-center text-green-600 font-semibold">
-                    Login
-                </a>
-
-                <a href="{{ route('appointment.create') }}" 
-                   class="block text-center bg-green-600 text-white py-2.5 rounded-xl shadow hover:bg-green-700 transition">
+                <a href="{{ route('appointment.create') }}"
+                   class="mt-2 inline-flex justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition">
                     Book Appointment
                 </a>
             </div>
-
         </div>
+
     </div>
 </header>
-
-<script>
-    const btn = document.getElementById('menu-btn');
-    const menu = document.getElementById('mobile-menu');
-
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
-</script>

@@ -18,18 +18,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // // User::factory(10)->create();
+        
+        $this->call([
+                 DepartmentSeeder::class,
+                 ServiceSeeder::class,
+            ]);
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        // $this->call([
-        //     DepartmentSeeder::class,
-        //     ServiceSeeder::class,
-        // ]);
-        $department = Department::first(); // or find a specific one
+        $department = Department::first();
 
         $user = User::firstOrCreate(
             ['email' => 'staff@example.com'],
@@ -43,7 +38,7 @@ class DatabaseSeeder extends Seeder
         if (! Staff::where('employee_id', 'EMP-0001')->exists()) {
             Staff::create([
                 'user_id'      => $user->id,
-                'department_id'=> $department?->id,
+                'department_id'=> $department->id,
                 'employee_id'  => 'EMP-0001',
                 'position'     => 'Front Desk',
                 'phone'        => '09123456789',
@@ -83,17 +78,12 @@ class DatabaseSeeder extends Seeder
         if (! $adminUser->staff) {
             Staff::create([
                 'user_id'       => $adminUser->id,
-                'department_id' => $department?->id,
+                'department_id' => $department->id,
                 'employee_id'   => 'EMP-0003',
                 'position'      => 'Admin',
                 'phone'         => '09987654321',
                 'is_active'     => true,
             ]);
         }
-
-        $this->call([
-                 DepartmentSeeder::class,
-                 ServiceSeeder::class,
-            ]);
     }
 }

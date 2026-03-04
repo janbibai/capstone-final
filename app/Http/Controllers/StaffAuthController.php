@@ -27,9 +27,31 @@ class StaffAuthController extends Controller
         return strtolower(trim($staff->position ?? '')) === 'doctor';
     }
 
+    /**
+     * Check if the current staff user is an admin.
+     */
+    private function isAdmin(): bool
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->staff || ! $user->staff->is_active) {
+            return false;
+        }
+        $staff = $user->staff;
+        if (Schema::hasColumn('staff', 'role_id') && $staff->role_id) {
+            $role = $staff->relationLoaded('role') ? $staff->role : $staff->role()->first();
+            if ($role && strtolower($role->name) === 'admin') {
+                return true;
+            }
+        }
+        return strtolower(trim($staff->position ?? '')) === 'admin';
+    }
+
     public function showLoginForm()
     {
         if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
+            if ($this->isAdmin()) {
+                return redirect()->route('rhu.dashboard');
+            }
             return redirect()->route($this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard');
         }
 
@@ -63,7 +85,11 @@ class StaffAuthController extends Controller
                 ->onlyInput('email');
         }
 
-        $dashboardRoute = $this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard';
+        if ($this->isAdmin()) {
+            $dashboardRoute = 'rhu.dashboard';
+        } else {
+            $dashboardRoute = $this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard';
+        }
 
         return redirect()->intended(route($dashboardRoute));
     }

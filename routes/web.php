@@ -6,6 +6,7 @@ use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\StaffDashboardController;
+use App\Http\Controllers\RhuDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,6 +36,12 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
 
     Route::patch('/staff/appointments/{appointment}/status', [StaffDashboardController::class, 'updateStatus'])
         ->name('staff.appointments.updateStatus');
+
+    // RHU Dashboard (Admin Only)
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/rhu/dashboard', [RhuDashboardController::class, 'index'])
+            ->name('rhu.dashboard');
+    });
 });
 
 // Doctor-only routes (staff + doctor role/position)

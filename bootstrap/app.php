@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'doctor' => EnsureDoctor::class,
             'staff' => EnsureStaff::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
             'dashboard.no-cache' => PreventDashboardCache::class,
         ]);
     })

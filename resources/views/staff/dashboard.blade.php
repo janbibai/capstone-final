@@ -27,6 +27,12 @@
 
                 <!-- User Info & Logout -->
                 <div class="flex items-center space-x-4">
+                    @if(auth()->check() && strtolower(trim(auth()->user()->staff->position ?? '')) === 'admin')
+                        <a href="{{ route('rhu.dashboard') }}"
+                           class="text-gray-600 hover:text-green-600 font-medium text-sm transition">
+                            RHU Dashboard
+                        </a>
+                    @endif
                     @auth
                         <div class="hidden md:flex items-center space-x-3 text-sm">
                             <div class="text-right">

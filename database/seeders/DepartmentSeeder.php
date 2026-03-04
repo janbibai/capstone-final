@@ -15,8 +15,8 @@ class DepartmentSeeder extends Seeder
     {
         Department::insert([
 
-            ['name'=> 'Talay Center',
-            'description'=> 'Talay Health Center',
+            ['name'=> 'poblacion',
+            'description'=> 'poblacion Health Center',
             'is_active'=> true],
             
         ]);

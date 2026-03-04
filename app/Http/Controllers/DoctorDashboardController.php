@@ -16,7 +16,7 @@ class DoctorDashboardController extends Controller
 
         $appointments = Appointment::with(['patient', 'service'])
             ->where('schedule', $date)
-            ->orderBy('queue_number')
+            ->orderByDesc('queue_number')
             ->orderBy('schedule_time')
             ->get();
 

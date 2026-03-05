@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female', 'other']);
             $table->string('phone', 30)->nullable();
             $table->string('email', 30)->nullable();
-            $table->string('address', 50)->nullable();
+            $table->string('address', 150)->nullable();
             // $table->string('patient_number')->unique();
             $table->timestamps();
         });

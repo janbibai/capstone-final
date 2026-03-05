@@ -17,7 +17,7 @@ class StaffDashboardController extends Controller
             ->where('schedule', $date)
             ->orderByDesc('queue_number')
             ->orderBy('schedule_time')
-            ->get();
+            ->paginate(15);
 
         $totalCount = Appointment::where('schedule', $date)->count();
 
@@ -51,4 +51,3 @@ class StaffDashboardController extends Controller
             ->with('success', 'Appointment status updated successfully.');
     }
 }
-

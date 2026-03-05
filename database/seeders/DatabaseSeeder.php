@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
                  DepartmentSeeder::class,
                  ServiceSeeder::class,
+                 PatientAppointmentSeeder::class,
             ]);
 
         $department = Department::first();

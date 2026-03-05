@@ -17,10 +17,10 @@ class DoctorDashboardController extends Controller
 
         $appointments = Appointment::with(['patient', 'service'])
             ->where('schedule', $date)
-            ->whereHas('service', fn($q) => $q->where('department_id', $departmentId))
+            ->whereHas('service', fn ($q) => $q->where('department_id', $departmentId))
             ->orderByDesc('queue_number')
             ->orderBy('schedule_time')
-            ->get();
+            ->paginate(10);
 
         return view('doctor.dashboard', [
             'date' => $date,
@@ -148,16 +148,16 @@ class DoctorDashboardController extends Controller
 
         $query = MedicalRecord::with(['patient', 'diagnosis', 'creator'])
             ->whereDate('created_on', $date)
-            ->whereHas('creator', fn($q) => $q->whereHas('staff', fn($sq) => $sq->where('department_id', $departmentId)))
+            ->whereHas('creator', fn ($q) => $q->whereHas('staff', fn ($sq) => $sq->where('department_id', $departmentId)))
             ->orderBy('created_on', 'desc');
 
         $search = trim((string) $request->query('search', ''));
 
         if ($search !== '') {
             $query->whereHas('patient', function ($q) use ($search) {
-                $q->where('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('last_name', 'like', '%' . $search . '%')
-                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                $q->where('first_name', 'like', '%'.$search.'%')
+                    ->orWhere('last_name', 'like', '%'.$search.'%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%'.$search.'%']);
             });
         }
 

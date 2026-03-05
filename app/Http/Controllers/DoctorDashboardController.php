@@ -13,9 +13,11 @@ class DoctorDashboardController extends Controller
     public function index(Request $request)
     {
         $date = $request->query('date', now()->toDateString());
+        $departmentId = auth()->user()->staff->department_id;
 
         $appointments = Appointment::with(['patient', 'service'])
             ->where('schedule', $date)
+            ->whereHas('service', fn($q) => $q->where('department_id', $departmentId))
             ->orderByDesc('queue_number')
             ->orderBy('schedule_time')
             ->get();

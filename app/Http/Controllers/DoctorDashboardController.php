@@ -138,6 +138,7 @@ class DoctorDashboardController extends Controller
     public function medicalRecords(Request $request)
     {
         $date = $request->query('date', now()->toDateString());
+        $departmentId = auth()->user()->staff->department_id;
 
         try {
             $date = \Carbon\Carbon::parse($date)->toDateString();
@@ -147,6 +148,7 @@ class DoctorDashboardController extends Controller
 
         $query = MedicalRecord::with(['patient', 'diagnosis', 'creator'])
             ->whereDate('created_on', $date)
+            ->whereHas('creator', fn($q) => $q->whereHas('staff', fn($sq) => $sq->where('department_id', $departmentId)))
             ->orderBy('created_on', 'desc');
 
         $search = trim((string) $request->query('search', ''));

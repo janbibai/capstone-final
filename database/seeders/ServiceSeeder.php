@@ -40,5 +40,15 @@ class ServiceSeeder extends Seeder
         'is_active' => true,
         ]);
 
+        // Purok 9 services
+        Service::create([
+        'department_id' => 2,
+        'name' => 'general consultation',
+        'code' => 'serv2001',
+        'description' => 'general consultation for purok 9',
+        'estimated_time' => 15 ,
+        'is_active' => true,
+        ]);
+
     }
 }

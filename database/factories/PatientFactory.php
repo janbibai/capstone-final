@@ -22,10 +22,10 @@ class PatientFactory extends Factory
             'middle_name' => fake()->optional()->firstName(),
             'last_name' => fake()->lastName(),
             'date_of_birth' => fake()->date(),
-            'gender' => fake()->randomElement(['male','female','other']),
+            'gender' => fake()->randomElement(['male', 'female', 'other']),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->safeEmail(),
-            'address' => fake()->address()
+            'address' => fake()->address(),
         ];
     }
 }

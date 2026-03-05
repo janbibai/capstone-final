@@ -95,27 +95,27 @@ class RhuDashboardController extends Controller
             ->get();
 
         // ── Overview KPIs ────────────────────────────────────────────────
-        $totalPatients       = DB::table('patients')->count();
-        $appointmentsToday   = DB::table('appointments')->whereDate('schedule', Carbon::today())->count();
-        $completedToday      = DB::table('appointments')->whereDate('schedule', Carbon::today())->where('status', 'completed')->count();
-        $pendingToday        = DB::table('appointments')->whereDate('schedule', Carbon::today())->where('status', 'not started')->count();
-        $activeDepartments   = DB::table('departments')->where('is_active', true)->count();
-        $diagnosesRecorded   = DB::table('medical_records')->whereBetween('created_on', [$startDate, $endDate])->count();
+        $totalPatients = DB::table('patients')->count();
+        $appointmentsToday = DB::table('appointments')->whereDate('schedule', Carbon::today())->count();
+        $completedToday = DB::table('appointments')->whereDate('schedule', Carbon::today())->where('status', 'completed')->count();
+        $pendingToday = DB::table('appointments')->whereDate('schedule', Carbon::today())->where('status', 'not started')->count();
+        $activeDepartments = DB::table('departments')->where('is_active', true)->count();
+        $diagnosesRecorded = DB::table('medical_records')->whereBetween('created_on', [$startDate, $endDate])->count();
 
         return view('rhu.dashboard', [
-            'groupedStatistics'    => $groupedStatistics,
-            'topDiseases'          => $topDiseases,
-            'filter'               => $filter,
+            'groupedStatistics' => $groupedStatistics,
+            'topDiseases' => $topDiseases,
+            'filter' => $filter,
             'appointmentsPerMonth' => $appointmentsPerMonth,
-            'patientsPerDepartment'=> $patientsPerDepartment,
-            'topDiagnosesThisMonth'=> $topDiagnosesThisMonth,
+            'patientsPerDepartment' => $patientsPerDepartment,
+            'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
             // Overview KPIs
-            'totalPatients'        => $totalPatients,
-            'appointmentsToday'    => $appointmentsToday,
-            'completedToday'       => $completedToday,
-            'pendingToday'         => $pendingToday,
-            'activeDepartments'    => $activeDepartments,
-            'diagnosesRecorded'    => $diagnosesRecorded,
+            'totalPatients' => $totalPatients,
+            'appointmentsToday' => $appointmentsToday,
+            'completedToday' => $completedToday,
+            'pendingToday' => $pendingToday,
+            'activeDepartments' => $activeDepartments,
+            'diagnosesRecorded' => $diagnosesRecorded,
         ]);
     }
 }

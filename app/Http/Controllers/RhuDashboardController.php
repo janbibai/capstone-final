@@ -55,10 +55,52 @@ class RhuDashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // ── Chart Data ─────────────────────────────────────────────────
+
+        // 1) Appointments per month (last 12 months)
+        $appointmentsPerMonth = DB::table('appointments')
+            ->select(
+                DB::raw("DATE_FORMAT(schedule, '%Y-%m') as month"),
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('schedule', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // 2) Patients per department (unique patients via appointments → services)
+        $patientsPerDepartment = DB::table('appointments')
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->join('departments', 'services.department_id', '=', 'departments.id')
+            ->select(
+                'departments.name as department_name',
+                DB::raw('COUNT(DISTINCT appointments.patient_id) as patient_count')
+            )
+            ->where('departments.is_active', true)
+            ->groupBy('departments.id', 'departments.name')
+            ->orderBy('departments.name')
+            ->get();
+
+        // 3) Top diagnoses this month
+        $topDiagnosesThisMonth = DB::table('medical_records')
+            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+            ->select(
+                'diagnoses.name as diagnosis_name',
+                DB::raw('COUNT(medical_records.id) as total_count')
+            )
+            ->where('medical_records.created_on', '>=', Carbon::now()->startOfMonth())
+            ->groupBy('diagnoses.id', 'diagnoses.name')
+            ->orderByDesc('total_count')
+            ->limit(10)
+            ->get();
+
         return view('rhu.dashboard', [
             'groupedStatistics' => $groupedStatistics,
             'topDiseases' => $topDiseases,
             'filter' => $filter,
+            'appointmentsPerMonth' => $appointmentsPerMonth,
+            'patientsPerDepartment' => $patientsPerDepartment,
+            'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
         ]);
     }
 }

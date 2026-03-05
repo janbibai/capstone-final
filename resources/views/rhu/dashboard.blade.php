@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>RHU Dashboard</title>
     @vite('resources/css/app.css')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
 <body class="bg-gray-50">
@@ -81,6 +82,36 @@
                             {{ $filter === 'year' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50' }}">
                         This Year
                     </a>
+                </div>
+            </div>
+
+            {{-- Appointment Analytics Charts --}}
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Appointment Analytics</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {{-- Chart 1: Appointments Per Month --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Appointments Per Month</h4>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="appointmentsPerMonthChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart 2: Patients Per Department --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Patients Per Department</h4>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="patientsPerDepartmentChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart 3: Top Diagnoses This Month --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Top Diagnoses This Month</h4>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="topDiagnosesChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -191,6 +222,157 @@
             @endif
         </div>
     </main>
+
+    <script>
+        const chartColors = {
+            indigo: 'rgba(79, 70, 229, 0.8)',
+            indigoBorder: 'rgba(79, 70, 229, 1)',
+            blue: 'rgba(59, 130, 246, 0.8)',
+            blueBorder: 'rgba(59, 130, 246, 1)',
+            teal: 'rgba(20, 184, 166, 0.8)',
+            tealBorder: 'rgba(20, 184, 166, 1)',
+            amber: 'rgba(245, 158, 11, 0.8)',
+            amberBorder: 'rgba(245, 158, 11, 1)',
+            rose: 'rgba(244, 63, 94, 0.8)',
+            roseBorder: 'rgba(244, 63, 94, 1)',
+            violet: 'rgba(139, 92, 246, 0.8)',
+            violetBorder: 'rgba(139, 92, 246, 1)',
+        };
+
+        const bgPalette = [
+            chartColors.indigo, chartColors.blue, chartColors.teal,
+            chartColors.amber, chartColors.rose, chartColors.violet,
+            'rgba(16, 185, 129, 0.8)', 'rgba(236, 72, 153, 0.8)',
+            'rgba(99, 102, 241, 0.8)', 'rgba(234, 179, 8, 0.8)',
+        ];
+        const borderPalette = [
+            chartColors.indigoBorder, chartColors.blueBorder, chartColors.tealBorder,
+            chartColors.amberBorder, chartColors.roseBorder, chartColors.violetBorder,
+            'rgba(16, 185, 129, 1)', 'rgba(236, 72, 153, 1)',
+            'rgba(99, 102, 241, 1)', 'rgba(234, 179, 8, 1)',
+        ];
+
+        const defaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.04)'
+                    },
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                },
+            },
+        };
+
+        // 1) Appointments Per Month
+        const apmData = @json($appointmentsPerMonth);
+        new Chart(document.getElementById('appointmentsPerMonthChart'), {
+            type: 'bar',
+            data: {
+                labels: apmData.map(r => {
+                    const [y, m] = r.month.split('-');
+                    return new Date(y, m - 1).toLocaleString('default', {
+                        month: 'short',
+                        year: '2-digit'
+                    });
+                }),
+                datasets: [{
+                    label: 'Appointments',
+                    data: apmData.map(r => r.total),
+                    backgroundColor: chartColors.indigo,
+                    borderColor: chartColors.indigoBorder,
+                    borderWidth: 1,
+                    borderRadius: 6,
+                }],
+            },
+            options: defaultOptions,
+        });
+
+        // 2) Patients Per Department
+        const ppdData = @json($patientsPerDepartment);
+        new Chart(document.getElementById('patientsPerDepartmentChart'), {
+            type: 'bar',
+            data: {
+                labels: ppdData.map(r => r.department_name),
+                datasets: [{
+                    label: 'Patients',
+                    data: ppdData.map(r => r.patient_count),
+                    backgroundColor: ppdData.map((_, i) => bgPalette[i % bgPalette.length]),
+                    borderColor: ppdData.map((_, i) => borderPalette[i % borderPalette.length]),
+                    borderWidth: 1,
+                    borderRadius: 6,
+                }],
+            },
+            options: defaultOptions,
+        });
+
+        // 3) Top Diagnoses This Month
+        const tdData = @json($topDiagnosesThisMonth);
+        new Chart(document.getElementById('topDiagnosesChart'), {
+            type: 'bar',
+            data: {
+                labels: tdData.map(r => r.diagnosis_name),
+                datasets: [{
+                    label: 'Cases',
+                    data: tdData.map(r => r.total_count),
+                    backgroundColor: tdData.map((_, i) => bgPalette[i % bgPalette.length]),
+                    borderColor: tdData.map((_, i) => borderPalette[i % borderPalette.length]),
+                    borderWidth: 1,
+                    borderRadius: 6,
+                }],
+            },
+            options: {
+                ...defaultOptions,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0,
+                            font: {
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.04)'
+                        },
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            display: false
+                        },
+                    },
+                },
+            },
+        });
+    </script>
 </body>
 
 </html>

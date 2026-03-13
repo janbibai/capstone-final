@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceAuth extends Model
 {
+    protected $table = 'services_auth';
+
     protected $fillable = [
         'service_id',
         'role_id',
@@ -16,13 +18,13 @@ class ServiceAuth extends Model
         'is_active' => 'boolean'
     ];
 
-    public function service(){
-        return $this->hasMany(Service::class);
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 
-    public function role(){
-        return $this->hasMany(Role::class);
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
-    
-    
 }

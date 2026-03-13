@@ -27,13 +27,13 @@
                     <div class="mt-8 flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('appointment.create') }}"
                            class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3.5 rounded-lg text-sm font-semibold shadow-sm transition">
-                            <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             Book Your Appointment
                         </a>
 
                         <a href="#services"
                            class="inline-flex items-center justify-center gap-2 bg-white border border-black/10 hover:bg-black/5 px-7 py-3.5 rounded-lg text-sm font-semibold text-slate-700 transition">
-                            <span class="material-symbols-outlined text-[20px]">info</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             Learn More
                         </a>
                     </div>
@@ -44,7 +44,7 @@
                     <div class="w-full max-w-lg bg-teal-200 rounded-2xl shadow-xl p-10 flex items-center justify-center min-h-[320px]">
                         <div class="w-48 h-64 bg-white/25 rounded-2xl border-4 border-white flex flex-col items-center justify-center">
                             <div class="w-24 h-24 rounded-full bg-white/25 flex items-center justify-center mb-6">
-                                <span class="material-symbols-outlined text-white text-5xl">medical_services</span>
+                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                             </div>
 
                             {{-- small "carousel dots" like the mockup --}}
@@ -72,21 +72,21 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="group p-8 rounded-2xl border border-primary/10 bg-background-light hover:shadow-xl transition-all">
                     <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                        <span class="material-symbols-outlined text-3xl">stethoscope</span>
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3">General Check-up</h3>
                     <p class="text-slate-600 leading-relaxed">Comprehensive physical examinations and health screenings to keep you and your family in top health year-round.</p>
                 </div>
                 <div class="group p-8 rounded-2xl border border-primary/10 bg-background-light hover:shadow-xl transition-all">
                     <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                        <span class="material-symbols-outlined text-3xl">dentistry</span>
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7c0 2.104 1.3 3.898 3.138 4.64C9.468 12.804 9 14.343 9 16c0 2.757 1.343 5 3 5s3-2.243 3-5c0-1.657-.468-3.196-1.138-4.36C15.7 10.898 17 9.104 17 7c0-2.757-2.243-5-5-5z"/></svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Dental Services</h3>
                     <p class="text-slate-600 leading-relaxed">Professional oral health care including routine cleanings, fillings, and dental treatments for all ages.</p>
                 </div>
                 <div class="group p-8 rounded-2xl border border-primary/10 bg-background-light hover:shadow-xl transition-all">
                     <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                        <span class="material-symbols-outlined text-3xl">child_care</span>
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Maternal Care</h3>
                     <p class="text-slate-600 leading-relaxed">Specialized prenatal and postnatal care for expectant mothers and newborns ensuring a healthy start for every child.</p>
@@ -107,21 +107,21 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-white rounded-full border-4 border-primary flex items-center justify-center mb-6 shadow-lg">
-                            <span class="material-symbols-outlined text-primary text-3xl">event_available</span>
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l2 2 4-4"/></svg>
                         </div>
                         <h4 class="text-lg font-bold mb-2">1. Book Online</h4>
                         <p class="text-sm text-slate-600">Select your service and preferred time slot through our website.</p>
                     </div>
                     <div class="flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-white rounded-full border-4 border-primary flex items-center justify-center mb-6 shadow-lg">
-                            <span class="material-symbols-outlined text-primary text-3xl">qr_code_2</span>
+                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M3 11h2V9H3v2zm0-4h2V3H3v4zm4 4h2V9H7v2zm0-4h2V3H7v4zM3 15h2v-2H3v2zm8-4h2V9h-2v2zm-4 4h2v-2H7v2zm4 0h2v-2h-2v2zm0-8h2V3h-2v4zm4 4h2V9h-2v2zm0-4h2V3h-2v4zm4 4h2V9h-2v2zm0-4h2V3h-2v4zm0 8h2v-2h-2v2zm-4 0h2v-2h-2v2zm-8 4h2v-2H7v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2zm0-4h2v-2h-2v2zm4 0h2v-2h-2v2zm0 4h2v-2h-2v2zM3 19h2v-2H3v2zm0 2h2v-2H3v2zm4 0h2v-2H7v2z"/></svg>
                         </div>
                         <h4 class="text-lg font-bold mb-2">2. Get QR Ticket</h4>
                         <p class="text-sm text-slate-600">Receive a digital ticket with a unique QR code for your appointment.</p>
                     </div>
                     <div class="flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-white rounded-full border-4 border-primary flex items-center justify-center mb-6 shadow-lg">
-                            <span class="material-symbols-outlined text-primary text-3xl">check_circle</span>
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <h4 class="text-lg font-bold mb-2">3. Arrive & Check-in</h4>
                         <p class="text-sm text-slate-600">Scan your QR code at the entrance to confirm your arrival instantly.</p>
@@ -140,7 +140,9 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-primary/5">
-                    <img alt="Dr. Elena Cruz" class="w-full h-72 object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhL6n7WWraGI4o5gtPpWTDy0_3ukcGV5I2igvT39RoqM7R_t-sHa83zOpPZbOrBLDatzxcjSzyG_lN1uuKaA5LMoGaeRE3LuU5and-n0Wxnc6dhvgb897ohWtUrA0190tjayLJdzfpp3cmNAlUT467zjQYN6JWGXl1OXZH4_48mhg9q641PpbOdUNd9vurAZN6eJKYZseQQc4Etk1xYuwTZeIges_tfNtLE5VpOfWJ4Fj-yjvPl4wuWr5m6m4aZo2ehuVSlY59buk"/>
+                    <div class="w-full h-72 overflow-hidden">
+                        <img src="{{ asset('images/jenn.jpg') }}" alt="Dr. Elena Cruz" class="w-full h-full object-cover">
+                    </div>
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-slate-900">Dr. Elena Cruz</h3>
                         <p class="text-primary font-semibold text-sm mb-4">General Physician</p>
@@ -149,7 +151,9 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-primary/5">
-                    <img alt="Dr. Marcus Reyes" class="w-full h-72 object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwTDCiQudy5dNxNrsc7hVM9UBrf63-V8B0IKSsnxELSqKC_zdG7P1Gw1kNYjdMGYiqHE82YdmKX5hEvPLKrpvC23D5nSbrG_cdqhQBMXd3U0CKyGBlzl157VYg9KkikxxsgiiG5t2hArLXzX2vG7RcTfX-Q22PEbFGpEa5mya_gitI3rKgMMILxVdOfLJ0reAkl9L5P3kTb2RNVP9B6KNGhItoY4p-T1vATZVpumR-lRJmWdwQjbtlGKsLhd7ai5MlAOdF2i3flQg"/>
+                    <div class="w-full h-72 overflow-hidden">
+                        <img src="{{ asset('images/jenn.jpg') }}" alt="Dr. Marcus Reyes" class="w-full h-full object-cover">
+                    </div>
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-slate-900">Dr. Marcus Reyes</h3>
                         <p class="text-primary font-semibold text-sm mb-4">Pediatrician</p>
@@ -158,7 +162,9 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-primary/5">
-                    <img alt="Dr. Sarah Lim" class="w-full h-72 object-cover object-top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhcKzBJFqViS-h28sF3vaonxusGN3vSIybVP-GoTQ8cmMVHjwKuEhBsIdhfmShULrmENhgeZjPMAIS_zf9Tzk1vr3Tw0PqujXFKTx75DYTqf2-l8K1N6sO4SjKGYn0nwa_LOUxmTcoPKTYwU8rCUVt2UXxKcnTC9sBC0bXy6QMj8VkhCPjPmS015HBRirREbLw-qH6L9isM5byvXSs0vddvrp5dbH_PbHmd8joHUW18BeTsFtv3ZsF1Kcpcd15vjAb0ARytJQSSoA"/>
+                    <div class="w-full h-72 overflow-hidden">
+                        <img src="{{ asset('images/jenn.jpg') }}" alt="Dr. Sarah Lim" class="w-full h-full object-cover">
+                    </div>
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-slate-900">Dr. Sarah Lim</h3>
                         <p class="text-primary font-semibold text-sm mb-4">Dentist</p>
@@ -179,16 +185,16 @@
                     <div class="space-y-6">
                         <div class="flex items-start gap-4">
                             <div class="bg-primary/10 p-3 rounded-lg text-primary shrink-0">
-                                <span class="material-symbols-outlined">location_on</span>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-bold text-lg">Our Location</h4>
-                                <p class="text-slate-600">123 Healthway Drive, San Jose Municipality, Rural Province</p>
+                                <p class="text-slate-600">Acupanda St., Poblacion, Zamboanguita, Negros Oriental, 6218</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
                             <div class="bg-primary/10 p-3 rounded-lg text-primary shrink-0">
-                                <span class="material-symbols-outlined">schedule</span>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-bold text-lg">Working Hours</h4>
@@ -198,7 +204,7 @@
                         </div>
                         <div class="flex items-start gap-4">
                             <div class="bg-primary/10 p-3 rounded-lg text-primary shrink-0">
-                                <span class="material-symbols-outlined">phone_in_talk</span>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                             </div>
                             <div>
                                 <h4 class="font-bold text-lg">Contact Details</h4>
@@ -209,12 +215,7 @@
                     </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden h-[400px] shadow-lg border border-primary/10">
-                    <div class="w-full h-full bg-slate-200 flex flex-col items-center justify-center text-slate-500 relative">
-                        <span class="material-symbols-outlined text-6xl mb-4">map</span>
-                        <p class="font-bold">Interactive Map Component</p>
-                        <div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
-                        <img class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlm5P27H_WcG6dQeQAotKegkwcTINxhVsl0p-ZawXMiqhTn5SKySxHcYb-bCYby3dx6F39wBlCLisOv_yaHYgcK6KRPPpGrEGctwsMGi9ivniEfkZviSybIqUeCH_nWnophiH7Ni1iYydcDvLpVYkCCxVIwLpEG79KXGSXqPBSHXDGUU0VKPALleDcPHSY4Xk3qACF5pxqx9EgnMyGkbKr6RMx7E4tQ6Kw_k9qESTsmw2I1jr3oxe4WmAc6C8QFiEMln4gluqBqVU"/>
-                    </div>
+                    <iframe class="w-full h-full" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Zamboangita%20Rural%20Health%20Unit&t=&z=14&ie=UTF8&iwloc=B&output=embed"></iframe>
                 </div>
             </div>
         </div>

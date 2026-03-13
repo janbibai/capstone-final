@@ -20,13 +20,14 @@ class Service extends Model
         'is_active' => 'boolean'
     ];
 
-    public function department(){
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class, 'services_auth');
     }
-    
+
 }

@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\RhuDashboardController;
+use App\Models\Appointment;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,7 +21,60 @@ Route::post('/appointments/{id}/start', [PatientController::class, 'start'])
     ->name('appointments.start');
 
 Route::get('/queue-board', function () {
-    return view('queue-board');
+    $today = now()->toDateString();
+
+    $nowServing = Appointment::with(['patient', 'service'])
+        ->where('schedule', $today)
+        ->where('status', 'started')
+        ->orderBy('queue_number')
+        ->first();
+
+    $upcoming = Appointment::with(['patient', 'service'])
+        ->where('schedule', $today)
+        ->where('status', 'not started')
+        ->orderBy('queue_number')
+        ->take(5)
+        ->get();
+
+    return view('queue-board', [
+        'nowServing' => $nowServing,
+        'upcoming'   => $upcoming,
+    ]);
+});
+
+// API endpoint for queue board polling
+Route::get('/api/queue-board', function () {
+    $today = now()->toDateString();
+
+    $nowServing = Appointment::with(['patient', 'service'])
+        ->where('schedule', $today)
+        ->where('status', 'started')
+        ->orderBy('queue_number')
+        ->first();
+
+    $upcoming = Appointment::with(['patient', 'service'])
+        ->where('schedule', $today)
+        ->where('status', 'not started')
+        ->orderBy('queue_number')
+        ->take(5)
+        ->get();
+
+    return response()->json([
+        'now_serving' => $nowServing ? [
+            'queue_number' => $nowServing->queue_number,
+            'patient_name' => $nowServing->patient
+                ? $nowServing->patient->first_name . ' ' . $nowServing->patient->last_name
+                : 'N/A',
+            'service' => optional($nowServing->service)->name ?? 'N/A',
+        ] : null,
+        'upcoming' => $upcoming->map(fn($a) => [
+            'queue_number' => $a->queue_number,
+            'patient_name' => $a->patient
+                ? $a->patient->first_name . ' ' . $a->patient->last_name
+                : 'N/A',
+            'service' => optional($a->service)->name ?? 'N/A',
+        ]),
+    ]);
 });
 
 // Staff authentication

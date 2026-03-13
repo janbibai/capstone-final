@@ -15,7 +15,13 @@ class Role extends Model
         'is_active' => 'boolean'
     ];
 
-    public function service_auth(){
-        return $this->belongsTo(ServiceAuth::class);
+    public function serviceAuths()
+    {
+        return $this->hasMany(ServiceAuth::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'services_auth');
     }
 }

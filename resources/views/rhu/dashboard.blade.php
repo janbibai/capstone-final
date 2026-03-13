@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RHU Dashboard</title>
     @vite('resources/css/app.css')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    @vite('resources/js/app.js')
     <style>
         /* Sidebar active link */
         .sidebar-link.active {
@@ -137,99 +137,81 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                     {{-- Total Patients --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-blue-500">
+                        <div class="absolute top-4 right-4 bg-blue-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Total Patients</p>
-                            <p class="text-3xl font-bold text-gray-800">{{ number_format($totalPatients) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">Registered in system</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Total Patients</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalPatients) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Registered in system</p>
                     </div>
 
                     {{-- Appointments Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-indigo-500">
+                        <div class="absolute top-4 right-4 bg-indigo-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Appointments Today</p>
-                            <p class="text-3xl font-bold text-gray-800">{{ number_format($appointmentsToday) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">Scheduled for today</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Appointments Today</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($appointmentsToday) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Scheduled for today</p>
                     </div>
 
                     {{-- Completed Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-green-500">
+                        <div class="absolute top-4 right-4 bg-green-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Completed Today</p>
-                            <p class="text-3xl font-bold text-green-700">{{ number_format($completedToday) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">Finished appointments</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Completed Today</p>
+                        <p class="text-3xl font-bold text-green-700 mt-1">{{ number_format($completedToday) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Finished appointments</p>
                     </div>
 
                     {{-- Pending Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-amber-500">
+                        <div class="absolute top-4 right-4 bg-amber-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Pending Today</p>
-                            <p class="text-3xl font-bold text-amber-700">{{ number_format($pendingToday) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">Not yet started</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Pending Today</p>
+                        <p class="text-3xl font-bold text-amber-700 mt-1">{{ number_format($pendingToday) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Not yet started</p>
                     </div>
 
                     {{-- Active Departments --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-violet-500">
+                        <div class="absolute top-4 right-4 bg-violet-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Active Departments</p>
-                            <p class="text-3xl font-bold text-gray-800">{{ number_format($activeDepartments) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">Health centers</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Active Departments</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($activeDepartments) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">Health centers</p>
                     </div>
 
                     {{-- Diagnoses Recorded --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                    <div class="relative bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden border-l-4 border-l-rose-500">
+                        <div class="absolute top-4 right-4 bg-rose-50 rounded-lg p-2.5">
+                            <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-medium">Diagnoses Recorded</p>
-                            <p class="text-3xl font-bold text-gray-800">{{ number_format($diagnosesRecorded) }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">In selected period</p>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium">Diagnoses Recorded</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($diagnosesRecorded) }}</p>
+                        <p class="text-xs text-gray-400 mt-1">In selected period</p>
                     </div>
                 </div>
             </section>
@@ -238,28 +220,91 @@
             {{-- SECTION: Appointment Analytics (Charts)   --}}
             {{-- ══════════════════════════════════════════ --}}
             <section id="section-analytics" class="section-content hidden mt-2">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Appointment Analytics</h2>
-                    <p class="text-gray-500 text-sm mt-1">Visual breakdown of appointments, patients, and diagnoses</p>
+                <div class="mb-6 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-100 rounded-xl p-3">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Appointment Analytics</h2>
+                            <p class="text-gray-500 text-sm mt-0.5">Visual breakdown of appointments, patients, and diagnoses</p>
+                        </div>
+                    </div>
+                    <span class="hidden sm:inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-indigo-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        Live Data
+                    </span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Appointments Per Month</h4>
-                        <div style="position:relative;height:280px;">
-                            <canvas id="appointmentsPerMonthChart"></canvas>
+                    {{-- Appointments Per Month --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden border-t-4 border-t-indigo-400 hover:shadow-md transition-shadow duration-200">
+                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50/40 to-white">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-100 rounded-lg p-2">
+                                    <svg class="w-4.5 h-4.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-800">Appointments Per Month</h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">Monthly booking trends</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div style="position:relative;height:280px;">
+                                <canvas id="appointmentsPerMonthChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Patients Per Department</h4>
-                        <div style="position:relative;height:280px;">
-                            <canvas id="patientsPerDepartmentChart"></canvas>
+
+                    {{-- Patients Per Department --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden border-t-4 border-t-blue-400 hover:shadow-md transition-shadow duration-200">
+                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50/40 to-white">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-blue-100 rounded-lg p-2">
+                                    <svg class="w-4.5 h-4.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-800">Patients Per Department</h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">Distribution across health centers</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div style="position:relative;height:280px;">
+                                <canvas id="patientsPerDepartmentChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h4 class="text-sm font-semibold text-gray-600 mb-4">Top Diagnoses This Month</h4>
-                        <div style="position:relative;height:280px;">
-                            <canvas id="topDiagnosesChart"></canvas>
+
+                    {{-- Top Diagnoses This Month --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden border-t-4 border-t-rose-400 hover:shadow-md transition-shadow duration-200">
+                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-rose-50/40 to-white">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-rose-100 rounded-lg p-2">
+                                    <svg class="w-4.5 h-4.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-800">Top Diagnoses This Month</h4>
+                                    <p class="text-xs text-gray-400 mt-0.5">Most common conditions recorded</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div style="position:relative;height:280px;">
+                                <canvas id="topDiagnosesChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -276,18 +321,47 @@
 
                 @if ($topDiseases->isNotEmpty())
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100">
-                            <h3 class="text-base font-bold text-indigo-800">Most Common Diseases</h3>
-                            <p class="text-xs text-indigo-500 mt-0.5">Top diagnoses across all departments — selected
-                                period</p>
+                        <div class="px-6 py-5 bg-gradient-to-r from-indigo-50 to-violet-50 border-b border-indigo-100 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-100 rounded-lg p-2.5">
+                                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-indigo-800">Most Common Diseases</h3>
+                                    <p class="text-xs text-indigo-500 mt-0.5">Top diagnoses across all departments — selected period</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
-                                    <tr>
-                                        <th class="px-6 py-3">Rank</th>
-                                        <th class="px-6 py-3">Disease / Diagnosis</th>
-                                        <th class="px-6 py-3 text-right">Total Cases</th>
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-indigo-50/50 to-violet-50/50 border-b border-indigo-100">
+                                        <th class="px-6 py-3.5 text-xs font-bold text-indigo-800 uppercase tracking-wider">
+                                            <div class="flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                                </svg>
+                                                Rank
+                                            </div>
+                                        </th>
+                                        <th class="px-6 py-3.5 text-xs font-bold text-indigo-800 uppercase tracking-wider">
+                                            <div class="flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                                </svg>
+                                                Disease / Diagnosis
+                                            </div>
+                                        </th>
+                                        <th class="px-6 py-3.5 text-xs font-bold text-indigo-800 uppercase tracking-wider text-right">
+                                            <div class="flex items-center gap-1.5 justify-end">
+                                                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                </svg>
+                                                Total Cases
+                                            </div>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -319,8 +393,17 @@
                         </div>
                     </div>
                 @else
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center text-gray-500">
-                        No diagnoses recorded for the selected period.
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-16 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-gray-100 rounded-full p-4 mb-4">
+                                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 font-medium">No diagnoses recorded</p>
+                            <p class="text-gray-400 text-sm mt-1">There are no diagnoses for the selected period.</p>
+                        </div>
                     </div>
                 @endif
             </section>
@@ -335,19 +418,35 @@
                 </div>
 
                 @if ($groupedStatistics->isEmpty())
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center text-gray-500">
-                        No records with diagnoses for the selected period.
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-16 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-gray-100 rounded-full p-4 mb-4">
+                                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 font-medium">No records found</p>
+                            <p class="text-gray-400 text-sm mt-1">There are no diagnoses for the selected period.</p>
+                        </div>
                     </div>
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         @foreach ($groupedStatistics as $departmentName => $diagnoses)
                             <div
-                                class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                                <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
-                                    <h3 class="text-base font-bold text-gray-800 capitalize">{{ $departmentName }}
-                                    </h3>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $diagnoses->sum('diagnosis_count') }}
-                                        total diagnoses</p>
+                                class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col border-t-4 border-t-indigo-400">
+                                <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="bg-indigo-50 rounded-lg p-2">
+                                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-base font-bold text-gray-800 capitalize">{{ $departmentName }}</h3>
+                                            <p class="text-xs text-gray-500 mt-0.5">{{ $diagnoses->sum('diagnosis_count') }} total diagnoses</p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="overflow-y-auto" style="max-height:380px;">
                                     <ul class="divide-y divide-gray-100">

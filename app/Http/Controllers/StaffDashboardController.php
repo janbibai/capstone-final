@@ -17,7 +17,7 @@ class StaffDashboardController extends Controller
         $appointments = Appointment::with(['patient', 'service'])
             ->where('schedule', $date)
             ->whereHas('service', fn($q) => $q->where('department_id', $departmentId))
-            ->orderByDesc('queue_number')
+            ->orderBy('queue_number')
             ->orderBy('schedule_time')
             ->paginate(15);
 

@@ -17,8 +17,8 @@ class DoctorDashboardController extends Controller
 
         $appointments = Appointment::with(['patient', 'service'])
             ->where('schedule', $date)
-            ->whereHas('service', fn ($q) => $q->where('department_id', $departmentId))
-            ->orderByDesc('queue_number')
+            ->whereHas('service', fn($q) => $q->where('department_id', $departmentId))
+            ->orderBy('queue_number')
             ->orderBy('schedule_time')
             ->paginate(10);
 
@@ -43,7 +43,7 @@ class DoctorDashboardController extends Controller
                 ->first();
         }
 
-        if (! $appointment || $appointment->status !== 'started') {
+        if (!$appointment || $appointment->status !== 'started') {
             return redirect()
                 ->route('doctor.dashboard', ['date' => now()->toDateString()])
                 ->withErrors(['appointment' => 'You can only add a diagnosis for a patient whose appointment has been started by staff.']);
@@ -90,11 +90,11 @@ class DoctorDashboardController extends Controller
         $diagnosisId = $validated['diagnosis_id'] ?? null;
         $diagnosisName = trim($validated['diagnosis_name'] ?? '');
 
-        if (! $diagnosisId && $diagnosisName === '') {
+        if (!$diagnosisId && $diagnosisName === '') {
             return back()->withErrors(['diagnosis_id' => 'Either select an existing diagnosis or enter a new diagnosis name.'])->withInput();
         }
 
-        if (! $diagnosisId) {
+        if (!$diagnosisId) {
             $diagnosis = Diagnosis::firstOrCreate(
                 ['name' => $diagnosisName],
                 [
@@ -148,16 +148,16 @@ class DoctorDashboardController extends Controller
 
         $query = MedicalRecord::with(['patient', 'diagnosis', 'creator'])
             ->whereDate('created_on', $date)
-            ->whereHas('creator', fn ($q) => $q->whereHas('staff', fn ($sq) => $sq->where('department_id', $departmentId)))
+            ->whereHas('creator', fn($q) => $q->whereHas('staff', fn($sq) => $sq->where('department_id', $departmentId)))
             ->orderBy('created_on', 'desc');
 
         $search = trim((string) $request->query('search', ''));
 
         if ($search !== '') {
             $query->whereHas('patient', function ($q) use ($search) {
-                $q->where('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('last_name', 'like', '%'.$search.'%')
-                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%'.$search.'%']);
+                $q->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
             });
         }
 

@@ -23,7 +23,7 @@ class StorePatientRequest extends FormRequest
             'date_of_birth' => 'required|date|before:today',
             'gender' => 'required|in:male,female,other',
             'phone' => 'nullable|string|max:30',
-            'email' => 'nullable|email|max:30|unique:patients,email',
+            'email' => 'nullable|email|max:30',
             'address' => 'nullable|string|max:50',
             // 'patient_number' => 'nullable|string|unique:patients,patient_number',
         ];

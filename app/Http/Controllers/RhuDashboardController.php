@@ -118,4 +118,44 @@ class RhuDashboardController extends Controller
             'diagnosesRecorded' => $diagnosesRecorded,
         ]);
     }
+
+    /**
+     * AJAX: Return patients for a given diagnosis within a department.
+     */
+    public function diagnosisPatients(Request $request)
+    {
+        $filter        = $request->query('filter', 'today');
+        $diagnosisName = $request->query('diagnosis_name');
+        $departmentName = $request->query('department_name');
+
+        $startDate = match ($filter) {
+            'week'  => Carbon::now()->startOfWeek(),
+            'month' => Carbon::now()->startOfMonth(),
+            'year'  => Carbon::now()->startOfYear(),
+            default => Carbon::today(),
+        };
+        $endDate = Carbon::now()->endOfDay();
+
+        $patients = DB::table('medical_records')
+            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+            ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
+            ->join('users', 'medical_records.created_by', '=', 'users.id')
+            ->join('staff', 'users.id', '=', 'staff.user_id')
+            ->join('departments', 'staff.department_id', '=', 'departments.id')
+            ->select(
+                'patients.id',
+                'patients.first_name',
+                'patients.last_name',
+                'patients.gender',
+                'patients.date_of_birth',
+                'medical_records.created_on'
+            )
+            ->where('diagnoses.name', $diagnosisName)
+            ->where('departments.name', $departmentName)
+            ->whereBetween('medical_records.created_on', [$startDate, $endDate])
+            ->orderByDesc('medical_records.created_on')
+            ->get();
+
+        return response()->json($patients);
+    }
 }

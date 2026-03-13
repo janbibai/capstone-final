@@ -20,7 +20,7 @@ class DoctorDashboardController extends Controller
             ->whereHas('service', fn($q) => $q->where('department_id', $departmentId))
             ->orderBy('queue_number')
             ->orderBy('schedule_time')
-            ->paginate(10);
+            ->paginate(15);
 
         return view('doctor.dashboard', [
             'date' => $date,

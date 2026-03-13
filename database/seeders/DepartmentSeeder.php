@@ -13,16 +13,26 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
-        Department::insert([
+         $departments = [
+            [
+                'name'        => 'poblacion',
+                'description' => 'poblacion Health Center',
+                'is_active'   => true,
+            ],
+            [
+                'name'        => 'purok 9',
+                'description' => 'purok 9 Health Center',
+                'is_active'   => true,
+            ],
+        ];
 
-            ['name'=> 'poblacion',
-            'description'=> 'poblacion Health Center',
-            'is_active'=> true],
+        foreach ($departments as $dept) {
+            Department::firstOrCreate(
+                ['name' => $dept['name']],   // search criteria
+                $dept                          // values to fill if not found
+            );
+        }
 
-            ['name'=> 'purok 9',
-            'description'=> 'purok 9 Health Center',
-            'is_active'=> true],
-            
-        ]);
+        
     }
 }

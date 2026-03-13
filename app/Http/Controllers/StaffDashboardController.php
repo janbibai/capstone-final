@@ -41,6 +41,13 @@ class StaffDashboardController extends Controller
 
     public function updateStatus(Request $request, Appointment $appointment)
     {
+        // Prevent staff from changing status once the doctor has completed the appointment
+        if ($appointment->status === 'completed') {
+            return redirect()
+                ->route('staff.dashboard', ['date' => $appointment->schedule])
+                ->withErrors(['status' => 'This appointment has been completed by the doctor and can no longer be updated.']);
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:not started,started,completed,cancelled',
         ]);

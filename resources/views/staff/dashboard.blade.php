@@ -184,26 +184,33 @@
                                         </span>
                                     </td>
                                     <td class="px-4 py-3">
-                                        <form method="POST"
-                                            action="{{ route('staff.appointments.updateStatus', $appointment) }}"
-                                            class="flex items-center gap-2">
-                                            @csrf
-                                            @method('PATCH')
-                                            <select name="status"
-                                                class="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-green-400 focus:outline-none">
-                                                <option value="not started" @selected($appointment->status === 'not started')>Not started
-                                                </option>
-                                                <option value="started" @selected($appointment->status === 'started')>Started</option>
-                                                <option value="completed" @selected($appointment->status === 'completed')>Completed
-                                                </option>
-                                                <option value="cancelled" @selected($appointment->status === 'cancelled')>Cancelled
-                                                </option>
-                                            </select>
-                                            <button type="submit"
-                                                class="bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-green-700 transition">
-                                                Update
-                                            </button>
-                                        </form>
+                                        @if ($appointment->status === 'completed')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-600 border border-green-200">
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Completed by Doctor
+                                            </span>
+                                        @else
+                                            <form method="POST"
+                                                action="{{ route('staff.appointments.updateStatus', $appointment) }}"
+                                                class="flex items-center gap-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select name="status"
+                                                    class="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-green-400 focus:outline-none">
+                                                    <option value="not started" @selected($appointment->status === 'not started')>Not started
+                                                    </option>
+                                                    <option value="started" @selected($appointment->status === 'started')>Started</option>
+                                                    <option value="cancelled" @selected($appointment->status === 'cancelled')>Cancelled
+                                                    </option>
+                                                </select>
+                                                <button type="submit"
+                                                    class="bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-green-700 transition">
+                                                    Update
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

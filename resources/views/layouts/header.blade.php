@@ -18,22 +18,18 @@
                 <a href="{{ url('/#services') }}" class="hover:text-primary transition">Our Services</a>
                 <a href="{{ url('/#doctors') }}" class="hover:text-primary transition">Doctors</a>
                 <a href="{{ url('/#contact') }}" class="hover:text-primary transition">Contact</a>
-                <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a>
+                {{-- <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a> --}}
             </nav>
 
             {{-- Desktop CTA --}}
             <a href="{{ route('appointment.create') }}"
-               class="hidden md:inline-flex bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm">
+                class="hidden md:inline-flex bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm">
                 Book Appointment
             </a>
 
             {{-- Mobile Menu Button --}}
-            <button
-                type="button"
-                class="md:hidden text-gray-700"
-                aria-label="Open menu"
-                onclick="document.getElementById('mobileNav').classList.toggle('hidden')"
-            >
+            <button type="button" class="md:hidden text-gray-700" aria-label="Open menu"
+                onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
                 <span class="material-symbols-outlined text-3xl">menu</span>
             </button>
 
@@ -46,10 +42,10 @@
                 <a href="{{ url('/#services') }}" class="py-2 border-b border-black/5">Our Services</a>
                 <a href="{{ url('/#doctors') }}" class="py-2 border-b border-black/5">Doctors</a>
                 <a href="{{ url('/#contact') }}" class="py-2 border-b border-black/5">Contact</a>
-                <a href="{{ route('staff.login') }}" class="py-2 border-b border-black/5">Login</a>
+                {{-- <a href="{{ route('staff.login') }}" class="py-2 border-b border-black/5">Login</a> --}}
 
                 <a href="{{ route('appointment.create') }}"
-                   class="mt-2 inline-flex justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition">
+                    class="mt-2 inline-flex justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition">
                     Book Appointment
                 </a>
             </div>

@@ -102,6 +102,7 @@
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Patient</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Service</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-600">Details</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Actions</th>
                             </tr>
                         </thead>
@@ -130,6 +131,18 @@
                                             @else bg-gray-100 text-gray-700 @endif">
                                             {{ ucfirst($appointment->status) }}
                                         </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        @if($appointment->weight || $appointment->height || $appointment->blood_pressure || $appointment->temperature)
+                                            <div class="text-xs text-gray-600 space-y-0.5 min-w-[100px]">
+                                                @if($appointment->weight) <div><span class="font-medium text-gray-700">W:</span> {{ $appointment->weight }} kg</div> @endif
+                                                @if($appointment->height) <div><span class="font-medium text-gray-700">H:</span> {{ $appointment->height }} cm</div> @endif
+                                                @if($appointment->blood_pressure) <div><span class="font-medium text-gray-700">BP:</span> {{ $appointment->blood_pressure }}</div> @endif
+                                                @if($appointment->temperature) <div><span class="font-medium text-gray-700">T:</span> {{ $appointment->temperature }} °C</div> @endif
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-400 italic">—</span>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         @if ($appointment->patient && $appointment->status === 'started')

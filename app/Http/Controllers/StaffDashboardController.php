@@ -62,4 +62,20 @@ class StaffDashboardController extends Controller
             ->route('staff.dashboard', ['date' => $appointment->schedule])
             ->with('success', 'Appointment status updated successfully.');
     }
+
+    public function updateDetails(Request $request, Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'weight'         => 'nullable|numeric|min:0|max:999',
+            'height'         => 'nullable|numeric|min:0|max:999',
+            'blood_pressure' => 'nullable|string|max:20',
+            'temperature'    => 'nullable|numeric|min:25|max:45',
+        ]);
+
+        $appointment->update($validated);
+
+        return redirect()
+            ->route('staff.dashboard', ['date' => $appointment->schedule])
+            ->with('success', 'Patient details updated successfully.');
+    }
 }

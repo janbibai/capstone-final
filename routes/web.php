@@ -37,6 +37,9 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
     Route::patch('/staff/appointments/{appointment}/status', [StaffDashboardController::class, 'updateStatus'])
         ->name('staff.appointments.updateStatus');
 
+    Route::patch('/staff/appointments/{appointment}/details', [StaffDashboardController::class, 'updateDetails'])
+        ->name('staff.appointments.updateDetails');
+
     // RHU Dashboard (Admin Only)
     Route::middleware(['admin'])->group(function () {
         Route::get('/rhu/dashboard', [RhuDashboardController::class, 'index'])

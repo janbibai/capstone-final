@@ -13,7 +13,11 @@ class Appointment extends Model
         'schedule',
         'schedule_time',
         'queue_number',
-        'status'
+        'status',
+        'weight',
+        'height',
+        'blood_pressure',
+        'temperature',
     ];
 
     public function patient()

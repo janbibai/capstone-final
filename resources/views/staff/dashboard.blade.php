@@ -145,6 +145,7 @@
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Patient</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Service</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-600">Details</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-600">Actions</th>
                             </tr>
                         </thead>
@@ -182,6 +183,48 @@
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $badgeClasses }}">
                                             {{ ucfirst($status) }}
                                         </span>
+                                    </td>
+                                    <td class="px-4 py-3 relative">
+                                        {{-- Patient Details Display & Edit Button --}}
+                                        @if($appointment->weight || $appointment->height || $appointment->blood_pressure || $appointment->temperature)
+                                            <div class="text-xs text-gray-600 mb-1 space-y-0.5 min-w-[100px]">
+                                                @if($appointment->weight) <div><span class="font-medium">W:</span> {{ $appointment->weight }} kg</div> @endif
+                                                @if($appointment->height) <div><span class="font-medium">H:</span> {{ $appointment->height }} cm</div> @endif
+                                                @if($appointment->blood_pressure) <div><span class="font-medium">BP:</span> {{ $appointment->blood_pressure }}</div> @endif
+                                                @if($appointment->temperature) <div><span class="font-medium">T:</span> {{ $appointment->temperature }} °C</div> @endif
+                                            </div>
+                                            <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.toggle('hidden')" class="text-xs text-green-600 hover:text-green-800 font-medium">Edit Details</button>
+                                        @else
+                                            <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.toggle('hidden')" class="text-xs text-green-600 hover:text-green-800 font-medium">+ Add Details</button>
+                                        @endif
+                                        
+                                        {{-- Form for updating details (hidden by default) --}}
+                                        <form id="details-form-{{ $appointment->id }}" method="POST" action="{{ route('staff.appointments.updateDetails', $appointment) }}" class="hidden mt-2 bg-white border border-gray-200 rounded-lg p-3 shadow-md absolute z-10 w-[220px] left-0 top-full">
+                                            @csrf
+                                            @method('PATCH')
+                                            <div class="space-y-2 text-xs">
+                                                <div>
+                                                    <label class="block text-gray-600 mb-0.5">Weight (kg)</label>
+                                                    <input type="number" step="0.01" name="weight" value="{{ old('weight', $appointment->weight) }}" class="w-full border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-green-400 focus:outline-none">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-600 mb-0.5">Height (cm)</label>
+                                                    <input type="number" step="0.01" name="height" value="{{ old('height', $appointment->height) }}" class="w-full border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-green-400 focus:outline-none">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-600 mb-0.5">Blood Pressure</label>
+                                                    <input type="text" name="blood_pressure" value="{{ old('blood_pressure', $appointment->blood_pressure) }}" placeholder="120/80" class="w-full border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-green-400 focus:outline-none">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-600 mb-0.5">Temperature (°C)</label>
+                                                    <input type="number" step="0.1" name="temperature" value="{{ old('temperature', $appointment->temperature) }}" class="w-full border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-green-400 focus:outline-none">
+                                                </div>
+                                                <div class="pt-1 flex gap-2">
+                                                    <button type="submit" class="bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition">Save</button>
+                                                    <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.add('hidden')" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded hover:bg-gray-200 transition border border-gray-200">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </td>
                                     <td class="px-4 py-3">
                                         @if ($appointment->status === 'completed')

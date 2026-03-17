@@ -37,7 +37,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 @isset($appointment)
                     <div class="mb-4 flex items-center justify-between text-sm">
-                        <div>
+                        <div class="flex-1">
                             <p class="font-medium text-gray-700">
                                 Queue #{{ str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT) }}
                                 · {{ \Carbon\Carbon::parse($appointment->schedule_time)->format('h:i A') }}
@@ -49,6 +49,14 @@
                                 </span>
                             </p>
                         </div>
+                        @if($appointment->weight || $appointment->height || $appointment->blood_pressure || $appointment->temperature)
+                        <div class="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 flex gap-4">
+                            @if($appointment->weight) <div><span class="font-semibold text-gray-700 mb-1 block">Weight</span>{{ $appointment->weight }} kg</div> @endif
+                            @if($appointment->height) <div><span class="font-semibold text-gray-700 mb-1 block">Height</span>{{ $appointment->height }} cm</div> @endif
+                            @if($appointment->blood_pressure) <div><span class="font-semibold text-gray-700 mb-1 block">BP</span>{{ $appointment->blood_pressure }}</div> @endif
+                            @if($appointment->temperature) <div><span class="font-semibold text-gray-700 mb-1 block">Temp</span>{{ $appointment->temperature }} °C</div> @endif
+                        </div>
+                        @endif
                     </div>
                 @endisset
                 @if($currentRecord)

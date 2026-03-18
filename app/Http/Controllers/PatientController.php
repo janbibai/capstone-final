@@ -55,17 +55,21 @@ class PatientController extends Controller
         // register patient
         $patient = $this->patientService->register($data);
 
-        // mao ni mo create og appointment
-        $appointment = $this->appointmentService->schedule([
-            'patient_id' => $patient->id,
-            'service_id' => $data['service_id'],
-            'schedule' => $data['schedule'],
-            'schedule_time' => $data['schedule_time'],
-        ]);
+        try {
+            // mao ni mo create og appointment
+            $appointment = $this->appointmentService->schedule([
+                'patient_id' => $patient->id,
+                'service_id' => $data['service_id'],
+                'schedule' => $data['schedule'],
+                'schedule_time' => $data['schedule_time'],
+            ]);
 
-        return redirect()
-            ->route('appointment.create')
-            ->with('success', 'Appointment booked successfully!Your queue number is Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT));
+            return redirect()
+                ->route('appointment.create')
+                ->with('success', 'Appointment booked successfully!Your queue number is Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT));
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['schedule_time' => $e->getMessage()]);
+        }
     }
 
     

@@ -7,6 +7,8 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\RhuDashboardController;
+use App\Models\Appointment;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,6 +24,30 @@ Route::post('/appointments/{id}/start', [PatientController::class, 'start'])
 
 Route::get('/queue-board', function () {
     return view('queue-board');
+});
+
+Route::get('/queue-stream', function () {
+    $response = new StreamedResponse(function () {
+        $latestAppointment = Appointment::where('schedule', now()->toDateString())
+            ->where('status', 'started')
+            ->orderByDesc('updated_at')
+            ->first();
+
+        $currentQueueNumber = $latestAppointment ? $latestAppointment->queue_number : 0;
+
+        // Set the retry interval for the browser to auto-reconnect (2000ms = 2 seconds)
+        echo "retry: 2000\n";
+        echo "data: " . json_encode(['queue_number' => $currentQueueNumber]) . "\n\n";
+        
+        ob_flush();
+        flush();
+    });
+
+    $response->headers->set('Content-Type', 'text/event-stream');
+    $response->headers->set('Cache-Control', 'no-cache');
+    $response->headers->set('Connection', 'close'); // Close connection after sending so it doesn't block the PHP server
+
+    return $response;
 });
 
 // Staff authentication

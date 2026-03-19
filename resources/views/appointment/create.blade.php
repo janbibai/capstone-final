@@ -298,8 +298,13 @@
                                     $end = strtotime('17:00');
                                     $oldTime = old('schedule_time');
                                 @endphp
-                                @for ($i = $start; $i <= $end; $i += 1800)
+                                @for ($i = $start; $i <= $end; $i += 900)
                                     @php
+                                        // Skip lunch break: 12:00 PM to 12:45 PM
+                                        if ($i >= strtotime('12:00') && $i < strtotime('13:00')) {
+                                            continue;
+                                        }
+
                                         $timeValue = date('H:i', $i);
                                         $timeLabel = date('h:i A', $i);
                                     @endphp

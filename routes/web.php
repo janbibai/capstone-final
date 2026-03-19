@@ -18,6 +18,7 @@ Route::get('/', function () {
 // Route::get('/home', [Controller::class, 'index'])->name('home');
 
 Route::get('/appointments/create', [PatientController::class, 'create'])->name('appointment.create');
+Route::get('/appointments/booked-times', [PatientController::class, 'getBookedTimes'])->name('appointment.bookedTimes');
 Route::post('/appointments', [PatientController::class, 'storePatient'])->name('appointment.storePatient');
 Route::post('/appointments/{id}/start', [PatientController::class, 'start'])
     ->name('appointments.start');

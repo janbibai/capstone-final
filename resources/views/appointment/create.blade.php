@@ -287,16 +287,27 @@
                             <label for="schedule_time" class="block text-sm font-medium text-gray-700 mb-1">
                                 Time *
                             </label>
-                            <input type="time" 
-                                   id="schedule_time"
+                            <select id="schedule_time"
                                    name="schedule_time"
-                                   value="{{ old('schedule_time') }}"
-                                   min="08:00"
-                                   max="17:00"
-                                   step="1800"
                                    required
                                    aria-describedby="schedule_time-error schedule_time-help"
                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none @error('schedule_time') border-red-500 @enderror">
+                                <option value="">-- Choose a Time --</option>
+                                @php
+                                    $start = strtotime('08:00');
+                                    $end = strtotime('17:00');
+                                    $oldTime = old('schedule_time');
+                                @endphp
+                                @for ($i = $start; $i <= $end; $i += 1800)
+                                    @php
+                                        $timeValue = date('H:i', $i);
+                                        $timeLabel = date('h:i A', $i);
+                                    @endphp
+                                    <option value="{{ $timeValue }}" {{ $oldTime == $timeValue ? 'selected' : '' }}>
+                                        {{ $timeLabel }}
+                                    </option>
+                                @endfor
+                            </select>
                             <p id="schedule_time-help" class="text-xs text-gray-500 mt-1">Business hours: 8:00 AM - 5:00 PM</p>
                             @error('schedule_time')
                                 <p id="schedule_time-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>
@@ -384,6 +395,63 @@
             localStorage.removeItem(`appointment_${input.name}`);
         });
     });
+
+    // Fetch and Handle Booked Times
+    const scheduleDateInput = document.getElementById('schedule');
+    const scheduleTimeSelect = document.getElementById('schedule_time');
+
+    async function fetchBookedTimes(date) {
+        if (!date) {
+            resetTimeOptions();
+            return;
+        }
+
+        try {
+            const response = await fetch(`/appointments/booked-times?date=${date}`);
+            const bookedTimes = await response.json();
+            updateTimeOptions(bookedTimes);
+        } catch (error) {
+            console.error('Error fetching booked times:', error);
+        }
+    }
+
+    function resetTimeOptions() {
+        Array.from(scheduleTimeSelect.options).forEach(option => {
+            if (option.value === '') return;
+            option.disabled = false;
+            option.text = option.text.replace(' (Booked)', '');
+        });
+    }
+
+    function updateTimeOptions(bookedTimes) {
+        resetTimeOptions();
+        
+        // Disable booked times
+        Array.from(scheduleTimeSelect.options).forEach(option => {
+            if (option.value && bookedTimes.includes(option.value)) {
+                option.disabled = true;
+                if (!option.text.includes('(Booked)')) {
+                    option.text += ' (Booked)';
+                }
+                
+                // If currently selected slot is now disabled, reset selection
+                if (option.selected) {
+                    scheduleTimeSelect.value = '';
+                }
+            }
+        });
+    }
+
+    scheduleDateInput.addEventListener('change', function() {
+        fetchBookedTimes(this.value);
+    });
+
+    // Run on init if date has a value limit from old input or local storage
+    setTimeout(() => {
+        if (scheduleDateInput.value) {
+            fetchBookedTimes(scheduleDateInput.value);
+        }
+    }, 100);
 </script>
 
 @endsection

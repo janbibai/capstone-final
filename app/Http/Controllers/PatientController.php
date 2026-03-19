@@ -72,5 +72,23 @@ class PatientController extends Controller
         }
     }
 
-    
+    public function getBookedTimes(Request $request)
+    {
+        $date = $request->query('date');
+
+        if (!$date) {
+            return response()->json([]);
+        }
+
+        $bookedTimes = Appointment::where('schedule', $date)
+            ->where('status', '!=', 'cancelled')
+            ->pluck('schedule_time')
+            ->toArray();
+
+        $formattedTimes = array_map(function($time) {
+            return date('H:i', strtotime($time));
+        }, $bookedTimes);
+
+        return response()->json($formattedTimes);
+    }
 }

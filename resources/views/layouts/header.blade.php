@@ -17,6 +17,7 @@
                 <a href="{{ url('/') }}" class="hover:text-primary transition">Home</a>
                 <a href="{{ url('/#services') }}" class="hover:text-primary transition">Our Services</a>
                 <a href="{{ url('/#doctors') }}" class="hover:text-primary transition">Doctors</a>
+                <a href="{{ route('appointment.queueStatus') }}" class="hover:text-primary transition text-green-600 font-semibold">Queue Status</a>
                 <a href="{{ url('/#contact') }}" class="hover:text-primary transition">Contact</a>
                 {{-- <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a> --}}
             </nav>
@@ -41,6 +42,7 @@
                 <a href="{{ url('/') }}" class="py-2 border-b border-black/5">Home</a>
                 <a href="{{ url('/#services') }}" class="py-2 border-b border-black/5">Our Services</a>
                 <a href="{{ url('/#doctors') }}" class="py-2 border-b border-black/5">Doctors</a>
+                <a href="{{ route('appointment.queueStatus') }}" class="py-2 border-b border-black/5 text-green-600 font-semibold">Queue Status</a>
                 <a href="{{ url('/#contact') }}" class="py-2 border-b border-black/5">Contact</a>
                 {{-- <a href="{{ route('staff.login') }}" class="py-2 border-b border-black/5">Login</a> --}}
 

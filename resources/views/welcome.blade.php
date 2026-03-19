@@ -31,10 +31,10 @@
                             Book Your Appointment
                         </a>
 
-                        <a href="#services"
+                        <a href="{{ route('appointment.queueStatus') }}"
                            class="inline-flex items-center justify-center gap-2 bg-white border border-black/10 hover:bg-black/5 px-7 py-3.5 rounded-lg text-sm font-semibold text-slate-700 transition">
-                            <span class="material-symbols-outlined text-[20px]">info</span>
-                            Learn More
+                            <span class="material-symbols-outlined text-[20px]">queue</span>
+                            Check Queue Status
                         </a>
                     </div>
                 </div>

@@ -91,4 +91,40 @@ class PatientController extends Controller
 
         return response()->json($formattedTimes);
     }
+
+    public function queueStatus()
+    {
+        return view('appointment.queue-status');
+    }
+
+    public function getQueueStatusData(Request $request)
+    {
+        $date = $request->query('date');
+
+        if (!$date) {
+            return response()->json(['current_serving' => null, 'appointments' => []]);
+        }
+
+        $appointments = Appointment::with('patient')
+            ->where('schedule', $date)
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(function ($appointment) {
+                return [
+                    'queue_number' => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
+                    'status' => $appointment->status,
+                    'schedule_time' => date('h:i A', strtotime($appointment->schedule_time)),
+                    // Optional: masking last name for some privacy
+                    'patient_name' => $appointment->patient->first_name . ' ' . mb_substr($appointment->patient->last_name, 0, 1) . '.',
+                ];
+            });
+
+        $currentServing = $appointments->where('status', 'started')->first();
+
+        return response()->json([
+            'current_serving' => $currentServing,
+            'appointments' => $appointments->values()
+        ]);
+    }
 }

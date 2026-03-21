@@ -67,7 +67,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('appointment.storePatient') }}" id="appointment-form" class="space-y-6" novalidate>
+        <form method="POST" action="{{ route('appointment.storePatient') }}" id="appointment-form" class="space-y-6" enctype="multipart/form-data" novalidate>
             @csrf
 
             <!-- Personal Information Section -->
@@ -166,6 +166,51 @@
                         <p id="gender-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+
+            <!-- Valid ID Upload -->
+            <div class="mt-4">
+                <label for="valid_id" class="block text-sm font-medium text-gray-700 mb-1">
+                    Valid Government ID *
+                </label>
+                <div id="id-upload-area" 
+                     class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-green-400 transition cursor-pointer @error('valid_id') border-red-500 @enderror"
+                     onclick="document.getElementById('valid_id').click()">
+                    
+                    <!-- Upload prompt (shown when no file selected) -->
+                    <div id="upload-prompt">
+                        <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-600">
+                            <span class="font-semibold text-green-600">Click to upload</span> your valid ID
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500">JPEG or PNG, max 2MB</p>
+                    </div>
+
+                    <!-- Image preview (hidden initially) -->
+                    <div id="id-preview-container" class="hidden">
+                        <img id="id-preview" src="" alt="ID Preview" class="mx-auto max-h-48 rounded-lg shadow-sm">
+                        <div id="id-file-info" class="mt-2 text-sm text-gray-600"></div>
+                        <button type="button" id="remove-id-btn" 
+                                class="mt-2 text-xs text-red-500 hover:text-red-700 font-medium"
+                                onclick="event.stopPropagation(); removeIdFile()">
+                            ✕ Remove
+                        </button>
+                    </div>
+                </div>
+
+                <input type="file" 
+                       id="valid_id" 
+                       name="valid_id" 
+                       accept="image/jpeg,image/png"
+                       class="hidden"
+                       aria-describedby="valid_id-help valid_id-error">
+                <p id="valid_id-help" class="text-xs text-gray-500 mt-1">Upload a clear photo of your government-issued ID (e.g. National ID, Driver's License)</p>
+                @error('valid_id')
+                    <p id="valid_id-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>
+                @enderror
             </div>
 
             </fieldset>
@@ -457,6 +502,83 @@
             fetchBookedTimes(scheduleDateInput.value);
         }
     }, 100);
+
+    // === Valid ID Upload Preview ===
+    const validIdInput = document.getElementById('valid_id');
+    const uploadArea = document.getElementById('id-upload-area');
+    const uploadPrompt = document.getElementById('upload-prompt');
+    const previewContainer = document.getElementById('id-preview-container');
+    const previewImg = document.getElementById('id-preview');
+    const fileInfo = document.getElementById('id-file-info');
+
+    validIdInput.addEventListener('change', function() {
+        handleIdFile(this.files[0]);
+    });
+
+    function handleIdFile(file) {
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            alert('Please upload a JPEG or PNG image.');
+            validIdInput.value = '';
+            return;
+        }
+
+        // Validate file size (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File size must not exceed 2MB.');
+            validIdInput.value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            uploadPrompt.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            uploadArea.classList.remove('border-gray-300', 'border-dashed');
+            uploadArea.classList.add('border-green-400', 'border-solid');
+            fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeIdFile() {
+        validIdInput.value = '';
+        previewImg.src = '';
+        uploadPrompt.classList.remove('hidden');
+        previewContainer.classList.add('hidden');
+        uploadArea.classList.add('border-gray-300', 'border-dashed');
+        uploadArea.classList.remove('border-green-400', 'border-solid');
+        fileInfo.textContent = '';
+    }
+
+    // Drag and drop support
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('border-green-400', 'bg-green-50');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('border-green-400', 'bg-green-50');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('border-green-400', 'bg-green-50');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            // Set the file to the input
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            validIdInput.files = dataTransfer.files;
+            handleIdFile(file);
+        }
+    });
 </script>
 
 @endsection

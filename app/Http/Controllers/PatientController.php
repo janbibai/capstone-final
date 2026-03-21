@@ -52,8 +52,8 @@ class PatientController extends Controller
     {
         $data = $request->validated();
 
-        // register patient
-        $patient = $this->patientService->register($data);
+        // register patient (pass the uploaded ID file)
+        $patient = $this->patientService->register($data, $request->file('valid_id'));
 
         try {
             // mao ni mo create og appointment

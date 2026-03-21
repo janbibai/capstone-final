@@ -18,6 +18,7 @@ class Patient extends Model
         'phone',
         'email',
         'address',
+        'valid_id_path',
         // 'patient_number',
     ];
 

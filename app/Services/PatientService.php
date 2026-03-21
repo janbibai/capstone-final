@@ -6,7 +6,7 @@ use App\Models\Patient;
 
 class PatientService
 {
-    public function register(array $data): Patient
+    public function register(array $data, $validIdFile = null): Patient
     {
       $exists = Patient::where('first_name', $data ['first_name'])
       ->where('middle_name', $data ['middle_name'])
@@ -22,7 +22,14 @@ class PatientService
       if ($exists){
             throw new \Exception('You have already booked');
         }
-      return patient::create([
+
+      // Store the valid ID file
+      $validIdPath = null;
+      if ($validIdFile) {
+          $validIdPath = $validIdFile->store('valid_ids', 'public');
+      }
+
+      return Patient::create([
         'first_name' => $data['first_name'],
         'middle_name' => $data['middle_name'],
         'last_name' => $data['last_name'],
@@ -31,6 +38,7 @@ class PatientService
         'phone' => $data['phone'],
         'email' => $data['email'],
         'address' => $data['address'],
+        'valid_id_path' => $validIdPath,
         // 'patient_number' => $data['patient_number'],
       ]);
         

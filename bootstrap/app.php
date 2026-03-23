@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureDoctor;
 use App\Http\Middleware\EnsureStaff;
+use App\Http\Middleware\HandleCors;
 use App\Http\Middleware\PreventDashboardCache;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
             'dashboard.no-cache' => PreventDashboardCache::class,
         ]);
+
+        // Prepend CORS middleware to the API group
+        $middleware->prependToGroup('api', HandleCors::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

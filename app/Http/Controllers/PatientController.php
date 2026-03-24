@@ -105,26 +105,39 @@ class PatientController extends Controller
             return response()->json(['current_serving' => null, 'appointments' => []]);
         }
 
+        // Fetch current serving independently of pagination
+        $currentServingRaw = Appointment::with('patient')
+            ->where('schedule', $date)
+            ->where('status', 'started')
+            ->first();
+
+        $currentServing = null;
+        if ($currentServingRaw) {
+            $currentServing = [
+                'queue_number' => 'Q-' . str_pad($currentServingRaw->queue_number, 3, '0', STR_PAD_LEFT),
+                'status' => $currentServingRaw->status,
+                'schedule_time' => date('h:i A', strtotime($currentServingRaw->schedule_time)),
+            ];
+        }
+
+        // Paginate queue list
         $appointments = Appointment::with('patient')
             ->where('schedule', $date)
             ->where('status', '!=', 'cancelled')
             ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(function ($appointment) {
-                return [
-                    'queue_number' => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
-                    'status' => $appointment->status,
-                    'schedule_time' => date('h:i A', strtotime($appointment->schedule_time)),
-                    // Optional: masking last name for some privacy
-                    'patient_name' => $appointment->patient->first_name . ' ' . mb_substr($appointment->patient->last_name, 0, 1) . '.',
-                ];
-            });
+            ->paginate(15);
 
-        $currentServing = $appointments->where('status', 'started')->first();
+        $appointments->getCollection()->transform(function (\App\Models\Appointment $appointment) {
+            return [
+                'queue_number' => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
+                'status' => $appointment->status,
+                'schedule_time' => date('h:i A', strtotime($appointment->schedule_time)),
+            ];
+        });
 
         return response()->json([
             'current_serving' => $currentServing,
-            'appointments' => $appointments->values()
+            'appointments' => $appointments
         ]);
     }
 }

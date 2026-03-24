@@ -137,7 +137,7 @@
                     <div class="h-10 mt-8 mb-4">
                         <p id="queueStatus"
                             class="text-3xl font-medium text-slate-400 tracking-wide opacity-0 transition-opacity duration-500">
-                            Please proceed to the doctor's desk
+                            Please proceed to the staff's desk
                         </p>
                     </div>
                 </div>
@@ -243,7 +243,7 @@
 
                         setTimeout(() => {
                             if (qNumber === 0) {
-                                queueNumberElement.innerText = "WAITING...";
+                                queueNumberElement.innerText = "prepare next number";
                                 queueNumberElement.className =
                                     "text-[7rem] md:text-[9rem] leading-none font-black text-slate-700 drop-shadow-lg";
                                 queueStatus.classList.remove('opacity-100');

@@ -58,14 +58,13 @@
                     <thead>
                         <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
                             <th class="py-3 px-4 rounded-tl-lg font-semibold">Queue No.</th>
-                            <th class="py-3 px-4 font-semibold">Patient</th>
                             <th class="py-3 px-4 font-semibold">Time</th>
                             <th class="py-3 px-4 rounded-tr-lg text-center font-semibold">Status</th>
                         </tr>
                     </thead>
                     <tbody id="queue-list-body" class="divide-y divide-gray-100">
                         <tr>
-                            <td colspan="4" class="py-8 text-center text-gray-500">
+                            <td colspan="3" class="py-8 text-center text-gray-500">
                                 Loading...
                             </td>
                         </tr>
@@ -109,7 +108,7 @@
                 // Update Current Serving
                 if (data.current_serving) {
                     currentServingNumber.textContent = data.current_serving.queue_number;
-                    currentServingDetails.innerHTML = `<span class="opacity-80">Patient:</span> <span class="font-bold">${data.current_serving.patient_name}</span> &nbsp;|&nbsp; <span class="opacity-80">Time:</span> <span class="font-bold">${data.current_serving.schedule_time}</span>`;
+                    currentServingDetails.innerHTML = `<span class="opacity-80">Time:</span> <span class="font-bold">${data.current_serving.schedule_time}</span>`;
                 } else {
                     currentServingNumber.textContent = '--';
                     if (data.appointments && data.appointments.length > 0) {
@@ -135,7 +134,6 @@
                         
                         tr.innerHTML = `
                             <td class="py-4 px-4 font-bold text-gray-800"><span class="${app.status === 'started' ? 'text-green-700' : ''}">${app.queue_number}</span></td>
-                            <td class="py-4 px-4 text-gray-600">${app.patient_name}</td>
                             <td class="py-4 px-4 text-gray-600">${app.schedule_time}</td>
                             <td class="py-4 px-4 text-center">${getStatusBadge(app.status)}</td>
                         `;
@@ -144,7 +142,7 @@
                 } else {
                     queueListBody.innerHTML = `
                         <tr>
-                            <td colspan="4" class="py-12 text-center text-gray-500 bg-gray-50/50 rounded-b-lg">
+                            <td colspan="3" class="py-12 text-center text-gray-500 bg-gray-50/50 rounded-b-lg">
                                 <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">event_busy</span><br>
                                 No appointments found for this date.
                             </td>
@@ -155,7 +153,7 @@
                 console.error('Error fetching queue data:', error);
                 queueListBody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="py-8 text-center text-red-500">
+                        <td colspan="3" class="py-8 text-center text-red-500">
                             Failed to load queue data. Please try again or check your connection.
                         </td>
                     </tr>

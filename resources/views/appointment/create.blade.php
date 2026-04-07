@@ -207,7 +207,7 @@
                        accept="image/jpeg,image/png"
                        class="hidden"
                        aria-describedby="valid_id-help valid_id-error">
-                <p id="valid_id-help" class="text-xs text-gray-500 mt-1">Upload a clear photo of your government-issued ID (e.g. National ID, Driver's License)</p>
+                <p id="valid_id-help" class="text-xs text-gray-500 mt-1">Upload a clear photo of your valid ID (e.g. barangay ID, driver's license)</p>
                 @error('valid_id')
                     <p id="valid_id-error" class="text-red-500 text-sm mt-1" role="alert">{{ $message }}</p>
                 @enderror

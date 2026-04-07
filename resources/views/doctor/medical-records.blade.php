@@ -13,7 +13,7 @@
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
+                <a href="{{ route('doctor.dashboard') }}" class="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer">
                     <div class="bg-blue-600 p-2.5 rounded-lg shadow-sm">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -24,7 +24,7 @@
                         <h1 class="text-lg font-bold text-gray-800">Medical Records</h1>
                         <p class="text-xs text-gray-500">View all patient records</p>
                     </div>
-                </div>
+                </a>
                 <div class="flex items-center space-x-4">
                     <a href="{{ route('doctor.dashboard') }}"
                         class="text-gray-600 hover:text-blue-600 font-medium text-sm">Dashboard</a>

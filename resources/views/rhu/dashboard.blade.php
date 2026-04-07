@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-gray-800">RHU Admin Dashboard</h1>
-                    <p class="text-xs text-gray-500">Rural Health Unit — Management Overview</p>
+                    <p class="text-xs text-gray-500">Rural Health Unit Management Overview</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4">

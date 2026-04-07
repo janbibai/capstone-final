@@ -116,8 +116,8 @@
                         <div class="w-20 h-20 bg-white rounded-full border-4 border-primary flex items-center justify-center mb-6 shadow-lg">
                             <span class="material-symbols-outlined text-primary text-3xl">qr_code_2</span>
                         </div>
-                        <h4 class="text-lg font-bold mb-2">2. Get QR Ticket</h4>
-                        <p class="text-sm text-slate-600">Receive a digital ticket with a unique QR code for your appointment.</p>
+                        <h4 class="text-lg font-bold mb-2">2. Receive Queue Number</h4>
+                        <p class="text-sm text-slate-600">Receive a queue number for your appointment.</p>
                     </div>
                     <div class="flex flex-col items-center text-center">
                         <div class="w-20 h-20 bg-white rounded-full border-4 border-primary flex items-center justify-center mb-6 shadow-lg">

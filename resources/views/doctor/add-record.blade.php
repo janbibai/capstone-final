@@ -77,6 +77,9 @@
                 <form method="POST" action="{{ route('doctor.medical-records.store') }}" class="space-y-6">
                     @csrf
                     <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+                    @if($currentRecord)
+                        <input type="hidden" name="record_id" value="{{ $currentRecord->id }}">
+                    @endif
                     @isset($appointment)
                         <input type="hidden" name="appointment_id" value="{{ $appointment->id }}">
                     @endisset

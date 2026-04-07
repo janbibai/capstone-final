@@ -172,9 +172,9 @@
                                     </td>
                                     <td class="px-4 py-3">
                                         @if ($record->patient)
-                                            <a href="{{ route('doctor.patients.add-record', $record->patient) }}"
+                                            <a href="{{ route('doctor.patients.add-record', ['patient' => $record->patient, 'record_id' => $record->id]) }}"
                                                 class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
-                                                Edit current
+                                                update diagnosis
                                             </a>
                                         @else
                                             —

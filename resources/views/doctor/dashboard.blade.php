@@ -150,6 +150,11 @@
                                                 class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
                                                 Add diagnosis
                                             </a>
+                                        @elseif($appointment->patient && $appointment->status === 'completed')
+                                            <span class="inline-flex items-center gap-1 text-green-600 text-xs font-semibold px-2 py-1 bg-green-50 rounded-md border border-green-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                Completed diagnosis
+                                            </span>
                                         @elseif($appointment->patient)
                                             <span class="text-xs text-gray-400">Diagnosis available when status is
                                                 "started"</span>

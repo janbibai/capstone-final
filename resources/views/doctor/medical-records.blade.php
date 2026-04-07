@@ -55,7 +55,11 @@
                         <p class="text-xs text-gray-500 mt-1">
                             Records for:
                             <span class="font-semibold">
-                                {{ \Carbon\Carbon::parse($date ?? now()->toDateString())->format('F d, Y') }}
+                                @if ($date === 'all')
+                                    All dates
+                                @else
+                                    {{ \Carbon\Carbon::parse($date ?? now()->toDateString())->format('F d, Y') }}
+                                @endif
                             </span>
                             @if ($patientId && $records->first() && $records->first()->patient)
                                 — for {{ $records->first()->patient->full_name }}
@@ -65,13 +69,21 @@
                         </p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <form method="GET" action="{{ route('doctor.medical-records') }}"
+                        <form method="GET" action="{{ route('doctor.medical-records') }}" id="filterForm"
                             class="flex flex-col md:flex-row md:items-center gap-2 text-sm">
                             <div class="flex items-center gap-2">
                                 <label class="text-gray-600">Date:</label>
-                                <input type="date" name="date" value="{{ $date ?? now()->toDateString() }}"
-                                    class="border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                <input type="date" name="date" id="dateInput" value="{{ $date !== 'all' ? ($date ?? now()->toDateString()) : now()->toDateString() }}"
+                                    class="border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-400 focus:outline-none {{ $date === 'all' ? 'opacity-50' : '' }}" {{ $date === 'all' ? 'disabled' : '' }}>
                             </div>
+                            <div class="flex items-center gap-2">
+                                <label for="showAll" class="text-gray-600 cursor-pointer select-none flex items-center gap-1.5">
+                                    <input type="checkbox" id="showAll" {{ $date === 'all' ? 'checked' : '' }}
+                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-400 cursor-pointer">
+                                    All Records
+                                </label>
+                            </div>
+                            <input type="hidden" name="date" id="dateHidden" value="{{ $date ?? now()->toDateString() }}" disabled>
                             <div class="flex items-center gap-2">
                                 <label class="text-gray-600">Patient:</label>
                                 <input type="text" name="search" value="{{ $search ?? request('search') }}"
@@ -86,6 +98,28 @@
                                 Filter
                             </button>
                         </form>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const showAll = document.getElementById('showAll');
+                                const dateInput = document.getElementById('dateInput');
+                                const dateHidden = document.getElementById('dateHidden');
+
+                                function toggleDate() {
+                                    if (showAll.checked) {
+                                        dateInput.disabled = true;
+                                        dateInput.classList.add('opacity-50');
+                                        dateHidden.disabled = false;
+                                        dateHidden.value = 'all';
+                                    } else {
+                                        dateInput.disabled = false;
+                                        dateInput.classList.remove('opacity-50');
+                                        dateHidden.disabled = true;
+                                    }
+                                }
+
+                                showAll.addEventListener('change', toggleDate);
+                            });
+                        </script>
                         @if ($patientId)
                             <a href="{{ route('doctor.medical-records', ['date' => $date ?? now()->toDateString(), 'search' => $search ?? request('search')]) }}"
                                 class="text-sm text-blue-600 hover:underline">

@@ -140,16 +140,23 @@ class DoctorDashboardController extends Controller
         $date = $request->query('date', now()->toDateString());
         $departmentId = auth()->user()->staff->department_id;
 
-        try {
-            $date = \Carbon\Carbon::parse($date)->toDateString();
-        } catch (\Exception $e) {
-            $date = now()->toDateString();
+        $showAll = $date === 'all';
+
+        if (! $showAll) {
+            try {
+                $date = \Carbon\Carbon::parse($date)->toDateString();
+            } catch (\Exception $e) {
+                $date = now()->toDateString();
+            }
         }
 
         $query = MedicalRecord::with(['patient', 'diagnosis', 'creator'])
-            ->whereDate('created_on', $date)
             ->whereHas('creator', fn ($q) => $q->whereHas('staff', fn ($sq) => $sq->where('department_id', $departmentId)))
             ->orderBy('created_on', 'desc');
+
+        if (! $showAll) {
+            $query->whereDate('created_on', $date);
+        }
 
         $search = trim((string) $request->query('search', ''));
 

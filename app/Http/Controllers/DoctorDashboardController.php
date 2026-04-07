@@ -15,9 +15,17 @@ class DoctorDashboardController extends Controller
         $date = $request->query('date', now()->toDateString());
         $departmentId = auth()->user()->staff->department_id;
 
-        $appointments = Appointment::with(['patient', 'service'])
-            ->where('schedule', $date)
-            ->whereHas('service', fn ($q) => $q->where('department_id', $departmentId))
+        $baseQuery = Appointment::where('schedule', $date)
+            ->whereHas('service', fn ($q) => $q->where('department_id', $departmentId));
+
+        $stats = [
+            'total' => (clone $baseQuery)->count(),
+            'waiting' => (clone $baseQuery)->whereNotIn('status', ['completed', 'cancelled'])->count(),
+            'completed' => (clone $baseQuery)->where('status', 'completed')->count(),
+            'cancelled' => (clone $baseQuery)->where('status', 'cancelled')->count(),
+        ];
+
+        $appointments = (clone $baseQuery)->with(['patient', 'service'])
             ->orderBy('queue_number')
             ->orderBy('schedule_time')
             ->paginate(15);
@@ -25,6 +33,7 @@ class DoctorDashboardController extends Controller
         return view('doctor.dashboard', [
             'date' => $date,
             'appointments' => $appointments,
+            'stats' => $stats,
         ]);
     }
 

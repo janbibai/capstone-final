@@ -88,10 +88,44 @@
                 </div>
             @endif
 
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <!-- Total -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col">
+                    <span class="text-blue-600 text-sm font-semibold mb-1 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Total Patients
+                    </span>
+                    <span class="text-blue-900 text-3xl font-bold">{{ $stats['total'] }}</span>
+                </div>
+                <!-- Waiting -->
+                <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 flex flex-col">
+                    <span class="text-amber-600 text-sm font-semibold mb-1 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Waiting
+                    </span>
+                    <span class="text-amber-900 text-3xl font-bold">{{ $stats['waiting'] }}</span>
+                </div>
+                <!-- Completed -->
+                <div class="bg-green-50 border border-green-100 rounded-xl p-4 flex flex-col">
+                    <span class="text-green-600 text-sm font-semibold mb-1 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Completed
+                    </span>
+                    <span class="text-green-900 text-3xl font-bold">{{ $stats['completed'] }}</span>
+                </div>
+                <!-- Cancelled -->
+                <div class="bg-red-50 border border-red-100 rounded-xl p-4 flex flex-col">
+                    <span class="text-red-500 text-sm font-semibold mb-1 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Cancelled
+                    </span>
+                    <span class="text-red-900 text-3xl font-bold">{{ $stats['cancelled'] }}</span>
+                </div>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-800">Patients in Queue</h3>
-                    <span class="text-sm text-gray-500">Total: {{ $appointments->count() }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm">

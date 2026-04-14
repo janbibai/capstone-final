@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\Diagnosis;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
+use App\Models\Prescription;
 use Illuminate\Http\Request;
 
 class DoctorDashboardController extends Controller
@@ -54,12 +55,12 @@ class DoctorDashboardController extends Controller
         }
 
         if ($recordId) {
-            $currentRecord = MedicalRecord::with('diagnosis')
+            $currentRecord = MedicalRecord::with(['diagnosis', 'prescriptions'])
                 ->where('id', $recordId)
                 ->where('patient_id', $patient->id)
                 ->first();
         } else {
-            $currentRecord = MedicalRecord::with('diagnosis')
+            $currentRecord = MedicalRecord::with(['diagnosis', 'prescriptions'])
                 ->where('patient_id', $patient->id)
                 ->whereDate('created_on', now()->toDateString())
                 ->first();
@@ -90,6 +91,12 @@ class DoctorDashboardController extends Controller
             'diagnosis_id' => 'nullable|exists:diagnoses,id',
             'diagnosis_name' => 'nullable|string|max:255',
             'details' => 'required|string|max:1000',
+            'prescriptions' => 'nullable|array',
+            'prescriptions.*.medication_name' => 'required_with:prescriptions|string|max:255',
+            'prescriptions.*.dosage' => 'nullable|string|max:255',
+            'prescriptions.*.frequency' => 'nullable|string|max:255',
+            'prescriptions.*.duration' => 'nullable|string|max:255',
+            'prescriptions.*.instructions' => 'nullable|string|max:1000',
         ]);
 
         $currentRecord = null;
@@ -146,11 +153,29 @@ class DoctorDashboardController extends Controller
                 'updated_on' => now(),
             ]);
         } else {
-            MedicalRecord::create([
+            $currentRecord = MedicalRecord::create([
                 'patient_id' => $validated['patient_id'],
                 'diagnosis_id' => $diagnosisId,
                 'details' => $validated['details'],
                 'created_by' => auth()->id(),
+                'created_on' => now(),
+            ]);
+        }
+
+        // Sync prescriptions: delete old ones and insert new ones
+        $currentRecord->prescriptions()->delete();
+
+        $prescriptions = collect($validated['prescriptions'] ?? [])
+            ->filter(fn ($p) => !empty(trim($p['medication_name'] ?? '')))
+            ->values();
+
+        foreach ($prescriptions as $p) {
+            $currentRecord->prescriptions()->create([
+                'medication_name' => $p['medication_name'],
+                'dosage' => $p['dosage'] ?? null,
+                'frequency' => $p['frequency'] ?? null,
+                'duration' => $p['duration'] ?? null,
+                'instructions' => $p['instructions'] ?? null,
                 'created_on' => now(),
             ]);
         }

@@ -252,8 +252,8 @@
                                             </span>
                                         @elseif($appointment->patient)
                                             <div class="flex flex-col">
-                                                <span class="text-xs text-slate-400 italic">Available when status is</span>
-                                                <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">"Started"</span>
+                                                <span class="text-xs text-slate-400 italic">Haven't started yet</span>
+                                                {{-- <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">"Started"</span> --}}
                                             </div>
                                         @else
                                             <span class="text-slate-300">—</span>

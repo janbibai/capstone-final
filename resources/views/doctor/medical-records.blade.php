@@ -254,11 +254,31 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($record->patient)
-                                            <a href="{{ route('doctor.patients.add-record', ['patient' => $record->patient, 'record_id' => $record->id]) }}"
-                                                class="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-sm transition-all focus:ring-2 focus:ring-blue-500/20">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                Update
-                                            </a>
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="viewRecord(this)" 
+                                                    data-patient="{{ $record->patient->full_name }}"
+                                                    data-diagnosis="{{ $record->diagnosis ? $record->diagnosis->name : 'None' }}"
+                                                    data-details="{{ $record->details }}"
+                                                    data-date="{{ $record->created_on ? $record->created_on->format('M d, Y') : '—' }}"
+                                                    data-prescriptions="{{ json_encode($record->prescriptions->map(function($p) {
+                                                        return [
+                                                            'name' => $p->medication_name,
+                                                            'dosage' => $p->dosage,
+                                                            'frequency' => $p->frequency,
+                                                            'duration' => $p->duration,
+                                                            'instructions' => $p->instructions
+                                                        ];
+                                                    })) }}"
+                                                    class="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 shadow-sm transition-all focus:ring-2 focus:ring-emerald-500/20">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    View
+                                                </button>
+                                                <a href="{{ route('doctor.patients.add-record', ['patient' => $record->patient, 'record_id' => $record->id]) }}"
+                                                    class="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 shadow-sm transition-all focus:ring-2 focus:ring-blue-500/20">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                    Update
+                                                </a>
+                                            </div>
                                         @else
                                             <span class="text-slate-300">—</span>
                                         @endif
@@ -290,6 +310,98 @@
             </div>
         </div>
     </main>
+
+    <!-- View Record Modal -->
+    <dialog id="viewRecordModal" class="p-0 bg-transparent backdrop:bg-slate-900/50 open:animate-in open:fade-in open:zoom-in-95 rounded-2xl shadow-xl w-full max-w-2xl m-auto">
+        <div class="bg-white rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-sm z-10">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Medical Record Details</h3>
+                    <p class="text-xs font-medium text-slate-500 mt-0.5" id="modalPatientName"></p>
+                </div>
+                <button type="button" onclick="document.getElementById('viewRecordModal').close()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-xl transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto w-full flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                        <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Date</span>
+                        <div class="font-medium text-slate-800" id="modalDate"></div>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                        <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Diagnosis</span>
+                        <div class="font-medium text-slate-800" id="modalDiagnosis"></div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Clinical Details</span>
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap" id="modalDetails"></div>
+                </div>
+
+                <div>
+                    <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Prescriptions</span>
+                    <div id="modalPrescriptions" class="space-y-3">
+                        <!-- Prescriptions injected via JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button type="button" onclick="document.getElementById('viewRecordModal').close()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-slate-200 outline-none">
+                    Close
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        function viewRecord(btn) {
+            const patient = btn.getAttribute('data-patient');
+            const diagnosis = btn.getAttribute('data-diagnosis');
+            const details = btn.getAttribute('data-details');
+            const date = btn.getAttribute('data-date');
+            
+            let prescriptions = [];
+            try {
+                prescriptions = JSON.parse(btn.getAttribute('data-prescriptions') || '[]');
+            } catch(e) {}
+
+            document.getElementById('modalPatientName').textContent = patient;
+            document.getElementById('modalDiagnosis').textContent = diagnosis;
+            document.getElementById('modalDate').textContent = date;
+            document.getElementById('modalDetails').textContent = details || 'No details provided.';
+            
+            const rxContainer = document.getElementById('modalPrescriptions');
+            rxContainer.innerHTML = '';
+            
+            if (prescriptions.length === 0) {
+                rxContainer.innerHTML = '<div class="text-sm italic text-slate-500 p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">No prescriptions recorded.</div>';
+            } else {
+                prescriptions.forEach(rx => {
+                    const row = document.createElement('div');
+                    row.className = 'bg-white border border-slate-200 rounded-xl p-4 shadow-sm';
+                    row.innerHTML = `
+                        <div class="font-bold text-blue-700 mb-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            ${rx.name}
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm text-slate-600">
+                            ${rx.dosage ? `<div><span class="font-medium text-slate-500">Dosage:</span> ${rx.dosage}</div>` : ''}
+                            ${rx.frequency ? `<div><span class="font-medium text-slate-500">Frequency:</span> ${rx.frequency}</div>` : ''}
+                            ${rx.duration ? `<div><span class="font-medium text-slate-500">Duration:</span> ${rx.duration}</div>` : ''}
+                        </div>
+                        ${rx.instructions ? `<div class="mt-2 text-sm text-slate-600"><span class="font-medium text-slate-500">Instructions:</span> ${rx.instructions}</div>` : ''}
+                    `;
+                    rxContainer.appendChild(row);
+                });
+            }
+
+            document.getElementById('viewRecordModal').showModal();
+        }
+    </script>
 </body>
 
 </html>

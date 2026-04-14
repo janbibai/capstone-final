@@ -206,7 +206,7 @@ class DoctorDashboardController extends Controller
             }
         }
 
-        $query = MedicalRecord::with(['patient', 'diagnosis', 'creator'])
+        $query = MedicalRecord::with(['patient', 'diagnosis', 'creator', 'prescriptions'])
             ->whereHas('creator', fn ($q) => $q->whereHas('staff', fn ($sq) => $sq->where('department_id', $departmentId)))
             ->orderBy('created_on', 'desc');
 

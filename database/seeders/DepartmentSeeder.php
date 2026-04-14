@@ -19,11 +19,6 @@ class DepartmentSeeder extends Seeder
                 'description' => 'poblacion Health Center',
                 'is_active'   => true,
             ],
-            [
-                'name'        => 'purok 9',
-                'description' => 'purok 9 Health Center',
-                'is_active'   => true,
-            ],
         ];
 
         foreach ($departments as $dept) {

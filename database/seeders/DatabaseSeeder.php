@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
         $doctorUser = User::firstOrCreate(
             ['email' => 'doctor@example.com'],
             [
-                'name' => 'Doctor janbai',
+                'name' => 'Doc. Angelo Electona',
                 'password' => Hash::make('password123'),
             ]
         );
@@ -83,49 +83,6 @@ class DatabaseSeeder extends Seeder
                 'employee_id' => 'EMP-0003',
                 'position' => 'Admin',
                 'phone' => '09987654321',
-                'is_active' => true,
-            ]);
-        }
-
-        // Purok 9 Department Staff & Doctor
-        $purok9 = Department::where('name', 'purok 9')->first();
-
-        // Purok 9 Staff
-        $purok9StaffUser = User::firstOrCreate(
-            ['email' => 'purok9staff@example.com'],
-            [
-                'name' => 'Purok 9 Staff',
-                'password' => Hash::make('password123'),
-            ]
-        );
-
-        if (! Staff::where('employee_id', 'EMP-0004')->exists()) {
-            Staff::create([
-                'user_id' => $purok9StaffUser->id,
-                'department_id' => $purok9->id,
-                'employee_id' => 'EMP-0004',
-                'position' => 'Front Desk',
-                'phone' => '09111111111',
-                'is_active' => true,
-            ]);
-        }
-
-        // Purok 9 Doctor
-        $purok9DoctorUser = User::firstOrCreate(
-            ['email' => 'purok9doctor@example.com'],
-            [
-                'name' => 'Purok 9 Doctor',
-                'password' => Hash::make('password123'),
-            ]
-        );
-
-        if (! Staff::where('employee_id', 'EMP-0005')->exists()) {
-            Staff::create([
-                'user_id' => $purok9DoctorUser->id,
-                'department_id' => $purok9->id,
-                'employee_id' => 'EMP-0005',
-                'position' => 'Doctor',
-                'phone' => '09222222222',
                 'is_active' => true,
             ]);
         }

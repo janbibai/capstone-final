@@ -456,35 +456,69 @@
             return;
         }
 
+        let bookedTimes = [];
         try {
             const response = await fetch(`/appointments/booked-times?date=${date}`);
-            const bookedTimes = await response.json();
-            updateTimeOptions(bookedTimes);
+            bookedTimes = await response.json();
         } catch (error) {
             console.error('Error fetching booked times:', error);
         }
+        // Always update time options (handles both booked and past-time filtering)
+        updateTimeOptions(bookedTimes);
+    }
+
+    function isSelectedDateToday() {
+        const selectedDate = scheduleDateInput.value;
+        if (!selectedDate) return false;
+        const today = new Date();
+        const todayStr = today.getFullYear() + '-' +
+            String(today.getMonth() + 1).padStart(2, '0') + '-' +
+            String(today.getDate()).padStart(2, '0');
+        return selectedDate === todayStr;
+    }
+
+    function isTimePassed(timeValue) {
+        const now = new Date();
+        const [hours, minutes] = timeValue.split(':').map(Number);
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+        return (hours < currentHours) || (hours === currentHours && minutes <= currentMinutes);
     }
 
     function resetTimeOptions() {
         Array.from(scheduleTimeSelect.options).forEach(option => {
             if (option.value === '') return;
             option.disabled = false;
-            option.text = option.text.replace(' (Booked)', '');
+            option.text = option.text.replace(' (Booked)', '').replace(' (Passed)', '');
         });
     }
 
     function updateTimeOptions(bookedTimes) {
         resetTimeOptions();
+
+        const isToday = isSelectedDateToday();
         
-        // Disable booked times
         Array.from(scheduleTimeSelect.options).forEach(option => {
-            if (option.value && bookedTimes.includes(option.value)) {
+            if (!option.value) return;
+
+            // Disable past times if the selected date is today
+            if (isToday && isTimePassed(option.value)) {
+                option.disabled = true;
+                if (!option.text.includes('(Passed)')) {
+                    option.text += ' (Passed)';
+                }
+                if (option.selected) {
+                    scheduleTimeSelect.value = '';
+                }
+                return; // skip booked check, already disabled
+            }
+
+            // Disable booked times
+            if (bookedTimes.includes(option.value)) {
                 option.disabled = true;
                 if (!option.text.includes('(Booked)')) {
                     option.text += ' (Booked)';
                 }
-                
-                // If currently selected slot is now disabled, reset selection
                 if (option.selected) {
                     scheduleTimeSelect.value = '';
                 }
@@ -496,7 +530,7 @@
         fetchBookedTimes(this.value);
     });
 
-    // Run on init if date has a value limit from old input or local storage
+    // Always run on page load to filter past times if today is selected
     setTimeout(() => {
         if (scheduleDateInput.value) {
             fetchBookedTimes(scheduleDateInput.value);

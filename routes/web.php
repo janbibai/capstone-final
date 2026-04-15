@@ -56,6 +56,8 @@ Route::get('/queue-stream', function () {
 // Staff authentication
 Route::get('/staff/login', [StaffAuthController::class, 'showLoginForm'])->name('staff.login');
 Route::post('/staff/login', [StaffAuthController::class, 'login'])->name('staff.login.submit');
+Route::get('/staff/register', [StaffAuthController::class, 'showRegisterForm'])->name('staff.register');
+Route::post('/staff/register', [StaffAuthController::class, 'register'])->name('staff.register.submit');
 Route::post('/staff/logout', [StaffAuthController::class, 'logout'])->name('staff.logout');
 
 // Staff-only routes
@@ -75,6 +77,10 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
             ->name('rhu.dashboard');
         Route::get('/rhu/dashboard/diagnosis-patients', [RhuDashboardController::class, 'diagnosisPatients'])
             ->name('rhu.diagnosisPatients');
+        Route::patch('/rhu/staff/{staff}/approve', [RhuDashboardController::class, 'approveStaff'])
+            ->name('rhu.staff.approve');
+        Route::delete('/rhu/staff/{staff}/reject', [RhuDashboardController::class, 'rejectStaff'])
+            ->name('rhu.staff.reject');
     });
 });
 

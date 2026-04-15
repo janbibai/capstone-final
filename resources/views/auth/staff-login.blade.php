@@ -1,4 +1,4 @@
-@extends('welcome')
+@extends('layouts.app')
 
 @section('title', 'Staff Login')
 
@@ -8,6 +8,12 @@
         <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
             Staff Login
         </h2>
+
+        @if (session('success'))
+            <div class="mb-4 p-3 rounded-lg bg-green-100 text-green-700 border border-green-300 text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
 
         @if ($errors->any())
             <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-300 text-sm">
@@ -58,6 +64,13 @@
                 Login
             </button>
         </form>
+
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?
+            <a href="{{ route('staff.register') }}" class="text-green-600 font-semibold hover:underline">
+                Register here
+            </a>
+        </p>
     </div>
 </div>
 @endsection

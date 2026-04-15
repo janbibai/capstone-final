@@ -7,6 +7,7 @@
     <title>RHU Dashboard</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         /* Sidebar active link */
         .sidebar-link.active {
@@ -120,11 +121,35 @@
                     </svg>
                     <span>By Department</span>
                 </a>
+
+                {{-- Group: Management --}}
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Management</p>
+                <a href="#staff-approvals" onclick="showSection('staff-approvals')" id="link-staff-approvals"
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    <span>Staff Approvals</span>
+                    @if($pendingStaff->count() > 0)
+                        <span class="ml-auto inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingStaff->count() }}</span>
+                    @endif
+                </a>
             </nav>
         </aside>
 
         {{-- MAIN CONTENT --}}
         <main class="flex-1 py-8 px-6 overflow-y-auto">
+
+            {{-- Flash Messages --}}
+            @if (session('success'))
+                <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-medium flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
 
             {{-- ══════════════════════════════════════════ --}}
             {{-- SECTION: Dashboard Overview               --}}
@@ -418,13 +443,106 @@
                 @endif
             </section>
 
+            {{-- ════════════════════════════════════════════ --}}
+            {{-- SECTION: Staff Approvals                   --}}
+            {{-- ════════════════════════════════════════════ --}}
+            <section id="section-staff-approvals" class="section-content hidden mt-2">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Staff Approvals</h2>
+                    <p class="text-gray-500 text-sm mt-1">Review and approve pending staff & doctor registrations</p>
+                </div>
+
+                @if ($pendingStaff->isEmpty())
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-gray-500 font-medium">No pending registrations</p>
+                        <p class="text-gray-400 text-sm mt-1">All staff accounts have been reviewed.</p>
+                    </div>
+                @else
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-base font-bold text-amber-800">Pending Registrations</h3>
+                                <p class="text-xs text-amber-600 mt-0.5">{{ $pendingStaff->count() }} account(s) awaiting approval</p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">#</th>
+                                        <th class="px-6 py-3">Name</th>
+                                        <th class="px-6 py-3">Email</th>
+                                        <th class="px-6 py-3">Position</th>
+                                        <th class="px-6 py-3">Department</th>
+                                        <th class="px-6 py-3">Phone</th>
+                                        <th class="px-6 py-3">Employee ID</th>
+                                        <th class="px-6 py-3">Registered</th>
+                                        <th class="px-6 py-3 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($pendingStaff as $index => $staff)
+                                        <tr class="border-t border-gray-100 hover:bg-gray-50">
+                                            <td class="px-6 py-4 text-gray-400">{{ $index + 1 }}</td>
+                                            <td class="px-6 py-4 font-medium text-gray-900">{{ $staff->user->name }}</td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $staff->user->email }}</td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                    {{ strtolower($staff->position) === 'doctor' ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-700' }}">
+                                                    {{ $staff->position }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $staff->department->name ?? '—' }}</td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $staff->phone ?? '—' }}</td>
+                                            <td class="px-6 py-4 text-gray-600 font-mono text-xs">{{ $staff->employee_id }}</td>
+                                            <td class="px-6 py-4 text-gray-500 text-xs">{{ $staff->created_at->diffForHumans() }}</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center justify-center space-x-2">
+                                                    <form method="POST" action="{{ route('rhu.staff.approve', $staff) }}">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1">
+                                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                            Approve
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" action="{{ route('rhu.staff.reject', $staff) }}"
+                                                        onsubmit="return confirm('Are you sure you want to reject this registration? This will permanently delete the account.')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1">
+                                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                            Reject
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+            </section>
+
         </main>
     </div>
 
     {{-- ── Chart.js ─────────────────────────────────────────────── --}}
     <script>
         // ── Sidebar navigation ────────────────────────────────────
-        const sections = ['overview', 'analytics', 'diseases', 'departments'];
+        const sections = ['overview', 'analytics', 'diseases', 'departments', 'staff-approvals'];
 
         function showSection(id) {
             sections.forEach(s => {

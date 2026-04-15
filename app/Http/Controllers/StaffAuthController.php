@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
+use App\Models\Role;
+use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class StaffAuthController extends Controller
@@ -103,5 +109,62 @@ class StaffAuthController extends Controller
 
         return redirect('/');
     }
-}
 
+    public function showRegisterForm()
+    {
+        if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
+            return redirect()->route('staff.dashboard');
+        }
+
+        $departments = Department::where('is_active', true)->get();
+
+        return view('auth.staff-register', compact('departments'));
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name'          => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password'      => ['required', 'string', 'min:8', 'confirmed'],
+            'position'      => ['required', 'in:Staff,Doctor'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'phone'         => ['nullable', 'string', 'max:20'],
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Try to match a role by position name
+            $role = Role::where('name', $request->position)->first();
+
+            // Auto-generate employee ID
+            $latestStaff = Staff::orderByDesc('id')->first();
+            $nextNumber  = $latestStaff ? ($latestStaff->id + 1) : 1;
+            $employeeId  = 'EMP-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+            $staffData = [
+                'user_id'       => $user->id,
+                'department_id' => $request->department_id,
+                'employee_id'   => $employeeId,
+                'position'      => $request->position,
+                'phone'         => $request->phone,
+                'is_active'     => false, // requires admin approval
+            ];
+
+            // Only set role_id if the column exists on the staff table
+            if (Schema::hasColumn('staff', 'role_id') && $role) {
+                $staffData['role_id'] = $role->id;
+            }
+
+            Staff::create($staffData);
+        });
+
+        return redirect()->route('staff.login')
+            ->with('success', 'Registration successful! Your account is pending admin approval.');
+    }
+}

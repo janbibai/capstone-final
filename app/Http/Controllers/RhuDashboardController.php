@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Staff;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -102,6 +104,12 @@ class RhuDashboardController extends Controller
         $activeDepartments = DB::table('departments')->where('is_active', true)->count();
         $diagnosesRecorded = DB::table('medical_records')->whereBetween('created_on', [$startDate, $endDate])->count();
 
+        // ── Pending Staff Registrations ───────────────────────────────
+        $pendingStaff = Staff::with(['user', 'department'])
+            ->where('is_active', false)
+            ->orderByDesc('created_at')
+            ->get();
+
         return view('rhu.dashboard', [
             'groupedStatistics' => $groupedStatistics,
             'topDiseases' => $topDiseases,
@@ -116,6 +124,8 @@ class RhuDashboardController extends Controller
             'pendingToday' => $pendingToday,
             'activeDepartments' => $activeDepartments,
             'diagnosesRecorded' => $diagnosesRecorded,
+            // Pending registrations
+            'pendingStaff' => $pendingStaff,
         ]);
     }
 
@@ -157,5 +167,30 @@ class RhuDashboardController extends Controller
             ->get();
 
         return response()->json($patients);
+    }
+
+    /**
+     * Approve a pending staff registration.
+     */
+    public function approveStaff(Staff $staff)
+    {
+        $staff->update(['is_active' => true]);
+
+        return back()->with('success', $staff->user->name . ' has been approved.');
+    }
+
+    /**
+     * Reject (delete) a pending staff registration.
+     */
+    public function rejectStaff(Staff $staff)
+    {
+        $userName = $staff->user->name;
+        $user = $staff->user;
+
+        // Delete the staff record and its associated user account
+        $staff->delete();
+        $user->delete();
+
+        return back()->with('success', $userName . '\'s registration has been rejected.');
     }
 }

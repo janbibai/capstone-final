@@ -24,10 +24,11 @@
             <div>
                 <h3 class="text-white font-bold mb-6">Services</h3>
                 <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="#">Immunization</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Family Planning</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Lab Testing</a></li>
-                    <li><a class="hover:text-primary transition-colors" href="#">Pharmacy</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Outpatient Consultation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Maternal and Child health</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Dental Services</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Public Health services</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Medical Consultation</a></li>
                 </ul>
             </div>
             

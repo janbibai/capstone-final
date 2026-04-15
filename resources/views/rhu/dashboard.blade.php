@@ -135,6 +135,14 @@
                         <span class="ml-auto inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingStaff->count() }}</span>
                     @endif
                 </a>
+                <a href="#medicine-inventory" onclick="showSection('medicine-inventory')" id="link-medicine-inventory"
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <span>Medicine Inventory</span>
+                </a>
             </nav>
         </aside>
 
@@ -536,13 +544,321 @@
                 @endif
             </section>
 
+            {{-- ════════════════════════════════════════════ --}}
+            {{-- SECTION: Medicine Inventory                --}}
+            {{-- ════════════════════════════════════════════ --}}
+            <section id="section-medicine-inventory" class="section-content hidden mt-2">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Medicine Inventory</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage available medicines and supplies at the RHU</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('add-medicine-modal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Medicine
+                    </button>
+                </div>
+
+                {{-- Summary Cards --}}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Total Medicines</p>
+                            <p class="text-3xl font-bold text-gray-800">{{ $medicines->count() }}</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Low Stock</p>
+                            <p class="text-3xl font-bold text-amber-700">{{ $medicines->where('quantity', '<=', 10)->where('quantity', '>', 0)->count() }}</p>
+                            <p class="text-xs text-gray-400 mt-0.5">≤ 10 units</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Out of Stock</p>
+                            <p class="text-3xl font-bold text-red-700">{{ $medicines->where('quantity', 0)->count() }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Medicine Table --}}
+                @if ($medicines->isEmpty())
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                        <p class="text-gray-500 font-medium">No medicines in inventory</p>
+                        <p class="text-gray-400 text-sm mt-1">Click "Add Medicine" to start building your inventory.</p>
+                    </div>
+                @else
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">#</th>
+                                        <th class="px-6 py-3">Medicine Name</th>
+                                        <th class="px-6 py-3">Generic Name</th>
+                                        <th class="px-6 py-3">Category</th>
+                                        <th class="px-6 py-3 text-right">Stock</th>
+                                        <th class="px-6 py-3">Unit</th>
+                                        <th class="px-6 py-3">Expiry Date</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($medicines as $index => $medicine)
+                                        @php
+                                            $isExpired = $medicine->expiry_date && $medicine->expiry_date->isPast();
+                                            $isExpiringSoon = $medicine->expiry_date && !$isExpired && $medicine->expiry_date->diffInDays(now()) <= 30;
+                                            $isOutOfStock = $medicine->quantity === 0;
+                                            $isLowStock = $medicine->quantity > 0 && $medicine->quantity <= 10;
+                                        @endphp
+                                        <tr class="border-t border-gray-100 hover:bg-gray-50">
+                                            <td class="px-6 py-4 text-gray-400">{{ $index + 1 }}</td>
+                                            <td class="px-6 py-4 font-medium text-gray-900">{{ $medicine->name }}</td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $medicine->generic_name ?? '—' }}</td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $medicine->category ?? '—' }}</td>
+                                            <td class="px-6 py-4 text-right font-semibold
+                                                {{ $isOutOfStock ? 'text-red-600' : ($isLowStock ? 'text-amber-600' : 'text-gray-800') }}">
+                                                {{ number_format($medicine->quantity) }}
+                                            </td>
+                                            <td class="px-6 py-4 text-gray-600">{{ $medicine->unit }}</td>
+                                            <td class="px-6 py-4 text-gray-600 text-xs">
+                                                @if($medicine->expiry_date)
+                                                    <span class="{{ $isExpired ? 'text-red-600 font-semibold' : ($isExpiringSoon ? 'text-amber-600 font-semibold' : '') }}">
+                                                        {{ $medicine->expiry_date->format('M d, Y') }}
+                                                    </span>
+                                                @else
+                                                    —
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                @if($isExpired)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Expired</span>
+                                                @elseif($isOutOfStock)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Out of Stock</span>
+                                                @elseif($isLowStock)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Low Stock</span>
+                                                @elseif($isExpiringSoon)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Expiring Soon</span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">In Stock</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center justify-center space-x-2">
+                                                    <button type="button" onclick="openEditModal({{ $medicine->id }}, {{ json_encode($medicine) }})"
+                                                        class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">
+                                                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                        </svg>
+                                                        Edit
+                                                    </button>
+                                                    <form method="POST" action="{{ route('rhu.medicines.delete', $medicine) }}"
+                                                        onsubmit="return confirm('Are you sure you want to delete this medicine?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 transition">
+                                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+            </section>
+
+            {{-- ═══ Add Medicine Modal ═══ --}}
+            <div id="add-medicine-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('add-medicine-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Add New Medicine</h3>
+                        <button type="button" onclick="document.getElementById('add-medicine-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('rhu.medicines.store') }}" class="p-6 space-y-4">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Medicine Name *</label>
+                                <input type="text" name="name" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Generic Name</label>
+                                <input type="text" name="generic_name"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <input type="text" name="category" placeholder="e.g. Analgesic, Antibiotic"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                <input type="date" name="expiry_date"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+                                <input type="number" name="quantity" min="0" value="0" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                                <select name="unit" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="pcs">Pieces (pcs)</option>
+                                    <option value="tablets">Tablets</option>
+                                    <option value="capsules">Capsules</option>
+                                    <option value="bottles">Bottles</option>
+                                    <option value="vials">Vials</option>
+                                    <option value="sachets">Sachets</option>
+                                    <option value="tubes">Tubes</option>
+                                    <option value="ml">Milliliters (ml)</option>
+                                    <option value="boxes">Boxes</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" rows="2"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none resize-none"
+                                    placeholder="Optional notes about this medicine"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('add-medicine-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                                Add Medicine
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- ═══ Edit Medicine Modal ═══ --}}
+            <div id="edit-medicine-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('edit-medicine-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Edit Medicine</h3>
+                        <button type="button" onclick="document.getElementById('edit-medicine-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="edit-medicine-form" method="POST" class="p-6 space-y-4">
+                        @csrf
+                        @method('PUT')
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Medicine Name *</label>
+                                <input type="text" name="name" id="edit-name" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Generic Name</label>
+                                <input type="text" name="generic_name" id="edit-generic_name"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <input type="text" name="category" id="edit-category"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                <input type="date" name="expiry_date" id="edit-expiry_date"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+                                <input type="number" name="quantity" id="edit-quantity" min="0" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                                <select name="unit" id="edit-unit" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="pcs">Pieces (pcs)</option>
+                                    <option value="tablets">Tablets</option>
+                                    <option value="capsules">Capsules</option>
+                                    <option value="bottles">Bottles</option>
+                                    <option value="vials">Vials</option>
+                                    <option value="sachets">Sachets</option>
+                                    <option value="tubes">Tubes</option>
+                                    <option value="ml">Milliliters (ml)</option>
+                                    <option value="boxes">Boxes</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea name="description" id="edit-description" rows="2"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('edit-medicine-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </main>
     </div>
 
     {{-- ── Chart.js ─────────────────────────────────────────────── --}}
     <script>
         // ── Sidebar navigation ────────────────────────────────────
-        const sections = ['overview', 'analytics', 'diseases', 'departments', 'staff-approvals'];
+        const sections = ['overview', 'analytics', 'diseases', 'departments', 'staff-approvals', 'medicine-inventory'];
 
         function showSection(id) {
             sections.forEach(s => {
@@ -782,6 +1098,29 @@
                 }
             },
         });
+
+        // ── Medicine Inventory: Edit modal ──────────────────────────
+        function openEditModal(id, medicine) {
+            const form = document.getElementById('edit-medicine-form');
+            form.action = `/rhu/medicines/${id}`;
+
+            document.getElementById('edit-name').value = medicine.name || '';
+            document.getElementById('edit-generic_name').value = medicine.generic_name || '';
+            document.getElementById('edit-category').value = medicine.category || '';
+            document.getElementById('edit-quantity').value = medicine.quantity || 0;
+            document.getElementById('edit-unit').value = medicine.unit || 'pcs';
+            document.getElementById('edit-description').value = medicine.description || '';
+
+            // Handle expiry_date — could be ISO string or null
+            if (medicine.expiry_date) {
+                const d = new Date(medicine.expiry_date);
+                document.getElementById('edit-expiry_date').value = d.toISOString().split('T')[0];
+            } else {
+                document.getElementById('edit-expiry_date').value = '';
+            }
+
+            document.getElementById('edit-medicine-modal').classList.remove('hidden');
+        }
     </script>
 </body>
 

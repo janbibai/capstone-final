@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Medicine;
 use App\Models\Staff;
 use App\Models\User;
 use Carbon\Carbon;
@@ -110,6 +111,9 @@ class RhuDashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        // ── Medicine Inventory ─────────────────────────────────────────
+        $medicines = Medicine::orderBy('name')->get();
+
         return view('rhu.dashboard', [
             'groupedStatistics' => $groupedStatistics,
             'topDiseases' => $topDiseases,
@@ -126,6 +130,8 @@ class RhuDashboardController extends Controller
             'diagnosesRecorded' => $diagnosesRecorded,
             // Pending registrations
             'pendingStaff' => $pendingStaff,
+            // Medicine inventory
+            'medicines' => $medicines,
         ]);
     }
 
@@ -192,5 +198,60 @@ class RhuDashboardController extends Controller
         $user->delete();
 
         return back()->with('success', $userName . '\'s registration has been rejected.');
+    }
+
+    /**
+     * Store a new medicine.
+     */
+    public function storeMedicine(Request $request)
+    {
+        $request->validate([
+            'name'         => ['required', 'string', 'max:255'],
+            'generic_name' => ['nullable', 'string', 'max:255'],
+            'category'     => ['nullable', 'string', 'max:100'],
+            'quantity'     => ['required', 'integer', 'min:0'],
+            'unit'         => ['required', 'string', 'max:50'],
+            'expiry_date'  => ['nullable', 'date'],
+            'description'  => ['nullable', 'string', 'max:500'],
+        ]);
+
+        Medicine::create($request->only([
+            'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
+        ]));
+
+        return back()->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
+    }
+
+    /**
+     * Update an existing medicine.
+     */
+    public function updateMedicine(Request $request, Medicine $medicine)
+    {
+        $request->validate([
+            'name'         => ['required', 'string', 'max:255'],
+            'generic_name' => ['nullable', 'string', 'max:255'],
+            'category'     => ['nullable', 'string', 'max:100'],
+            'quantity'     => ['required', 'integer', 'min:0'],
+            'unit'         => ['required', 'string', 'max:50'],
+            'expiry_date'  => ['nullable', 'date'],
+            'description'  => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $medicine->update($request->only([
+            'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
+        ]));
+
+        return back()->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
+    }
+
+    /**
+     * Delete a medicine from inventory.
+     */
+    public function deleteMedicine(Medicine $medicine)
+    {
+        $name = $medicine->name;
+        $medicine->delete();
+
+        return back()->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
     }
 }

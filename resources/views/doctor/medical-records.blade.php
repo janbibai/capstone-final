@@ -260,6 +260,7 @@
                                                     data-diagnosis="{{ $record->diagnosis ? $record->diagnosis->name : 'None' }}"
                                                     data-details="{{ $record->details }}"
                                                     data-date="{{ $record->created_on ? $record->created_on->format('M d, Y') : '—' }}"
+                                                    data-doctor="{{ $record->creator ? $record->creator->name : '—' }}"
                                                     data-prescriptions="{{ json_encode($record->prescriptions->map(function($p) {
                                                         return [
                                                             'name' => $p->medication_name,
@@ -349,25 +350,36 @@
                 </div>
             </div>
             
-            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
                 <button type="button" onclick="document.getElementById('viewRecordModal').close()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-slate-200 outline-none">
                     Close
+                </button>
+                <button type="button" onclick="printPrescription()" class="inline-flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-blue-500/20 outline-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Print Prescription
                 </button>
             </div>
         </div>
     </dialog>
 
     <script>
+        // Store current modal data for printing
+        let currentRecord = {};
+
         function viewRecord(btn) {
             const patient = btn.getAttribute('data-patient');
             const diagnosis = btn.getAttribute('data-diagnosis');
             const details = btn.getAttribute('data-details');
             const date = btn.getAttribute('data-date');
+            const doctor = btn.getAttribute('data-doctor');
             
             let prescriptions = [];
             try {
                 prescriptions = JSON.parse(btn.getAttribute('data-prescriptions') || '[]');
             } catch(e) {}
+
+            // Store for print
+            currentRecord = { patient, diagnosis, details, date, doctor, prescriptions };
 
             document.getElementById('modalPatientName').textContent = patient;
             document.getElementById('modalDiagnosis').textContent = diagnosis;
@@ -400,6 +412,213 @@
             }
 
             document.getElementById('viewRecordModal').showModal();
+        }
+
+        function printPrescription() {
+            const { patient, diagnosis, details, date, doctor, prescriptions } = currentRecord;
+
+            let rxRows = '';
+            if (prescriptions && prescriptions.length > 0) {
+                prescriptions.forEach((rx, i) => {
+                    rxRows += `
+                        <tr>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${i + 1}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${rx.name || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.dosage || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.frequency || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.duration || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.instructions || '—'}</td>
+                        </tr>`;
+                });
+            } else {
+                rxRows = '<tr><td colspan="6" style="padding: 16px; text-align: center; color: #94a3b8; font-style: italic;">No prescriptions recorded.</td></tr>';
+            }
+
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Prescription - ${patient}</title>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body {
+                            font-family: 'Inter', Arial, sans-serif;
+                            color: #1e293b;
+                            padding: 40px;
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 2px solid #1e293b;
+                            padding-bottom: 16px;
+                            margin-bottom: 24px;
+                        }
+                        .header h1 {
+                            font-size: 22px;
+                            font-weight: 700;
+                            letter-spacing: -0.5px;
+                            margin-bottom: 4px;
+                        }
+                        .header p {
+                            font-size: 12px;
+                            color: #64748b;
+                        }
+                        .rx-symbol {
+                            font-size: 28px;
+                            font-weight: 700;
+                            font-style: italic;
+                            color: #1e40af;
+                            margin-bottom: 16px;
+                        }
+                        .info-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 12px;
+                            margin-bottom: 24px;
+                        }
+                        .info-item label {
+                            display: block;
+                            font-size: 10px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            color: #64748b;
+                            margin-bottom: 2px;
+                        }
+                        .info-item span {
+                            font-size: 14px;
+                            font-weight: 500;
+                        }
+                        .section-title {
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            color: #64748b;
+                            margin-bottom: 8px;
+                        }
+                        .details-box {
+                            background: #f8fafc;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                            padding: 12px 16px;
+                            font-size: 13px;
+                            margin-bottom: 24px;
+                            white-space: pre-wrap;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 13px;
+                            margin-bottom: 40px;
+                        }
+                        thead th {
+                            background: #f1f5f9;
+                            padding: 10px 12px;
+                            text-align: left;
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            color: #475569;
+                            border-bottom: 2px solid #cbd5e1;
+                        }
+                        .signature-area {
+                            margin-top: 60px;
+                            display: flex;
+                            justify-content: flex-end;
+                        }
+                        .signature-block {
+                            text-align: center;
+                            width: 250px;
+                        }
+                        .signature-line {
+                            border-top: 1px solid #1e293b;
+                            margin-top: 60px;
+                            padding-top: 8px;
+                        }
+                        .signature-block .doctor-name {
+                            font-size: 14px;
+                            font-weight: 600;
+                        }
+                        .signature-block .doctor-label {
+                            font-size: 11px;
+                            color: #64748b;
+                        }
+                        @media print {
+                            body { padding: 20px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Medical Prescription</h1>
+                        <p>Rural Health Unit</p>
+                    </div>
+
+                    <div class="rx-symbol">℞</div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Patient Name</label>
+                            <span>${patient}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Date</label>
+                            <span>${date}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Diagnosis</label>
+                            <span>${diagnosis}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Attending Physician</label>
+                            <span>${doctor}</span>
+                        </div>
+                    </div>
+
+                    ${details ? `
+                        <div class="section-title">Clinical Details</div>
+                        <div class="details-box">${details}</div>
+                    ` : ''}
+
+                    <div class="section-title">Prescribed Medications</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Medication</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Duration</th>
+                                <th>Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rxRows}
+                        </tbody>
+                    </table>
+
+                    <div class="signature-area">
+                        <div class="signature-block">
+                            <div class="signature-line">
+                                <div class="doctor-name">${doctor}</div>
+                                <div class="doctor-label">Attending Physician</div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
         }
     </script>
 </body>

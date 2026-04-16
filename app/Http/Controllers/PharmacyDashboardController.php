@@ -54,7 +54,7 @@ class PharmacyDashboardController extends Controller
     }
 
     /**
-     * Dispense medicine — deduct the given quantity from inventory.
+     * Dispense medicine — deduct the given quantity using FEFO (First Expiry, First Out).
      */
     public function dispense(Request $request, Medicine $medicine)
     {
@@ -70,7 +70,22 @@ class PharmacyDashboardController extends Controller
             ]);
         }
 
-        $medicine->decrement('quantity', $qty);
+        // FEFO: deduct from earliest-expiring batches first
+        $batches = $medicine->batches()
+            ->where('quantity', '>', 0)
+            ->orderByRaw('expiry_date IS NULL, expiry_date ASC')
+            ->get();
+
+        $remaining = $qty;
+        foreach ($batches as $batch) {
+            if ($remaining <= 0) break;
+
+            $deduct = min($remaining, $batch->quantity);
+            $batch->decrement('quantity', $deduct);
+            $remaining -= $deduct;
+        }
+
+        $medicine->syncStockFromBatches();
 
         return back()->with('success', "Dispensed {$qty} {$medicine->unit} of \"{$medicine->name}\". Remaining stock: {$medicine->quantity} {$medicine->unit}.");
     }

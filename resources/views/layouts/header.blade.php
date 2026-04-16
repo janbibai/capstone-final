@@ -17,16 +17,16 @@
                 <a href="{{ url('/') }}" class="hover:text-primary transition">Home</a>
                 <a href="{{ url('/#services') }}" class="hover:text-primary transition">Our Services</a>
                 <a href="{{ url('/#doctors') }}" class="hover:text-primary transition">Doctors</a>
-                <a href="{{ route('appointment.queueStatus') }}" class="hover:text-primary transition text-green-600 font-semibold">Queue Status</a>
+                {{-- <a href="{{ route('appointment.queueStatus') }}" class="hover:text-primary transition text-green-600 font-semibold">Queue Status</a> --}}
                 <a href="{{ url('/#contact') }}" class="hover:text-primary transition">Contact</a>
-                {{-- <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a> --}}
+                <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a>
             </nav>
 
             {{-- Desktop CTA --}}
-            <a href="{{ route('appointment.create') }}"
+            {{-- <a href="{{ route('appointment.create') }}"
                 class="hidden md:inline-flex bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-medium transition shadow-sm">
                 Book Appointment
-            </a>
+            </a> --}}
 
             {{-- Mobile Menu Button --}}
             <button type="button" class="md:hidden text-gray-700" aria-label="Open menu"

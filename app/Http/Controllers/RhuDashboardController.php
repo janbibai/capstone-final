@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medicine;
+use App\Models\MedicineBatch;
 use App\Models\Staff;
 use App\Models\User;
 use Carbon\Carbon;
@@ -111,8 +112,10 @@ class RhuDashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        // ── Medicine Inventory ─────────────────────────────────────────
-        $medicines = Medicine::orderBy('name')->get();
+        // ── Medicine Inventory (with batches) ─────────────────────────
+        $medicines = Medicine::with(['batches' => function ($q) {
+            $q->orderBy('expiry_date', 'asc');
+        }])->orderBy('name')->get();
 
         return view('rhu.dashboard', [
             'groupedStatistics' => $groupedStatistics,
@@ -215,15 +218,23 @@ class RhuDashboardController extends Controller
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
 
-        Medicine::create($request->only([
+        $medicine = Medicine::create($request->only([
             'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
         ]));
+
+        // Create the initial batch
+        if ($medicine->quantity > 0 || $medicine->expiry_date) {
+            $medicine->batches()->create([
+                'quantity'    => $medicine->quantity,
+                'expiry_date' => $medicine->expiry_date,
+            ]);
+        }
 
         return back()->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
     }
 
     /**
-     * Update an existing medicine.
+     * Update an existing medicine (name, generic, category, unit, description only).
      */
     public function updateMedicine(Request $request, Medicine $medicine)
     {
@@ -231,17 +242,49 @@ class RhuDashboardController extends Controller
             'name'         => ['required', 'string', 'max:255'],
             'generic_name' => ['nullable', 'string', 'max:255'],
             'category'     => ['nullable', 'string', 'max:100'],
-            'quantity'     => ['required', 'integer', 'min:0'],
             'unit'         => ['required', 'string', 'max:50'],
-            'expiry_date'  => ['nullable', 'date'],
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
 
         $medicine->update($request->only([
-            'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
+            'name', 'generic_name', 'category', 'unit', 'description',
         ]));
 
         return back()->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
+    }
+
+    /**
+     * Add stock to an existing medicine by creating a new batch.
+     */
+    public function addStock(Request $request, Medicine $medicine)
+    {
+        $request->validate([
+            'add_quantity' => ['required', 'integer', 'min:1'],
+            'expiry_date'  => ['nullable', 'date'],
+        ]);
+
+        $medicine->batches()->create([
+            'quantity'    => $request->add_quantity,
+            'expiry_date' => $request->expiry_date,
+        ]);
+
+        $medicine->syncStockFromBatches();
+
+        return back()->with('success', $request->add_quantity . ' ' . $medicine->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
+    }
+
+    /**
+     * Delete a specific medicine batch (e.g. expired batches).
+     */
+    public function deleteBatch(MedicineBatch $batch)
+    {
+        $medicine = $batch->medicine;
+        $batchInfo = $batch->quantity . ' ' . $medicine->unit;
+
+        $batch->delete();
+        $medicine->syncStockFromBatches();
+
+        return back()->with('success', 'Batch (' . $batchInfo . ') of "' . $medicine->name . '" has been removed. Remaining stock: ' . $medicine->quantity . '.');
     }
 
     /**

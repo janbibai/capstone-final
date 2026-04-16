@@ -90,6 +90,10 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
             ->name('rhu.medicines.update');
         Route::delete('/rhu/medicines/{medicine}', [RhuDashboardController::class, 'deleteMedicine'])
             ->name('rhu.medicines.delete');
+        Route::patch('/rhu/medicines/{medicine}/add-stock', [RhuDashboardController::class, 'addStock'])
+            ->name('rhu.medicines.addStock');
+        Route::delete('/rhu/medicine-batches/{batch}', [RhuDashboardController::class, 'deleteBatch'])
+            ->name('rhu.batches.delete');
     });
 });
 

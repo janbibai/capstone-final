@@ -621,7 +621,7 @@
                                         <th class="px-6 py-3">Category</th>
                                         <th class="px-6 py-3 text-right">Stock</th>
                                         <th class="px-6 py-3">Unit</th>
-                                        <th class="px-6 py-3">Expiry Date</th>
+                                        <th class="px-6 py-3">Nearest Expiry</th>
                                         <th class="px-6 py-3">Status</th>
                                         <th class="px-6 py-3 text-center">Actions</th>
                                     </tr>
@@ -633,6 +633,8 @@
                                             $isExpiringSoon = $medicine->expiry_date && !$isExpired && $medicine->expiry_date->diffInDays(now()) <= 30;
                                             $isOutOfStock = $medicine->quantity === 0;
                                             $isLowStock = $medicine->quantity > 0 && $medicine->quantity <= 10;
+                                            $activeBatches = $medicine->batches->where('quantity', '>', 0);
+                                            $batchCount = $activeBatches->count();
                                         @endphp
                                         <tr class="border-t border-gray-100 hover:bg-gray-50">
                                             <td class="px-6 py-4 text-gray-400">{{ $index + 1 }}</td>
@@ -651,6 +653,9 @@
                                                     </span>
                                                 @else
                                                     —
+                                                @endif
+                                                @if($batchCount > 1)
+                                                    <span class="text-gray-400 ml-1">({{ $batchCount }} batches)</span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4">
@@ -675,21 +680,104 @@
                                                         </svg>
                                                         Edit
                                                     </button>
-                                                    <form method="POST" action="{{ route('rhu.medicines.delete', $medicine) }}"
-                                                        onsubmit="return confirm('Are you sure you want to delete this medicine?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 transition">
+                                                    <button type="button" onclick="openAddStockModal({{ $medicine->id }}, '{{ addslashes($medicine->name) }}', '{{ $medicine->unit }}')"
+                                                        class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-green-50 text-green-700 hover:bg-green-100 transition">
+                                                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                        </svg>
+                                                        Add Stock
+                                                    </button>
+                                                    @if($medicine->batches->count() > 0)
+                                                        <button type="button" onclick="toggleBatches('batches-{{ $medicine->id }}')"
+                                                            class="inline-flex items-center px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 transition">
                                                             <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                                                             </svg>
-                                                            Delete
+                                                            Batches
                                                         </button>
-                                                    </form>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
+                                        {{-- Expandable Batch Rows --}}
+                                        @if($medicine->batches->count() > 0)
+                                            <tr id="batches-{{ $medicine->id }}" class="hidden">
+                                                <td colspan="9" class="px-6 py-0">
+                                                    <div class="bg-gray-50 rounded-xl border border-gray-200 my-2 overflow-hidden">
+                                                        <div class="px-4 py-2.5 bg-gray-100 border-b border-gray-200 flex items-center justify-between">
+                                                            <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Stock Batches — {{ $medicine->name }}</p>
+                                                            <span class="text-xs text-gray-500">{{ $medicine->batches->count() }} batch(es)</span>
+                                                        </div>
+                                                        <table class="w-full text-xs">
+                                                            <thead class="bg-white text-gray-500 uppercase">
+                                                                <tr>
+                                                                    <th class="px-4 py-2 text-left">Batch #</th>
+                                                                    <th class="px-4 py-2 text-right">Quantity</th>
+                                                                    <th class="px-4 py-2 text-left">Expiry Date</th>
+                                                                    <th class="px-4 py-2 text-left">Status</th>
+                                                                    <th class="px-4 py-2 text-left">Added</th>
+                                                                    <th class="px-4 py-2 text-center">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-gray-100">
+                                                                @foreach($medicine->batches->sortBy('expiry_date') as $bIndex => $batch)
+                                                                    @php
+                                                                        $batchExpired = $batch->expiry_date && $batch->expiry_date->isPast();
+                                                                        $batchExpiringSoon = $batch->expiry_date && !$batchExpired && $batch->expiry_date->diffInDays(now()) <= 30;
+                                                                        $batchEmpty = $batch->quantity === 0;
+                                                                    @endphp
+                                                                    <tr class="hover:bg-gray-50 {{ $batchExpired ? 'bg-red-50/50' : '' }}">
+                                                                        <td class="px-4 py-2.5 text-gray-500 font-medium">#{{ $bIndex + 1 }}</td>
+                                                                        <td class="px-4 py-2.5 text-right font-bold {{ $batchEmpty ? 'text-gray-300' : ($batchExpired ? 'text-red-600' : 'text-gray-800') }}">
+                                                                            {{ number_format($batch->quantity) }} {{ $medicine->unit }}
+                                                                        </td>
+                                                                        <td class="px-4 py-2.5">
+                                                                            @if($batch->expiry_date)
+                                                                                <span class="{{ $batchExpired ? 'text-red-600 font-semibold' : ($batchExpiringSoon ? 'text-amber-600 font-semibold' : 'text-gray-600') }}">
+                                                                                    {{ $batch->expiry_date->format('M d, Y') }}
+                                                                                </span>
+                                                                            @else
+                                                                                <span class="text-gray-400">No expiry set</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td class="px-4 py-2.5">
+                                                                            @if($batchExpired)
+                                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-700">Expired</span>
+                                                                            @elseif($batchEmpty)
+                                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-500">Depleted</span>
+                                                                            @elseif($batchExpiringSoon)
+                                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Expiring Soon</span>
+                                                                            @else
+                                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700">Active</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td class="px-4 py-2.5 text-gray-400">{{ $batch->created_at->format('M d, Y') }}</td>
+                                                                        <td class="px-4 py-2.5 text-center">
+                                                                            @if($batchExpired || $batchEmpty)
+                                                                                <form method="POST" action="{{ route('rhu.batches.delete', $batch) }}"
+                                                                                    onsubmit="return confirm('Remove this batch? This will deduct {{ $batch->quantity }} {{ $medicine->unit }} from total stock.')">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button type="submit"
+                                                                                        class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                                                                        <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                        </svg>
+                                                                                        Remove
+                                                                                    </button>
+                                                                                </form>
+                                                                            @else
+                                                                                <span class="text-gray-300">—</span>
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>
@@ -808,16 +896,6 @@
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                                <input type="date" name="expiry_date" id="edit-expiry_date"
-                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
-                                <input type="number" name="quantity" id="edit-quantity" min="0" required
-                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
-                            </div>
-                            <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
                                 <select name="unit" id="edit-unit" required
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
@@ -837,6 +915,9 @@
                                 <textarea name="description" id="edit-description" rows="2"
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none resize-none"></textarea>
                             </div>
+                            <div class="col-span-2">
+                                <p class="text-xs text-gray-400 bg-gray-50 rounded-lg p-3">💡 Quantity and expiry dates are managed through stock batches. Use the "Add Stock" button to add new batches.</p>
+                            </div>
                         </div>
                         <div class="flex justify-end space-x-3 pt-2">
                             <button type="button" onclick="document.getElementById('edit-medicine-modal').classList.add('hidden')"
@@ -846,6 +927,54 @@
                             <button type="submit"
                                 class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
                                 Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- ═══ Add Stock Modal ═══ --}}
+            <div id="add-stock-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('add-stock-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Add Stock</h3>
+                        <button type="button" onclick="document.getElementById('add-stock-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="add-stock-form" method="POST" class="p-6 space-y-4">
+                        @csrf
+                        @method('PATCH')
+                        <div class="bg-indigo-50 rounded-xl p-4">
+                            <p class="text-xs text-gray-500 font-medium">Medicine</p>
+                            <p id="add-stock-medicine-name" class="text-sm font-bold text-gray-800 mt-0.5"></p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity to Add *</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" name="add_quantity" id="add-stock-quantity" min="1" value="1" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
+                                <span id="add-stock-unit" class="text-sm text-gray-500 font-medium whitespace-nowrap"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Batch Expiry Date</label>
+                            <input type="date" name="expiry_date" id="add-stock-expiry"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <p class="text-xs text-gray-400 mt-1">Set the expiry date for this new batch</p>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('add-stock-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition shadow-sm">
+                                Add Stock
                             </button>
                         </div>
                     </form>
@@ -1107,19 +1236,29 @@
             document.getElementById('edit-name').value = medicine.name || '';
             document.getElementById('edit-generic_name').value = medicine.generic_name || '';
             document.getElementById('edit-category').value = medicine.category || '';
-            document.getElementById('edit-quantity').value = medicine.quantity || 0;
             document.getElementById('edit-unit').value = medicine.unit || 'pcs';
             document.getElementById('edit-description').value = medicine.description || '';
 
-            // Handle expiry_date — could be ISO string or null
-            if (medicine.expiry_date) {
-                const d = new Date(medicine.expiry_date);
-                document.getElementById('edit-expiry_date').value = d.toISOString().split('T')[0];
-            } else {
-                document.getElementById('edit-expiry_date').value = '';
-            }
-
             document.getElementById('edit-medicine-modal').classList.remove('hidden');
+        }
+
+        // ── Medicine Inventory: Add Stock modal ─────────────────────
+        function openAddStockModal(id, name, unit) {
+            const form = document.getElementById('add-stock-form');
+            form.action = `/rhu/medicines/${id}/add-stock`;
+
+            document.getElementById('add-stock-medicine-name').textContent = name;
+            document.getElementById('add-stock-unit').textContent = unit;
+            document.getElementById('add-stock-quantity').value = 1;
+            document.getElementById('add-stock-expiry').value = '';
+
+            document.getElementById('add-stock-modal').classList.remove('hidden');
+        }
+
+        // ── Medicine Inventory: Toggle batch rows ────────────────────
+        function toggleBatches(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) row.classList.toggle('hidden');
         }
     </script>
 </body>

@@ -121,6 +121,14 @@
                     </svg>
                     <span>By Department</span>
                 </a>
+                <a href="#dispensing" onclick="showSection('dispensing')" id="link-dispensing"
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <span>Medicine Dispensing</span>
+                </a>
 
                 {{-- Group: Management --}}
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Management</p>
@@ -452,6 +460,74 @@
             </section>
 
             {{-- ════════════════════════════════════════════ --}}
+            {{-- SECTION: Medicine Dispensing Statistics      --}}
+            {{-- ════════════════════════════════════════════ --}}
+            <section id="section-dispensing" class="section-content hidden mt-2">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Medicine Dispensing Statistics</h2>
+                    <p class="text-gray-500 text-sm mt-1">Most dispensed medicines by the pharmacy — selected period</p>
+                </div>
+
+                @if ($topDispensedMedicines->isNotEmpty())
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 bg-emerald-50 border-b border-emerald-100">
+                            <h3 class="text-base font-bold text-emerald-800">Top Dispensed Medicines</h3>
+                            <p class="text-xs text-emerald-500 mt-0.5">Ranked by total quantity dispensed — selected period</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">Rank</th>
+                                        <th class="px-6 py-3">Medicine Name</th>
+                                        <th class="px-6 py-3 text-right">Total Qty Dispensed</th>
+                                        <th class="px-6 py-3 text-right">Times Dispensed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($topDispensedMedicines as $index => $med)
+                                        <tr class="border-t border-gray-100 hover:bg-gray-50">
+                                            <td class="px-6 py-3">
+                                                <div
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs
+                                                    @if ($index === 0) bg-amber-100 text-amber-600 font-bold
+                                                    @elseif ($index === 1) bg-gray-200 text-gray-600 font-bold
+                                                    @elseif ($index === 2) bg-orange-100 text-orange-600 font-bold
+                                                    @else bg-gray-50 text-gray-400 @endif">
+                                                    #{{ $index + 1 }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-3 font-medium text-gray-900">
+                                                {{ $med->medicine_name }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                                                    {{ number_format($med->total_dispensed) }}
+                                                    {{ $med->unit }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-3 text-right">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
+                                                    {{ $med->dispense_count }}
+                                                    {{ $med->dispense_count == 1 ? 'time' : 'times' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center text-gray-500">
+                        No medicines have been dispensed for the selected period.
+                    </div>
+                @endif
+            </section>
+
+            {{-- ════════════════════════════════════════════ --}}
             {{-- SECTION: Staff Approvals                   --}}
             {{-- ════════════════════════════════════════════ --}}
             <section id="section-staff-approvals" class="section-content hidden mt-2">
@@ -630,7 +706,7 @@
                                     @foreach ($medicines as $index => $medicine)
                                         @php
                                             $isExpired = $medicine->expiry_date && $medicine->expiry_date->isPast();
-                                            $isExpiringSoon = $medicine->expiry_date && !$isExpired && $medicine->expiry_date->diffInDays(now()) <= 30;
+                                            $isExpiringSoon = $medicine->expiry_date && !$isExpired && now()->diffInDays($medicine->expiry_date) <= 30;
                                             $isOutOfStock = $medicine->quantity === 0;
                                             $isLowStock = $medicine->quantity > 0 && $medicine->quantity <= 10;
                                             $activeBatches = $medicine->batches->where('quantity', '>', 0);
@@ -723,7 +799,7 @@
                                                                 @foreach($medicine->batches->sortBy('expiry_date') as $bIndex => $batch)
                                                                     @php
                                                                         $batchExpired = $batch->expiry_date && $batch->expiry_date->isPast();
-                                                                        $batchExpiringSoon = $batch->expiry_date && !$batchExpired && $batch->expiry_date->diffInDays(now()) <= 30;
+                                                                        $batchExpiringSoon = $batch->expiry_date && !$batchExpired && now()->diffInDays($batch->expiry_date) <= 30;
                                                                         $batchEmpty = $batch->quantity === 0;
                                                                     @endphp
                                                                     <tr class="hover:bg-gray-50 {{ $batchExpired ? 'bg-red-50/50' : '' }}">
@@ -987,7 +1063,7 @@
     {{-- ── Chart.js ─────────────────────────────────────────────── --}}
     <script>
         // ── Sidebar navigation ────────────────────────────────────
-        const sections = ['overview', 'analytics', 'diseases', 'departments', 'staff-approvals', 'medicine-inventory'];
+        const sections = ['overview', 'analytics', 'diseases', 'departments', 'dispensing', 'staff-approvals', 'medicine-inventory'];
 
         function showSection(id) {
             sections.forEach(s => {

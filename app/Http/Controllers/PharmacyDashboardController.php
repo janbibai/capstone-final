@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DispensingLog;
 use App\Models\Medicine;
 use App\Models\Prescription;
 use Carbon\Carbon;
@@ -86,6 +87,15 @@ class PharmacyDashboardController extends Controller
         }
 
         $medicine->syncStockFromBatches();
+
+        // Log the dispensing action
+        DispensingLog::create([
+            'medicine_id'        => $medicine->id,
+            'medicine_name'      => $medicine->name,
+            'quantity_dispensed'  => $qty,
+            'unit'               => $medicine->unit,
+            'dispensed_by'       => auth()->id(),
+        ]);
 
         return back()->with('success', "Dispensed {$qty} {$medicine->unit} of \"{$medicine->name}\". Remaining stock: {$medicine->quantity} {$medicine->unit}.");
     }

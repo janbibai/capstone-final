@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DispensingLog;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
 use App\Models\Staff;
@@ -117,6 +118,20 @@ class RhuDashboardController extends Controller
             $q->orderBy('expiry_date', 'asc');
         }])->orderBy('name')->get();
 
+        // ── Medicine Dispensing Statistics ─────────────────────────────
+        $topDispensedMedicines = DB::table('dispensing_logs')
+            ->select(
+                'medicine_name',
+                'unit',
+                DB::raw('SUM(quantity_dispensed) as total_dispensed'),
+                DB::raw('COUNT(*) as dispense_count')
+            )
+            ->whereBetween('dispensed_at', [$startDate, $endDate])
+            ->groupBy('medicine_name', 'unit')
+            ->orderByDesc('total_dispensed')
+            ->limit(10)
+            ->get();
+
         return view('rhu.dashboard', [
             'groupedStatistics' => $groupedStatistics,
             'topDiseases' => $topDiseases,
@@ -135,6 +150,8 @@ class RhuDashboardController extends Controller
             'pendingStaff' => $pendingStaff,
             // Medicine inventory
             'medicines' => $medicines,
+            // Medicine dispensing statistics
+            'topDispensedMedicines' => $topDispensedMedicines,
         ]);
     }
 

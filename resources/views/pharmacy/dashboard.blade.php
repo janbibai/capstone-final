@@ -197,7 +197,7 @@
                                 @forelse($medicines as $index => $medicine)
                                     @php
                                         $isExpired = $medicine->expiry_date && $medicine->expiry_date->isPast();
-                                        $isExpiringSoon = $medicine->expiry_date && !$isExpired && $medicine->expiry_date->diffInDays(now()) <= 30;
+                                        $isExpiringSoon = $medicine->expiry_date && !$isExpired && now()->diffInDays($medicine->expiry_date) <= 30;
                                         $isOutOfStock = $medicine->quantity === 0;
                                         $isLowStock = $medicine->quantity > 0 && $medicine->quantity <= 10;
                                     @endphp

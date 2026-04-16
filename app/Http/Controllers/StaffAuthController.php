@@ -52,11 +52,33 @@ class StaffAuthController extends Controller
         return strtolower(trim($staff->position ?? '')) === 'admin';
     }
 
+    /**
+     * Check if the current staff user is pharmacy personnel.
+     */
+    private function isPharmacy(): bool
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->staff || ! $user->staff->is_active) {
+            return false;
+        }
+        $staff = $user->staff;
+        if (Schema::hasColumn('staff', 'role_id') && $staff->role_id) {
+            $role = $staff->relationLoaded('role') ? $staff->role : $staff->role()->first();
+            if ($role && strtolower($role->name) === 'pharmacy') {
+                return true;
+            }
+        }
+        return strtolower(trim($staff->position ?? '')) === 'pharmacy';
+    }
+
     public function showLoginForm()
     {
         if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
             if ($this->isAdmin()) {
                 return redirect()->route('rhu.dashboard');
+            }
+            if ($this->isPharmacy()) {
+                return redirect()->route('pharmacy.dashboard');
             }
             return redirect()->route($this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard');
         }
@@ -93,6 +115,8 @@ class StaffAuthController extends Controller
 
         if ($this->isAdmin()) {
             $dashboardRoute = 'rhu.dashboard';
+        } elseif ($this->isPharmacy()) {
+            $dashboardRoute = 'pharmacy.dashboard';
         } else {
             $dashboardRoute = $this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard';
         }
@@ -127,7 +151,7 @@ class StaffAuthController extends Controller
             'name'          => ['required', 'string', 'max:255'],
             'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'      => ['required', 'string', 'min:8', 'confirmed'],
-            'position'      => ['required', 'in:Staff,Doctor'],
+            'position'      => ['required', 'in:Staff,Doctor,Pharmacy'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
         ]);

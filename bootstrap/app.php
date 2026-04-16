@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureDoctor;
+use App\Http\Middleware\EnsurePharmacy;
 use App\Http\Middleware\EnsureStaff;
 use App\Http\Middleware\HandleCors;
 use App\Http\Middleware\PreventDashboardCache;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'doctor' => EnsureDoctor::class,
             'staff' => EnsureStaff::class,
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'pharmacy' => EnsurePharmacy::class,
             'dashboard.no-cache' => PreventDashboardCache::class,
         ]);
 

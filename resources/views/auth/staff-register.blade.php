@@ -70,6 +70,7 @@
                     <option value="" disabled {{ old('position') ? '' : 'selected' }}>Select position</option>
                     <option value="Staff" {{ old('position') === 'Staff' ? 'selected' : '' }}>Staff</option>
                     <option value="Doctor" {{ old('position') === 'Doctor' ? 'selected' : '' }}>Doctor</option>
+                    <option value="Pharmacy" {{ old('position') === 'Pharmacy' ? 'selected' : '' }}>Pharmacy</option>
                 </select>
             </div>
 

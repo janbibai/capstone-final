@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PharmacyDashboardController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\RhuDashboardController;
@@ -98,5 +99,10 @@ Route::middleware(['staff', 'doctor', 'dashboard.no-cache'])->prefix('doctor')->
     Route::get('/patients/{patient}/add-record', [DoctorDashboardController::class, 'addRecord'])->name('patients.add-record');
     Route::post('/medical-records', [DoctorDashboardController::class, 'storeRecord'])->name('medical-records.store');
     Route::get('/medical-records', [DoctorDashboardController::class, 'medicalRecords'])->name('medical-records');
+});
+
+// Pharmacy-only routes (staff + pharmacy role/position)
+Route::middleware(['staff', 'pharmacy', 'dashboard.no-cache'])->prefix('pharmacy')->name('pharmacy.')->group(function () {
+    Route::get('/dashboard', [PharmacyDashboardController::class, 'index'])->name('dashboard');
 });
 

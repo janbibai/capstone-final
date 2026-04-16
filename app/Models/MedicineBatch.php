@@ -9,6 +9,7 @@ class MedicineBatch extends Model
     protected $fillable = [
         'medicine_id',
         'quantity',
+        'unit',
         'expiry_date',
     ];
 

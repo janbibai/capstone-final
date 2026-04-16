@@ -233,57 +233,64 @@
                                                 @if($appointment->blood_pressure) <div><span class="font-semibold text-slate-400">BP:</span> {{ $appointment->blood_pressure }}</div> @endif
                                                 @if($appointment->temperature) <div><span class="font-semibold text-slate-400">T:</span> {{ $appointment->temperature }}°C</div> @endif
                                             </div>
-                                            <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.toggle('hidden')" 
+                                            <button type="button" onclick="document.getElementById('details-modal-{{ $appointment->id }}').classList.toggle('hidden')" 
                                                 class="text-[11px] text-emerald-600 hover:text-emerald-700 font-semibold uppercase tracking-wider">
                                                 Edit Vitals
                                             </button>
                                         @else
-                                            <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.toggle('hidden')" 
+                                            <button type="button" onclick="document.getElementById('details-modal-{{ $appointment->id }}').classList.toggle('hidden')" 
                                                 class="inline-flex items-center text-xs text-emerald-600 hover:text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 transition-colors">
                                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                                 Add Vitals
                                             </button>
                                         @endif
                                         
-                                        {{-- Form for updating details (Modern Popover) --}}
-                                        <form id="details-form-{{ $appointment->id }}" method="POST" action="{{ route('staff.appointments.updateDetails', $appointment) }}" 
-                                            class="hidden mt-2 bg-white border border-slate-200 rounded-xl p-4 shadow-xl absolute z-50 w-[260px] left-6 top-full ring-1 ring-slate-900/5">
-                                            @csrf
-                                            @method('PATCH')
-                                            <div class="flex justify-between items-center mb-3">
-                                                <h4 class="text-sm font-bold text-slate-800">Patient Vitals</h4>
-                                                <button type="button" onclick="document.getElementById('details-form-{{ $appointment->id }}').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                </button>
-                                            </div>
-                                            <div class="space-y-3 text-xs">
-                                                <div class="grid grid-cols-2 gap-3">
+                                        {{-- Form for updating details (Modal) --}}
+                                        <div id="details-modal-{{ $appointment->id }}" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm" onclick="if(event.target === this) this.classList.add('hidden')">
+                                            <form method="POST" action="{{ route('staff.appointments.updateDetails', $appointment) }}" 
+                                                class="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl w-full max-w-[320px] ring-1 ring-slate-900/5 animate-in zoom-in-95 duration-200">
+                                                @csrf
+                                                @method('PATCH')
+                                                <div class="flex justify-between items-start mb-5 border-b border-slate-100 pb-4">
                                                     <div>
-                                                        <label class="block text-slate-500 font-medium mb-1">Weight (kg)</label>
-                                                        <input type="number" step="0.01" name="weight" value="{{ old('weight', $appointment->weight) }}" 
-                                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                        <h4 class="text-base font-bold text-slate-900">Patient Vitals</h4>
+                                                        <p class="text-xs font-medium text-slate-500 mt-0.5">{{ $appointment->patient ? $appointment->patient->first_name . ' ' . $appointment->patient->last_name : 'No patient' }}</p>
+                                                    </div>
+                                                    <button type="button" onclick="document.getElementById('details-modal-{{ $appointment->id }}').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-1.5 rounded-lg transition-colors outline-none">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    </button>
+                                                </div>
+                                                <div class="space-y-4">
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Weight (kg)</label>
+                                                            <input type="number" step="0.01" name="weight" value="{{ old('weight', $appointment->weight) }}" 
+                                                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Height (cm)</label>
+                                                            <input type="number" step="0.01" name="height" value="{{ old('height', $appointment->height) }}" 
+                                                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                        </div>
                                                     </div>
                                                     <div>
-                                                        <label class="block text-slate-500 font-medium mb-1">Height (cm)</label>
-                                                        <input type="number" step="0.01" name="height" value="{{ old('height', $appointment->height) }}" 
-                                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Blood Pressure</label>
+                                                        <input type="text" name="blood_pressure" value="{{ old('blood_pressure', $appointment->blood_pressure) }}" placeholder="120/80" 
+                                                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Temperature (°C)</label>
+                                                        <input type="number" step="0.1" name="temperature" value="{{ old('temperature', $appointment->temperature) }}" 
+                                                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                                    </div>
+                                                    <div class="pt-3">
+                                                        <button type="submit" class="w-full bg-emerald-600 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-emerald-700 transition-colors shadow-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                                                            Save Vitals
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <label class="block text-slate-500 font-medium mb-1">Blood Pressure</label>
-                                                    <input type="text" name="blood_pressure" value="{{ old('blood_pressure', $appointment->blood_pressure) }}" placeholder="120/80" 
-                                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-slate-500 font-medium mb-1">Temperature (°C)</label>
-                                                    <input type="number" step="0.1" name="temperature" value="{{ old('temperature', $appointment->temperature) }}" 
-                                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
-                                                </div>
-                                                <div class="pt-2 flex gap-2">
-                                                    <button type="submit" class="flex-1 bg-emerald-600 text-white font-medium px-3 py-2 rounded-lg hover:bg-emerald-700 transition-colors">Save Vitals</button>
-                                                </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($appointment->status === 'completed')

@@ -805,7 +805,7 @@
                                                                     <tr class="hover:bg-gray-50 {{ $batchExpired ? 'bg-red-50/50' : '' }}">
                                                                         <td class="px-4 py-2.5 text-gray-500 font-medium">#{{ $bIndex + 1 }}</td>
                                                                         <td class="px-4 py-2.5 text-right font-bold {{ $batchEmpty ? 'text-gray-300' : ($batchExpired ? 'text-red-600' : 'text-gray-800') }}">
-                                                                            {{ number_format($batch->quantity) }} {{ $medicine->unit }}
+                                                                            {{ number_format($batch->quantity) }} {{ $batch->unit ?? $medicine->unit }}
                                                                         </td>
                                                                         <td class="px-4 py-2.5">
                                                                             @if($batch->expiry_date)
@@ -831,7 +831,7 @@
                                                                         <td class="px-4 py-2.5 text-center">
                                                                             @if($batchExpired || $batchEmpty)
                                                                                 <form method="POST" action="{{ route('rhu.batches.delete', $batch) }}"
-                                                                                    onsubmit="return confirm('Remove this batch? This will deduct {{ $batch->quantity }} {{ $medicine->unit }} from total stock.')">
+                                                                                    onsubmit="return confirm('Remove this batch? This will deduct {{ $batch->quantity }} {{ $batch->unit ?? $medicine->unit }} from total stock.')">
                                                                                     @csrf
                                                                                     @method('DELETE')
                                                                                     <button type="submit"
@@ -1030,11 +1030,22 @@
                             <p id="add-stock-medicine-name" class="text-sm font-bold text-gray-800 mt-0.5"></p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity to Add *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity and Unit to Add *</label>
                             <div class="flex items-center space-x-2">
                                 <input type="number" name="add_quantity" id="add-stock-quantity" min="1" value="1" required
-                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
-                                <span id="add-stock-unit" class="text-sm text-gray-500 font-medium whitespace-nowrap"></span>
+                                    class="w-2/3 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
+                                <select name="unit" id="add-stock-unit" required
+                                    class="w-1/3 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none bg-white">
+                                    <option value="pcs">Pieces (pcs)</option>
+                                    <option value="tablets">Tablets</option>
+                                    <option value="capsules">Capsules</option>
+                                    <option value="bottles">Bottles</option>
+                                    <option value="vials">Vials</option>
+                                    <option value="sachets">Sachets</option>
+                                    <option value="tubes">Tubes</option>
+                                    <option value="ml">Milliliters (ml)</option>
+                                    <option value="boxes">Boxes</option>
+                                </select>
                             </div>
                         </div>
                         <div>
@@ -1324,7 +1335,18 @@
             form.action = `/rhu/medicines/${id}/add-stock`;
 
             document.getElementById('add-stock-medicine-name').textContent = name;
-            document.getElementById('add-stock-unit').textContent = unit;
+            
+            // Set the default unit from existing medicine
+            const unitSelect = document.getElementById('add-stock-unit');
+            const unitOption = Array.from(unitSelect.options).find(opt => opt.value === unit);
+            if (unitOption) {
+                unitSelect.value = unit;
+            } else {
+                // If it's a custom unit not in the list, just leave whatever or append it?
+                // Let's just try to match it or leave default
+                unitSelect.value = 'pcs'; 
+            }
+
             document.getElementById('add-stock-quantity').value = 1;
             document.getElementById('add-stock-expiry').value = '';
 

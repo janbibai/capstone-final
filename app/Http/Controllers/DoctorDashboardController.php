@@ -7,6 +7,7 @@ use App\Models\Diagnosis;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\Prescription;
+use App\Models\Medicine;
 use Illuminate\Http\Request;
 
 class DoctorDashboardController extends Controller
@@ -77,10 +78,12 @@ class DoctorDashboardController extends Controller
         }
 
         $diagnoses = Diagnosis::orderBy('name')->get();
+        $medicines = Medicine::where('is_active', true)->orderBy('name')->get();
 
         return view('doctor.add-record', [
             'patient' => $patient,
             'diagnoses' => $diagnoses,
+            'medicines' => $medicines,
             'currentRecord' => $currentRecord,
             'appointment' => $appointment,
         ]);

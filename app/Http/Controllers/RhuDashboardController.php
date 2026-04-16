@@ -243,6 +243,7 @@ class RhuDashboardController extends Controller
         if ($medicine->quantity > 0 || $medicine->expiry_date) {
             $medicine->batches()->create([
                 'quantity'    => $medicine->quantity,
+                'unit'        => $medicine->unit,
                 'expiry_date' => $medicine->expiry_date,
             ]);
         }
@@ -277,17 +278,19 @@ class RhuDashboardController extends Controller
     {
         $request->validate([
             'add_quantity' => ['required', 'integer', 'min:1'],
+            'unit'         => ['required', 'string', 'max:50'],
             'expiry_date'  => ['nullable', 'date'],
         ]);
 
         $medicine->batches()->create([
             'quantity'    => $request->add_quantity,
+            'unit'        => $request->unit,
             'expiry_date' => $request->expiry_date,
         ]);
 
         $medicine->syncStockFromBatches();
 
-        return back()->with('success', $request->add_quantity . ' ' . $medicine->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
+        return back()->with('success', $request->add_quantity . ' ' . $request->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
     }
 
     /**

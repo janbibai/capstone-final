@@ -148,7 +148,7 @@
                                             <div class="sm:col-span-2">
                                                 <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
                                                 <input type="text" name="prescriptions[{{ $i }}][medication_name]" value="{{ old("prescriptions.$i.medication_name", $rx->medication_name) }}" required
-                                                       placeholder="e.g. Amoxicillin"
+                                                       placeholder="e.g. Amoxicillin" list="medicine-list" autocomplete="off"
                                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                                             </div>
                                             <div>
@@ -184,6 +184,12 @@
                         <p id="no-prescriptions-msg" class="text-xs text-gray-400 italic mt-2" style="{{ ($currentRecord && $currentRecord->prescriptions->count()) ? 'display:none' : '' }}"> </p>
                     </div>
                     {{-- ═══════════════ End Prescriptions ═══════════════ --}}
+
+                    <datalist id="medicine-list">
+                        @foreach($medicines as $medicine)
+                            <option value="{{ $medicine->name }}"></option>
+                        @endforeach
+                    </datalist>
 
                     <div class="flex gap-3">
                         <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition">
@@ -252,7 +258,7 @@
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
                         <input type="text" name="prescriptions[${index}][medication_name]" required
-                               placeholder="e.g. Amoxicillin"
+                               placeholder="e.g. Amoxicillin" list="medicine-list" autocomplete="off"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                     </div>
                     <div>

@@ -198,10 +198,10 @@
                     </div>
 
                     <div>
-                        <label for="address" class="block text-sm font-semibold text-slate-700 mb-1.5">Full Address</label>
+                        <label for="address" class="block text-sm font-semibold text-slate-700 mb-1.5">Baranggay</label>
                         <input type="text" id="address" name="address" value="{{ old('address') }}" maxlength="50"
                                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                               placeholder="Street, Barangay, City, Province">
+                               placeholder="Baranggay">
                     </div>
                 </div>
             </div>

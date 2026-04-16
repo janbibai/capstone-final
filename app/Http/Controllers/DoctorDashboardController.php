@@ -54,7 +54,11 @@ class DoctorDashboardController extends Controller
                 ->first();
         }
 
-        if ($recordId) {
+        $forceNew = $request->query('new');
+
+        if ($forceNew) {
+            $currentRecord = null;
+        } elseif ($recordId) {
             $currentRecord = MedicalRecord::with(['diagnosis', 'prescriptions'])
                 ->where('id', $recordId)
                 ->where('patient_id', $patient->id)

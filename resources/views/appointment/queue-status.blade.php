@@ -3,8 +3,14 @@
 @section('title', 'Queue Status')
 
 @section('content')
-    <div class="min-h-screen bg-green-50 py-12 px-4">
-        <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8 border border-green-100">
+    <div class="relative min-h-screen py-12 px-4 font-sans">
+        {{-- Background Image --}}
+        <div class="fixed inset-0 -z-10">
+            <img src="{{ asset('images/pic.jpg') }}" alt="" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8 border border-green-100 relative z-10">
 
             <div class="mb-8 text-center">
                 <h2 class="text-3xl font-bold text-green-700">

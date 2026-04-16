@@ -4,14 +4,20 @@
 
 @section('content')
 
-<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    {{-- Background Image --}}
+    <div class="fixed inset-0 -z-10">
+        <img src="{{ asset('images/pic.jpg') }}" alt="" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-[2px]"></div>
+    </div>
+
     <div class="max-w-4xl mx-auto">
 
         <div class="mb-10 text-center">
-            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
-                Book an Appointment
+            <h2 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+                Patient Registration
             </h2>
-            <p class="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">
+            <p class="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
                 Please fill in your details below to register and schedule your visit.
             </p>
         </div>
@@ -67,7 +73,7 @@
             @csrf
 
             <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-6 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
                     <h3 class="text-lg font-semibold text-slate-800">Personal Information</h3>
                     <p class="text-sm text-slate-500 mt-1">Provide your basic identity details.</p>
                 </div>
@@ -164,7 +170,7 @@
             </div>
 
             <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-6 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
                     <h3 class="text-lg font-semibold text-slate-800">Contact Details</h3>
                 </div>
                 <div class="p-6 md:p-8 space-y-6">
@@ -201,7 +207,7 @@
             </div>
 
             <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
                     <h3 class="text-lg font-semibold text-slate-800">Appointment Details</h3>
                     <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
                 </div>
@@ -269,7 +275,7 @@
             <div class="flex justify-end">
                 <button type="submit" id="submit-btn"
                         class="w-full sm:w-auto inline-flex items-center justify-center bg-emerald-600 text-white px-8 py-3.5 rounded-xl shadow-sm hover:bg-emerald-700 hover:shadow transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed min-w-[200px]">
-                    <span id="submit-text">Book Appointment</span>
+                    <span id="submit-text">Register</span>
                     <span id="submit-spinner" class="hidden flex items-center">
                         <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -3,34 +3,35 @@
 @section('content')
 
     {{-- HERO SECTION --}}
-    <section class="relative bg-slate-50 py-20 sm:py-28 overflow-hidden font-sans">
-        <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#059669 1px, transparent 1px); background-size: 24px 24px;"></div>
-        
-        <div class="absolute top-0 -left-40 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute top-0 -right-40 w-96 h-96 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <section class="relative py-20 sm:py-28 overflow-hidden font-sans">
+        {{-- Background Image --}}
+        <div class="absolute inset-0">
+            <img src="{{ asset('images/pic.jpg') }}" alt="" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/70 to-slate-900/50"></div>
+        </div>
 
         <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
                 {{-- LEFT CONTENT --}}
                 <div class="max-w-2xl">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 mb-8 text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/80 rounded-full border border-emerald-200/50 backdrop-blur-sm">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 mb-8 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 rounded-full border border-emerald-400/30 backdrop-blur-sm">
                         <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                         </span>
                         Community Health First
                     </span>
 
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] tracking-tight">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
                         Quality Healthcare
                         <br />
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
                             Made Accessible
                         </span>
                     </h1>
 
-                    <p class="mt-6 text-lg text-slate-600 leading-relaxed max-w-lg">
+                    <p class="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg">
                         Book appointments online and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
                     </p>
 
@@ -38,11 +39,11 @@
                         <a href="{{ route('appointment.create') }}"
                            class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all duration-300">
                             <span class="material-symbols-outlined text-[20px]">calendar_today</span>
-                            Book Your Appointment
+                            Patient Registration
                         </a>
 
                         <a href="{{ route('appointment.queueStatus') }}"
-                           class="inline-flex items-center justify-center gap-2 bg-white border-2 border-slate-200 hover:border-emerald-200 hover:bg-emerald-50 px-8 py-4 rounded-xl text-sm font-bold text-slate-700 hover:text-emerald-700 transition-all duration-300">
+                           class="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 hover:border-emerald-400/50 hover:bg-emerald-500/20 px-8 py-4 rounded-xl text-sm font-bold text-white hover:text-emerald-300 transition-all duration-300">
                             <span class="material-symbols-outlined text-[20px]">queue</span>
                             Check Queue Status
                         </a>
@@ -50,15 +51,15 @@
                 </div>
 
                 {{-- RIGHT VISUAL --}}
-                <div class="relative flex justify-center lg:justify-end">
-                    <div class="relative w-full max-w-lg bg-gradient-to-br from-emerald-400 to-teal-600 rounded-[2.5rem] shadow-2xl shadow-teal-600/20 p-10 flex items-center justify-center min-h-[400px] overflow-hidden transform hover:-translate-y-2 transition-transform duration-500">
+                {{-- <div class="relative flex justify-center lg:justify-end">
+                    <div class="relative w-full max-w-lg bg-white/10 backdrop-blur-md rounded-[2.5rem] shadow-2xl shadow-black/20 p-10 flex items-center justify-center min-h-[400px] overflow-hidden transform hover:-translate-y-2 transition-transform duration-500 border border-white/20">
                         <div class="relative z-10 w-56 h-72 bg-white/10 backdrop-blur-md rounded-3xl border border-white/30 flex flex-col items-center justify-center shadow-2xl">
                             <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-8 shadow-inner border border-white/20">
                                 <span class="material-symbols-outlined text-white text-5xl drop-shadow-md">medical_services</span>
-                            </div>
+                            </div> --}}
 
                             {{-- Carousel dots --}}
-                            <div class="flex gap-2.5">
+                            {{-- <div class="flex gap-2.5">
                                 <span class="w-2 h-2 rounded-full bg-white shadow-sm"></span>
                                 <span class="w-2 h-2 rounded-full bg-white/40"></span>
                                 <span class="w-2 h-2 rounded-full bg-white/40"></span>
@@ -69,7 +70,7 @@
                         <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                         <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-800/20 rounded-full blur-2xl"></div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>

@@ -78,6 +78,16 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="p-4 rounded-xl bg-rose-50 text-rose-800 border border-rose-200 shadow-sm">
+                    <ul class="list-disc pl-5 space-y-1 text-sm font-medium">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- ─── KPI SUMMARY CARDS ──────────────────────────── --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 {{-- Total Medicines --}}
@@ -180,6 +190,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Unit</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Expiry Date</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 bg-white">
@@ -227,10 +238,22 @@
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Stock</span>
                                             @endif
                                         </td>
+                                        <td class="px-6 py-4 text-center">
+                                            @if(!$isOutOfStock && !$isExpired)
+                                                <button type="button"
+                                                    onclick="openDispenseModal({{ $medicine->id }}, '{{ addslashes($medicine->name) }}', {{ $medicine->quantity }}, '{{ $medicine->unit }}')"
+                                                    class="inline-flex items-center gap-1.5 bg-teal-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-teal-700 shadow-sm transition-all focus:ring-2 focus:ring-teal-500/20">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                                    Dispense
+                                                </button>
+                                            @else
+                                                <span class="text-slate-300 text-xs">—</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-16 text-center">
+                                        <td colspan="9" class="px-6 py-16 text-center">
                                             <div class="mx-auto w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-slate-50/50">
                                                 <svg class="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
@@ -363,7 +386,67 @@
         </div>
     </main>
 
+    {{-- ═══ Dispense Medicine Modal ═══ --}}
+    <dialog id="dispenseModal" class="p-0 bg-transparent backdrop:bg-slate-900/50 open:animate-in open:fade-in open:zoom-in-95 rounded-2xl shadow-xl w-full max-w-md m-auto">
+        <div class="bg-white rounded-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Dispense Medicine</h3>
+                    <p class="text-xs font-medium text-slate-500 mt-0.5" id="dispenseModalSubtitle"></p>
+                </div>
+                <button type="button" onclick="document.getElementById('dispenseModal').close()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-xl transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="dispenseForm" method="POST" class="p-6">
+                @csrf
+                <div class="mb-4">
+                    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-teal-900" id="dispenseModalName"></p>
+                            <p class="text-sm text-teal-700">Available: <span class="font-bold" id="dispenseModalStock"></span></p>
+                        </div>
+                    </div>
+
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Quantity to Dispense</label>
+                    <input type="number" name="quantity" id="dispenseQtyInput" min="1" required
+                        class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all shadow-sm"
+                        placeholder="Enter quantity...">
+                    <p class="text-xs text-slate-400 mt-2">This will deduct the entered amount from the medicine inventory.</p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="document.getElementById('dispenseModal').close()"
+                        class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="bg-teal-600 text-white hover:bg-teal-700 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-teal-500/20 inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        Confirm Dispense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
     <script>
+        // ─── Dispense Modal ───────────────────────────────────────
+        function openDispenseModal(id, name, stock, unit) {
+            document.getElementById('dispenseForm').action = '/pharmacy/medicines/' + id + '/dispense';
+            document.getElementById('dispenseModalName').textContent = name;
+            document.getElementById('dispenseModalSubtitle').textContent = name;
+            document.getElementById('dispenseModalStock').textContent = stock + ' ' + unit;
+            document.getElementById('dispenseQtyInput').max = stock;
+            document.getElementById('dispenseQtyInput').value = '';
+            document.getElementById('dispenseQtyInput').placeholder = 'Max: ' + stock;
+            document.getElementById('dispenseModal').showModal();
+        }
+
         // ─── Tab Switching ───────────────────────────────────────
         function switchTab(tab) {
             // Hide all panels

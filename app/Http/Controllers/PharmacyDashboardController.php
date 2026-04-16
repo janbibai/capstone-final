@@ -52,4 +52,27 @@ class PharmacyDashboardController extends Controller
             'todayPrescriptionCount' => $todayPrescriptionCount,
         ]);
     }
+
+    /**
+     * Dispense medicine — deduct the given quantity from inventory.
+     */
+    public function dispense(Request $request, Medicine $medicine)
+    {
+        $request->validate([
+            'quantity' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $qty = (int) $request->quantity;
+
+        if ($qty > $medicine->quantity) {
+            return back()->withErrors([
+                'quantity' => "Insufficient stock for \"{$medicine->name}\". Available: {$medicine->quantity} {$medicine->unit}.",
+            ]);
+        }
+
+        $medicine->decrement('quantity', $qty);
+
+        return back()->with('success', "Dispensed {$qty} {$medicine->unit} of \"{$medicine->name}\". Remaining stock: {$medicine->quantity} {$medicine->unit}.");
+    }
 }
+

@@ -104,5 +104,6 @@ Route::middleware(['staff', 'doctor', 'dashboard.no-cache'])->prefix('doctor')->
 // Pharmacy-only routes (staff + pharmacy role/position)
 Route::middleware(['staff', 'pharmacy', 'dashboard.no-cache'])->prefix('pharmacy')->name('pharmacy.')->group(function () {
     Route::get('/dashboard', [PharmacyDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/medicines/{medicine}/dispense', [PharmacyDashboardController::class, 'dispense'])->name('medicines.dispense');
 });
 

@@ -15,5 +15,10 @@
         "pusher-js": "^8.4.0",
         "tailwindcss": "^4.1.18",
         "vite": "^7.0.7"
+    },
+    "dependencies": {
+        "@fontsource/inter": "^5.2.8",
+        "@fontsource/outfit": "^5.2.8",
+        "material-symbols": "^0.44.2"
     }
 }

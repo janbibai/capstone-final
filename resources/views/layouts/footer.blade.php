@@ -3,9 +3,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div class="col-span-1 md:col-span-1">
                 <div class="flex items-center gap-2 mb-6">
-                    <div class="bg-primary p-1 rounded-lg">
-                        <span class="material-symbols-outlined text-white text-xl">health_and_safety</span>
-                    </div>
+                    <img src="{{ asset('images/ZamboanguitaLogo.png') }}" alt="RHU Logo" class="w-8 h-8 rounded-lg object-contain">
                     <h2 class="text-xl font-bold text-white">Rural Health Unit</h2>
                 </div>
                 <p class="text-sm leading-relaxed">Dedicated to bringing world-class healthcare to our rural communities through technology and compassion.</p>

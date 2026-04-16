@@ -172,7 +172,6 @@
                         <h3 class="text-2xl font-bold text-slate-900 mb-1">Dr. Louise Pinili Cas</h3>
                         <p class="text-emerald-600 font-semibold text-sm mb-4 uppercase tracking-wider">General Physician</p>
                         <p class="text-slate-600 leading-relaxed mb-8">Expert in preventive medicine with over 12 years of experience in rural community health.</p>
-                        <button class="w-full py-3.5 bg-emerald-50 text-emerald-700 font-bold rounded-xl hover:bg-emerald-600 hover:text-white transition-colors duration-300">View Profile</button>
                     </div>
                 </div>
                 
@@ -184,7 +183,6 @@
                         <h3 class="text-2xl font-bold text-slate-900 mb-1">Dr. Angelo Electona</h3>
                         <p class="text-emerald-600 font-semibold text-sm mb-4 uppercase tracking-wider">General Physician</p>
                         <p class="text-slate-600 leading-relaxed mb-8">Specializing in child development and pediatric infectious diseases for over 8 years.</p>
-                        <button class="w-full py-3.5 bg-emerald-50 text-emerald-700 font-bold rounded-xl hover:bg-emerald-600 hover:text-white transition-colors duration-300">View Profile</button>
                     </div>
                 </div>
             </div>
@@ -206,7 +204,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-900 text-lg mb-1">Our Location</h4>
-                                    <p class="text-slate-600 leading-relaxed">123 Healthway Drive, San Jose Municipality,<br> Rural Province</p>
+                                    <p class="text-slate-600 leading-relaxed">Acupanda St., Poblacion, Zamboanguita,<br> Negros Oriental, 6218</p>
                                 </div>
                             </div>
                             
@@ -235,12 +233,7 @@
                     </div>
                     
                     <div class="relative h-80 lg:h-auto bg-slate-200">
-                        <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 z-10">
-                            <span class="material-symbols-outlined text-5xl mb-3 text-slate-400">map</span>
-                            <p class="font-semibold text-slate-600 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">Interactive Map Component</p>
-                        </div>
-                        <div class="absolute inset-0 bg-emerald-900/5 pointer-events-none z-0"></div>
-                        <img class="absolute inset-0 w-full h-full object-cover opacity-30 grayscale mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlm5P27H_WcG6dQeQAotKegkwcTINxhVsl0p-ZawXMiqhTn5SKySxHcYb-bCYby3dx6F39wBlCLisOv_yaHYgcK6KRPPpGrEGctwsMGi9ivniEfkZviSybIqUeCH_nWnophiH7Ni1iYydcDvLpVYkCCxVIwLpEG79KXGSXqPBSHXDGUU0VKPALleDcPHSY4Xk3qACF5pxqx9EgnMyGkbKr6RMx7E4tQ6Kw_k9qESTsmw2I1jr3oxe4WmAc6C8QFiEMln4gluqBqVU" alt="Map background"/>
+                        <iframe class="absolute inset-0 w-full h-full" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Zamboangita%20Rural%20Health%20Unit&t=&z=14&ie=UTF8&iwloc=B&output=embed"></iframe>
                     </div>
                 </div>
             </div>

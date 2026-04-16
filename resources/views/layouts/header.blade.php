@@ -4,9 +4,7 @@
 
             {{-- Logo --}}
             <a href="{{ url('/') }}" class="flex items-center gap-3">
-                <div class="bg-primary text-white w-10 h-10 rounded-lg flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl">health_and_safety</span>
-                </div>
+                <img src="{{ asset('images/ZamboanguitaLogo.png') }}" alt="RHU Logo" class="w-10 h-10 rounded-lg object-contain">
                 <span class="font-semibold text-lg text-gray-800">
                     RuralHealth Unit
                 </span>

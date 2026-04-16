@@ -7,8 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Medical Records</title>
     @vite('resources/css/app.css')
-    <!-- Optional: Inter font for a crisp, modern UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
     </style>
@@ -440,7 +438,6 @@
                 <head>
                     <title>Prescription - ${patient}</title>
                     <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
                         * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
                             font-family: 'Inter', Arial, sans-serif;

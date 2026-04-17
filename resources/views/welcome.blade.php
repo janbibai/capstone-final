@@ -14,15 +14,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
                 {{-- LEFT CONTENT --}}
-                <div class="max-w-2xl">
-                    <span class="inline-flex items-center gap-2 px-4 py-2 mb-8 text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 rounded-full border border-emerald-400/30 backdrop-blur-sm">
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-                        </span>
-                        Community Health First
-                    </span>
-
+                <div class="max-w-2xl text-center lg:text-center flex flex-col items-center lg:items-center">
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
                         Quality Healthcare
                         <br />
@@ -31,46 +23,54 @@
                         </span>
                     </h1>
 
-                    <p class="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg">
-                        Register online as a patient or register on site and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
+                    <p class="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg mx-auto">
+                        Book appointments online and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
                     </p>
-
-                    <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('appointment.create') }}"
-                           class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all duration-300">
-                            <span class="material-symbols-outlined text-[20px]">calendar_today</span>
-                            Patient Registration
-                        </a>
-
-                        <a href="{{ route('appointment.queueStatus') }}"
-                           class="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border-2 border-white/20 hover:border-emerald-400/50 hover:bg-emerald-500/20 px-8 py-4 rounded-xl text-sm font-bold text-white hover:text-emerald-300 transition-all duration-300">
-                            <span class="material-symbols-outlined text-[20px]">queue</span>
-                            Check Queue Status
-                        </a>
-                    </div>
                 </div>
 
-                {{-- RIGHT VISUAL --}}
-                {{-- <div class="relative flex justify-center lg:justify-end">
-                    <div class="relative w-full max-w-lg bg-white/10 backdrop-blur-md rounded-[2.5rem] shadow-2xl shadow-black/20 p-10 flex items-center justify-center min-h-[400px] overflow-hidden transform hover:-translate-y-2 transition-transform duration-500 border border-white/20">
-                        <div class="relative z-10 w-56 h-72 bg-white/10 backdrop-blur-md rounded-3xl border border-white/30 flex flex-col items-center justify-center shadow-2xl">
-                            <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-8 shadow-inner border border-white/20">
-                                <span class="material-symbols-outlined text-white text-5xl drop-shadow-md">medical_services</span>
-                            </div> --}}
-
-                            {{-- Carousel dots --}}
-                            {{-- <div class="flex gap-2.5">
-                                <span class="w-2 h-2 rounded-full bg-white shadow-sm"></span>
-                                <span class="w-2 h-2 rounded-full bg-white/40"></span>
-                                <span class="w-2 h-2 rounded-full bg-white/40"></span>
-                                <span class="w-2 h-2 rounded-full bg-white/40"></span>
-                            </div>
+                {{-- RIGHT VISUAL / ACTIONS --}}
+                <div class="relative flex justify-center lg:justify-end">
+                    <div class="relative w-full max-w-md bg-white/10 backdrop-blur-xl rounded-[15px] shadow-2xl shadow-emerald-900/20 p-8 lg:p-10 flex flex-col items-center border border-white/20">
+                        
+                        <div class="text-center mb-8">
+                            <h3 class="text-2xl font-extrabold text-white mb-3">Skip the Waiting Room</h3>
+                            <p class="text-sm text-emerald-50/90 leading-relaxed">
+                                Take control of your health journey. Register online ahead of time or track your live queue status effortlessly.
+                            </p>
                         </div>
                         
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-800/20 rounded-full blur-2xl"></div>
+                        <div class="w-full flex flex-col gap-4">
+                            <a href="{{ route('appointment.create') }}"
+                               class="group relative overflow-hidden flex items-center gap-5 bg-emerald-600/95 hover:bg-emerald-500 text-white p-5 rounded-2xl shadow-lg shadow-emerald-600/30 hover:shadow-emerald-500/40 border border-emerald-400/30 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]">
+                                <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div class="bg-white/20 p-3.5 rounded-[1rem] flex-shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                                    <span class="material-symbols-outlined text-3xl drop-shadow-sm text-white">how_to_reg</span>
+                                </div>
+                                <div class="flex flex-col text-left">
+                                    <span class="text-lg font-bold tracking-wide">Register Now</span>
+                                    <span class="text-xs text-emerald-100 font-medium">Book your appointment in minutes</span>
+                                </div>
+                                <span class="material-symbols-outlined absolute right-6 text-white/50 group-hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">arrow_forward</span>
+                            </a>
+
+                            <a href="{{ route('appointment.queueStatus') }}"
+                               class="group relative overflow-hidden flex items-center gap-5 bg-slate-800/90 hover:bg-slate-700 text-white p-5 rounded-2xl shadow-lg shadow-slate-900/40 hover:shadow-slate-800/50 border border-slate-600/50 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]">
+                                <div class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div class="bg-emerald-500/20 border border-emerald-500/30 p-3.5 rounded-[1rem] flex-shrink-0 group-hover:bg-emerald-500/30 group-hover:scale-110 transition-all duration-300">
+                                    <span class="material-symbols-outlined text-3xl text-emerald-400 drop-shadow-sm">pending_actions</span>
+                                </div>
+                                <div class="flex flex-col text-left">
+                                    <span class="text-lg font-bold tracking-wide">Check Queue</span>
+                                    <span class="text-xs text-slate-300 font-medium">View real-time waiting position</span>
+                                </div>
+                                <span class="material-symbols-outlined absolute right-6 text-emerald-400/50 group-hover:text-emerald-400 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">arrow_forward</span>
+                            </a>
+                        </div>
+                        
+                        <div class="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+                        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-800/30 rounded-full blur-3xl -z-10 pointer-events-none"></div>
                     </div>
-                </div> --}}
+                </div>
 
             </div>
         </div>

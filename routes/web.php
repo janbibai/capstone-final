@@ -72,6 +72,12 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
     Route::patch('/staff/appointments/{appointment}/details', [StaffDashboardController::class, 'updateDetails'])
         ->name('staff.appointments.updateDetails');
 
+    // Staff Medical Records & Service Editing
+    Route::get('/staff/medical-records', [StaffDashboardController::class, 'medicalRecords'])
+        ->name('staff.medical-records');
+    Route::patch('/staff/appointments/{appointment}/service', [StaffDashboardController::class, 'updateService'])
+        ->name('staff.appointments.updateService');
+
     // RHU Dashboard (Admin Only)
     Route::middleware(['admin'])->group(function () {
         Route::get('/rhu/dashboard', [RhuDashboardController::class, 'index'])

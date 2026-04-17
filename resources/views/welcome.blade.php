@@ -32,7 +32,7 @@
                     </h1>
 
                     <p class="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg">
-                        Book appointments online and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
+                        Register online as a patient or register on site and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
                     </p>
 
                     <div class="mt-10 flex flex-col sm:flex-row gap-4">
@@ -131,8 +131,8 @@
                         <div class="w-24 h-24 bg-white rounded-full border-4 border-emerald-100 flex items-center justify-center mb-6 shadow-xl shadow-slate-200/50 group-hover:border-emerald-400 group-hover:scale-110 transition-all duration-300">
                             <span class="material-symbols-outlined text-emerald-600 text-4xl">event_available</span>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">1. Book Online</h4>
-                        <p class="text-slate-600 px-4">Select your service and preferred time slot through our secure website.</p>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">1. Register on site</h4>
+                        <p class="text-slate-600 px-4">Register on site and get your queue number.</p>
                     </div>
                     
                     <div class="flex flex-col items-center text-center relative group">
@@ -140,7 +140,7 @@
                             <span class="material-symbols-outlined text-emerald-600 text-4xl">qr_code_2</span>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 mb-3">2. Get Number</h4>
-                        <p class="text-slate-600 px-4">Instantly receive a digital queue number for your appointment.</p>
+                        <p class="text-slate-600 px-4">Instantly receive a queue number for your appointment.</p>
                     </div>
                     
                     <div class="flex flex-col items-center text-center relative group">
@@ -148,7 +148,7 @@
                             <span class="material-symbols-outlined text-white text-4xl">check_circle</span>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 mb-3">3. Check-in</h4>
-                        <p class="text-slate-600 px-4">Show your digital queue number or ID to the staff upon arrival.</p>
+                        <p class="text-slate-600 px-4">Show your queue number or ID to the staff upon arrival.</p>
                     </div>
                 </div>
             </div>

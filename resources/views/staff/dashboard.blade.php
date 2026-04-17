@@ -33,9 +33,15 @@
 
                 <!-- User Info & Logout -->
                 <div class="flex items-center space-x-4">
+                    <a href="{{ route('staff.medical-records') }}"
+                        class="text-sm font-semibold text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Medical Records
+                    </a>
+                    
                     @if (auth()->check() && strtolower(trim(auth()->user()->staff->position ?? '')) === 'admin')
                         <a href="{{ route('rhu.dashboard') }}"
-                            class="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">
+                            class="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors pl-4 border-l border-slate-200">
                             RHU Dashboard
                         </a>
                     @endif
@@ -300,19 +306,47 @@
                                                 </svg>
                                                 completed by Doctor
                                             </span>
+                                            <div class="mt-2 text-center text-[11px] text-slate-400 font-medium pt-1">
+                                                @if ($appointment->patient)
+                                                    <a href="{{ route('staff.medical-records', ['patient_id' => $appointment->patient_id]) }}"
+                                                        class="inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 text-[11px] font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-200 shadow-sm focus:ring-2 focus:ring-slate-500/20 transition-colors w-full">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                        View Records
+                                                    </a>
+                                                @else
+                                                    No additional actions
+                                                @endif
+                                            </div>
                                         @else
-                                            <form method="POST" action="{{ route('staff.appointments.updateStatus', $appointment) }}" class="flex items-center gap-2">
-                                                @csrf
-                                                @method('PATCH')
-                                                <select name="status" class="bg-slate-50 border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all cursor-pointer">
-                                                    <option value="not started" @selected($appointment->status === 'not started')>Not started</option>
-                                                    <option value="started" @selected($appointment->status === 'started')>Started</option>
-                                                    <option value="cancelled" @selected($appointment->status === 'cancelled')>Cancelled</option>
-                                                </select>
-                                                <button type="submit" class="bg-slate-900 text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:bg-slate-800 transition-all focus:ring-2 focus:ring-slate-900/20 shadow-sm">
-                                                    Update
-                                                </button>
-                                            </form>
+                                            <div class="flex flex-col gap-2">
+                                                <form method="POST" action="{{ route('staff.appointments.updateStatus', $appointment) }}" class="flex items-center gap-2">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="status" class="bg-slate-50 border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all cursor-pointer">
+                                                        <option value="not started" @selected($appointment->status === 'not started')>Not started</option>
+                                                        <option value="started" @selected($appointment->status === 'started')>Started</option>
+                                                        <option value="cancelled" @selected($appointment->status === 'cancelled')>Cancelled</option>
+                                                    </select>
+                                                    <button type="submit" class="bg-slate-900 text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:bg-slate-800 transition-all focus:ring-2 focus:ring-slate-900/20 shadow-sm">
+                                                        Update
+                                                    </button>
+                                                </form>
+                                                <div class="flex items-center gap-2">
+                                                    @if (in_array($appointment->status, ['not started', 'started']))
+                                                    <button type="button" onclick="openEditServiceModal({{ $appointment->id }}, {{ $appointment->service_id ?? 'null' }})"
+                                                        class="inline-flex flex-1 items-center justify-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold px-2 py-1.5 rounded-lg hover:bg-emerald-100 shadow-sm focus:ring-2 focus:ring-emerald-500/20 transition-colors">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                                        Edit Service
+                                                    </button>
+                                                    @endif
+                                                    @if ($appointment->patient)
+                                                    <a href="{{ route('staff.medical-records', ['patient_id' => $appointment->patient_id]) }}"
+                                                        class="inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold px-2 py-1.5 rounded-lg hover:bg-slate-200 shadow-sm focus:ring-2 focus:ring-slate-500/20 transition-colors" title="View Medical Records">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
@@ -338,5 +372,55 @@
             </div>
         </div>
     </main>
+
+    <!-- Edit Service Modal -->
+    <dialog id="editServiceModal" class="p-0 bg-transparent backdrop:bg-slate-900/50 open:animate-in open:fade-in open:zoom-in-95 rounded-2xl shadow-xl w-full max-w-sm m-auto">
+        <div class="bg-white rounded-2xl overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white/80 backdrop-blur-sm z-10">
+                <h3 class="text-lg font-bold text-slate-900">Edit Service</h3>
+                <button type="button" onclick="document.getElementById('editServiceModal').close()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-xl transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <form method="POST" id="editServiceForm" class="p-6">
+                @csrf
+                @method('PATCH')
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Select Service</label>
+                    <select name="service_id" id="serviceSelect" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all cursor-pointer">
+                        @if(isset($services))
+                            @foreach ($services as $service)
+                                <option value="{{ $service->id }}">{{ $service->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="document.getElementById('editServiceModal').close()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-slate-200 outline-none">
+                        Cancel
+                    </button>
+                    <button type="submit" class="inline-flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 px-5 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Save Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script>
+        function openEditServiceModal(appointmentId, serviceId) {
+            const form = document.getElementById('editServiceForm');
+            form.action = `/staff/appointments/${appointmentId}/service`;
+            
+            const select = document.getElementById('serviceSelect');
+            if (serviceId) {
+                select.value = serviceId;
+            }
+            
+            document.getElementById('editServiceModal').showModal();
+        }
+    </script>
 </body>
 </html>

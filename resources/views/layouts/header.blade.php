@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-50 bg-white border-b border-black/5">
+<header class="sticky top-0 z-50 bg-green-50/80 border-b border-slate-100">
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex items-center justify-between py-4">
 
@@ -17,7 +17,7 @@
                 <a href="{{ url('/#doctors') }}" class="hover:text-primary transition">Doctors</a>
                 {{-- <a href="{{ route('appointment.queueStatus') }}" class="hover:text-primary transition text-green-600 font-semibold">Queue Status</a> --}}
                 <a href="{{ url('/#contact') }}" class="hover:text-primary transition">Contact</a>
-                <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a>
+                {{-- <a href="{{ route('staff.login') }}" class="hover:text-primary transition">Login</a> --}}
             </nav>
 
             {{-- Desktop CTA --}}
@@ -44,10 +44,10 @@
                 <a href="{{ url('/#contact') }}" class="py-2 border-b border-black/5">Contact</a>
                 {{-- <a href="{{ route('staff.login') }}" class="py-2 border-b border-black/5">Login</a> --}}
 
-                <a href="{{ route('appointment.create') }}"
+                {{-- <a href="{{ route('appointment.create') }}"
                     class="mt-2 inline-flex justify-center bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-semibold transition">
                     Book Appointment
-                </a>
+                </a> --}}
             </div>
         </div>
 

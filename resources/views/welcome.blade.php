@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="flex flex-col text-left">
                                     <span class="text-lg font-bold tracking-wide">Register Now</span>
-                                    <span class="text-xs text-emerald-100 font-medium">Book your appointment in minutes</span>
+                                    <span class="text-xs text-emerald-100 font-medium">Register in minutes</span>
                                 </div>
                                 <span class="material-symbols-outlined absolute right-6 text-white/50 group-hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1">arrow_forward</span>
                             </a>

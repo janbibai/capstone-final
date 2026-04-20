@@ -22,7 +22,9 @@ Route::get('/appointments/create', [PatientController::class, 'create'])->name('
 Route::get('/appointments/queue-status', [PatientController::class, 'queueStatus'])->name('appointment.queueStatus');
 Route::get('/appointments/queue-status-data', [PatientController::class, 'getQueueStatusData'])->name('appointment.queueStatusData');
 Route::get('/appointments/booked-times', [PatientController::class, 'getBookedTimes'])->name('appointment.bookedTimes');
+Route::get('/appointments/lookup-patient', [PatientController::class, 'lookupPatient'])->name('appointment.lookupPatient');
 Route::post('/appointments', [PatientController::class, 'storePatient'])->name('appointment.storePatient');
+Route::post('/appointments/existing', [PatientController::class, 'storeExistingPatient'])->name('appointment.storeExisting');
 Route::post('/appointments/{id}/start', [PatientController::class, 'start'])
     ->name('appointments.start');
 

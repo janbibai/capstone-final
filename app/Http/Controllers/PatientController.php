@@ -92,6 +92,67 @@ class PatientController extends Controller
         return response()->json($formattedTimes);
     }
 
+    public function lookupPatient(Request $request)
+    {
+        $request->validate([
+            'first_name'    => 'required|string|max:30',
+            'last_name'     => 'required|string|max:30',
+            'date_of_birth' => 'required|date',
+        ]);
+
+        $patient = Patient::where('first_name', $request->first_name)
+            ->where('last_name', $request->last_name)
+            ->whereDate('date_of_birth', $request->date_of_birth)
+            ->first();
+
+        if (!$patient) {
+            return response()->json(['found' => false], 404);
+        }
+
+        return response()->json([
+            'found' => true,
+            'id'    => $patient->id,
+            'name'  => $patient->full_name,
+        ]);
+    }
+
+    public function storeExistingPatient(Request $request)
+    {
+        $data = $request->validate([
+            'patient_id'    => 'required|exists:patients,id',
+            'service_id'    => 'required|exists:services,id',
+            'schedule'      => 'required|date|after_or_equal:today',
+            'schedule_time' => 'required|date_format:H:i',
+        ]);
+
+        // Block if patient already has an active appointment on the chosen date
+        $alreadyBooked = Appointment::where('patient_id', $data['patient_id'])
+            ->where('schedule', $data['schedule'])
+            ->where('status', '!=', 'cancelled')
+            ->exists();
+
+        if ($alreadyBooked) {
+            return back()->withInput()->withErrors([
+                'schedule' => 'You already have an active appointment on this date. Please choose a different date.',
+            ]);
+        }
+
+        try {
+            $appointment = $this->appointmentService->schedule([
+                'patient_id'    => $data['patient_id'],
+                'service_id'    => $data['service_id'],
+                'schedule'      => $data['schedule'],
+                'schedule_time' => $data['schedule_time'],
+            ]);
+
+            return redirect()
+                ->route('appointment.create')
+                ->with('success', 'Appointment booked successfully! Your queue number is Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT));
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['schedule_time' => $e->getMessage()]);
+        }
+    }
+
     public function queueStatus()
     {
         return view('appointment.queue-status');

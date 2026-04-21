@@ -16,7 +16,7 @@ class EnsureDoctor
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::check()) {
-            return redirect()->route('staff.login');
+            return redirect()->route('doctor.login');
         }
 
         $user = Auth::user();

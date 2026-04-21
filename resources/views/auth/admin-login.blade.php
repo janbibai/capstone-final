@@ -1,12 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Staff Login')
+@section('title', 'Admin Login')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <div class="flex items-center justify-center mb-2">
+            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-slate-700 text-2xl">admin_panel_settings</span>
+            </div>
+        </div>
         <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
-            Staff Login
+            Admin Login
         </h2>
 
         @if (session('success'))
@@ -25,7 +30,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('staff.login.submit') }}" class="space-y-4">
+        <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-4">
             @csrf
 
             <div>
@@ -37,7 +42,7 @@
                        value="{{ old('email') }}"
                        required
                        autofocus
-                       class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+                       class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-slate-400 focus:outline-none">
             </div>
 
             <div>
@@ -47,25 +52,31 @@
                 <input type="password"
                        name="password"
                        required
-                       class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+                       class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-slate-400 focus:outline-none">
             </div>
 
             <div class="flex items-center justify-between text-sm">
                 <label class="inline-flex items-center">
                     <input type="checkbox"
                            name="remember"
-                           class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                           class="rounded border-gray-300 text-slate-600 focus:ring-slate-500">
                     <span class="ml-2 text-gray-600">Remember me</span>
                 </label>
             </div>
 
             <button type="submit"
-                    class="w-full bg-green-600 text-white py-2.5 rounded-xl font-semibold hover:bg-green-700 transition">
+                    class="w-full bg-slate-700 text-white py-2.5 rounded-xl font-semibold hover:bg-slate-800 transition">
                 Login
             </button>
         </form>
 
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Not an admin?
+            <a href="{{ route('staff.login') }}" class="text-green-600 font-semibold hover:underline">
+                Staff login here
+            </a>
+        </p>
+
     </div>
 </div>
 @endsection
-

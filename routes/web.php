@@ -63,6 +63,14 @@ Route::get('/staff/register', [StaffAuthController::class, 'showRegisterForm'])-
 Route::post('/staff/register', [StaffAuthController::class, 'register'])->name('staff.register.submit');
 Route::post('/staff/logout', [StaffAuthController::class, 'logout'])->name('staff.logout');
 
+// Doctor authentication
+Route::get('/doctor/login', [StaffAuthController::class, 'showDoctorLoginForm'])->name('doctor.login');
+Route::post('/doctor/login', [StaffAuthController::class, 'doctorLogin'])->name('doctor.login.submit');
+
+// Admin authentication
+Route::get('/admin/login', [StaffAuthController::class, 'showAdminLoginForm'])->name('admin.login');
+Route::post('/admin/login', [StaffAuthController::class, 'adminLogin'])->name('admin.login.submit');
+
 // Staff-only routes
 Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
     Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])

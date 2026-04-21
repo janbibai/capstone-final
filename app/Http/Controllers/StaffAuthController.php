@@ -74,13 +74,16 @@ class StaffAuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
+            if ($this->isDoctor()) {
+                return redirect()->route('doctor.dashboard');
+            }
             if ($this->isAdmin()) {
                 return redirect()->route('rhu.dashboard');
             }
             if ($this->isPharmacy()) {
                 return redirect()->route('pharmacy.dashboard');
             }
-            return redirect()->route($this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard');
+            return redirect()->route('staff.dashboard');
         }
 
         return view('auth.staff-login');
@@ -113,24 +116,184 @@ class StaffAuthController extends Controller
                 ->onlyInput('email');
         }
 
+        // Reject doctors from the staff login — direct them to doctor login
+        if ($this->isDoctor()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'Doctor accounts must use the Doctor Login page.'])
+                ->onlyInput('email');
+        }
+        
+        // Reject admins from the staff login — direct them to admin login
         if ($this->isAdmin()) {
-            $dashboardRoute = 'rhu.dashboard';
-        } elseif ($this->isPharmacy()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'Admin accounts must use the Admin Login page.'])
+                ->onlyInput('email');
+        }
+
+        // Now we know it's a standard staff or pharmacy
+        if ($this->isPharmacy()) {
             $dashboardRoute = 'pharmacy.dashboard';
         } else {
-            $dashboardRoute = $this->isDoctor() ? 'doctor.dashboard' : 'staff.dashboard';
+            $dashboardRoute = 'staff.dashboard';
         }
 
         return redirect()->intended(route($dashboardRoute));
     }
 
+    /**
+     * Show the doctor login form.
+     */
+    public function showDoctorLoginForm()
+    {
+        if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
+            if ($this->isDoctor()) {
+                return redirect()->route('doctor.dashboard');
+            }
+            if ($this->isAdmin()) {
+                return redirect()->route('rhu.dashboard');
+            }
+            if ($this->isPharmacy()) {
+                return redirect()->route('pharmacy.dashboard');
+            }
+            return redirect()->route('staff.dashboard');
+        }
+
+        return view('auth.doctor-login');
+    }
+
+    /**
+     * Handle doctor login submission.
+     */
+    public function doctorLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            return back()
+                ->withErrors(['email' => 'These credentials do not match our records.'])
+                ->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if (! $user->staff || ! $user->staff->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'You are not authorized.'])
+                ->onlyInput('email');
+        }
+
+        // Only allow doctors through this login
+        if (! $this->isDoctor()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'This login is for doctors only. Please use the Staff Login page.'])
+                ->onlyInput('email');
+        }
+
+        return redirect()->intended(route('doctor.dashboard'));
+    }
+
+    /**
+     * Show the admin login form.
+     */
+    public function showAdminLoginForm()
+    {
+        if (Auth::check() && Auth::user()->staff && Auth::user()->staff->is_active) {
+            if ($this->isAdmin()) {
+                return redirect()->route('rhu.dashboard');
+            }
+            if ($this->isDoctor()) {
+                return redirect()->route('doctor.dashboard');
+            }
+            if ($this->isPharmacy()) {
+                return redirect()->route('pharmacy.dashboard');
+            }
+            return redirect()->route('staff.dashboard');
+        }
+
+        return view('auth.admin-login');
+    }
+
+    /**
+     * Handle admin login submission.
+     */
+    public function adminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            return back()
+                ->withErrors(['email' => 'These credentials do not match our records.'])
+                ->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if (! $user->staff || ! $user->staff->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'You are not authorized.'])
+                ->onlyInput('email');
+        }
+
+        // Only allow admins through this login
+        if (! $this->isAdmin()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'This login is for administrators only. Please use the Staff Login page.'])
+                ->onlyInput('email');
+        }
+
+        return redirect()->intended(route('rhu.dashboard'));
+    }
+
     public function logout(Request $request)
     {
+        // Determine where to redirect before logging out
+        $isDoctor = $this->isDoctor();
+        $isAdmin = $this->isAdmin();
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        if ($isDoctor) {
+            return redirect()->route('doctor.login');
+        } elseif ($isAdmin) {
+            return redirect()->route('admin.login');
+        }
         return redirect('/');
     }
 

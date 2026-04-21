@@ -79,7 +79,7 @@
                 </div>
                 <div>
                     <h3 class="text-emerald-900 font-bold text-base">Already a patient?</h3>
-                    <p class="text-emerald-700 text-sm mt-0.5">Skip the forms and book an appointment instantly.</p>
+                    <p class="text-emerald-700 text-sm mt-0.5">Skip the forms and look up your name.</p>
                 </div>
             </div>
             <button type="button" onclick="openReturningModal()"
@@ -427,7 +427,7 @@
 
                     <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
                         <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
-                            <h3 class="text-lg font-semibold text-slate-800">Appointment Details</h3>
+                            <h3 class="text-lg font-semibold text-slate-800">Choose Service</h3>
                             <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
                         </div>
                         <div class="p-6 md:p-8 space-y-6">

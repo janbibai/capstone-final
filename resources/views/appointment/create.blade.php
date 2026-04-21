@@ -233,7 +233,7 @@
                             <label for="service_id" class="block text-sm font-semibold text-slate-700 mb-1.5">Service Type <span class="text-red-500">*</span></label>
                             <select id="service_id" name="service_id" required aria-describedby="service_id-error service_id-help"
                                     class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none @error('service_id') border-red-300 focus:border-red-500 focus:ring-red-500/10 @enderror">
-                                <option value="" disabled {{ old('service_id') ? '' : 'selected' }}>-- Choose a Service --</option>
+                                <option value="" disabled {{ old('service_id') ? '' : 'selected' }}>Choose a Service</option>
                                 @foreach($services as $service)
                                     <option value="{{ $service->id }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>
                                         {{ ucfirst($service->name) }} — {{ $service->description }} ({{ $service->estimated_time }} min)

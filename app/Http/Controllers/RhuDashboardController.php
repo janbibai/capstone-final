@@ -111,9 +111,8 @@ class RhuDashboardController extends Controller
         $activeDepartments = DB::table('departments')->where('is_active', true)->count();
         $diagnosesRecorded = DB::table('medical_records')->whereBetween('created_on', [$startDate, $endDate])->count();
 
-        // ── Pending Staff Registrations ───────────────────────────────
-        $pendingStaff = Staff::with(['user', 'department'])
-            ->where('is_active', false)
+        // ── Staff Accounts ───────────────────────────────
+        $staffAccounts = Staff::with(['user', 'department'])
             ->orderByDesc('created_at')
             ->get();
 
@@ -136,6 +135,15 @@ class RhuDashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // ── Tabular Chronological Dispensing Logs ──────────────────────
+        $dispensingLogsTabular = DispensingLog::with([
+                'prescription.medicalRecord.patient',
+                'dispenser'
+            ])
+            ->whereBetween('dispensed_at', [$startDate, $endDate])
+            ->orderByDesc('dispensed_at')
+            ->get();
+
             // ── Departments (for create-account form) ─────────────────
             $departments = Department::where('is_active', true)->orderBy('name')->get();
 
@@ -153,12 +161,13 @@ class RhuDashboardController extends Controller
                 'pendingToday' => $pendingToday,
                 'activeDepartments' => $activeDepartments,
                 'diagnosesRecorded' => $diagnosesRecorded,
-                // Pending registrations
-                'pendingStaff' => $pendingStaff,
+                // Staff accounts
+                'staffAccounts' => $staffAccounts,
                 // Medicine inventory
                 'medicines' => $medicines,
                 // Medicine dispensing statistics
                 'topDispensedMedicines' => $topDispensedMedicines,
+                'dispensingLogsTabular' => $dispensingLogsTabular,
                 // Departments
                 'departments' => $departments,
             ]);

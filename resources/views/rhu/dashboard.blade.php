@@ -138,10 +138,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
+<<<<<<< HEAD
                     <span>Staff Approvals</span>
                     @if($pendingStaff->count() > 0)
                         <span class="ml-auto inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingStaff->count() }}</span>
                     @endif
+=======
+                    <span>Staff Management</span>
+>>>>>>> 703c8a7916a026183fafe9efc8d10a9361ca9889
                 </a>
                 <a href="#medicine-inventory" onclick="showSection('medicine-inventory')" id="link-medicine-inventory"
                     class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
@@ -525,32 +529,102 @@
                         No medicines have been dispensed for the selected period.
                     </div>
                 @endif
+
+                {{-- Chronological Logs --}}
+                <div class="mt-8 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Dispensing Logs</h3>
+                    <p class="text-gray-500 text-sm mt-1">Chronological history of medicines dispensed — selected period</p>
+                </div>
+
+                @if ($dispensingLogsTabular->isEmpty())
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center text-gray-500">
+                        No dispensing events recorded for the selected period.
+                    </div>
+                @else
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">Date & Time</th>
+                                        <th class="px-6 py-3">Patient</th>
+                                        <th class="px-6 py-3">Medicine Dispensed</th>
+                                        <th class="px-6 py-3 text-right">Quantity</th>
+                                        <th class="px-6 py-3">Dispensed By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($dispensingLogsTabular as $log)
+                                        <tr class="border-t border-gray-100 hover:bg-gray-50">
+                                            <td class="px-6 py-3 text-gray-500 text-xs whitespace-nowrap">
+                                                {{ $log->dispensed_at->format('M d, Y h:i A') }}
+                                            </td>
+                                            <td class="px-6 py-3 font-medium text-gray-900">
+                                                @if($log->prescription && $log->prescription->medicalRecord && $log->prescription->medicalRecord->patient)
+                                                    {{ $log->prescription->medicalRecord->patient->first_name }} {{ $log->prescription->medicalRecord->patient->last_name }}
+                                                @else
+                                                    <span class="text-gray-400 italic">Unknown</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-3">
+                                                {{ $log->medicine_name }}
+                                            </td>
+                                            <td class="px-6 py-3 text-right font-medium">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-indigo-50 text-indigo-700">
+                                                    {{ $log->quantity_dispensed }} {{ $log->unit }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-3 text-gray-600">
+                                                {{ $log->dispenser->name ?? '—' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
             </section>
 
             {{-- ════════════════════════════════════════════ --}}
             {{-- SECTION: Staff Approvals                   --}}
             {{-- ════════════════════════════════════════════ --}}
             <section id="section-staff-approvals" class="section-content hidden mt-2">
+<<<<<<< HEAD
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Staff Approvals</h2>
                     <p class="text-gray-500 text-sm mt-1">Review and approve pending staff & doctor registrations</p>
+=======
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Staff Management</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage staff accounts</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('create-staff-modal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Create Account
+                    </button>
+>>>>>>> 703c8a7916a026183fafe9efc8d10a9361ca9889
                 </div>
 
-                @if ($pendingStaff->isEmpty())
+                @if ($staffAccounts->isEmpty())
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center">
                         <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p class="text-gray-500 font-medium">No pending registrations</p>
-                        <p class="text-gray-400 text-sm mt-1">All staff accounts have been reviewed.</p>
+                        <p class="text-gray-500 font-medium">No staff accounts found</p>
+                        <p class="text-gray-400 text-sm mt-1">Click "Create Account" to add a new staff member.</p>
                     </div>
                 @else
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="px-6 py-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
+                        <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between">
                             <div>
-                                <h3 class="text-base font-bold text-amber-800">Pending Registrations</h3>
-                                <p class="text-xs text-amber-600 mt-0.5">{{ $pendingStaff->count() }} account(s) awaiting approval</p>
+                                <h3 class="text-base font-bold text-indigo-800">Staff Accounts</h3>
+                                <p class="text-xs text-indigo-600 mt-0.5">{{ $staffAccounts->count() }} account(s)</p>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -564,12 +638,12 @@
                                         <th class="px-6 py-3">Department</th>
                                         <th class="px-6 py-3">Phone</th>
                                         <th class="px-6 py-3">Employee ID</th>
-                                        <th class="px-6 py-3">Registered</th>
-                                        <th class="px-6 py-3 text-center">Actions</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3">Added</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($pendingStaff as $index => $staff)
+                                    @foreach ($staffAccounts as $index => $staff)
                                         <tr class="border-t border-gray-100 hover:bg-gray-50">
                                             <td class="px-6 py-4 text-gray-400">{{ $index + 1 }}</td>
                                             <td class="px-6 py-4 font-medium text-gray-900">{{ $staff->user->name }}</td>
@@ -583,34 +657,14 @@
                                             <td class="px-6 py-4 text-gray-600">{{ $staff->department->name ?? '—' }}</td>
                                             <td class="px-6 py-4 text-gray-600">{{ $staff->phone ?? '—' }}</td>
                                             <td class="px-6 py-4 text-gray-600 font-mono text-xs">{{ $staff->employee_id }}</td>
-                                            <td class="px-6 py-4 text-gray-500 text-xs">{{ $staff->created_at->diffForHumans() }}</td>
                                             <td class="px-6 py-4">
-                                                <div class="flex items-center justify-center space-x-2">
-                                                    <form method="POST" action="{{ route('rhu.staff.approve', $staff) }}">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1">
-                                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                            Approve
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST" action="{{ route('rhu.staff.reject', $staff) }}"
-                                                        onsubmit="return confirm('Are you sure you want to reject this registration? This will permanently delete the account.')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1">
-                                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                            </svg>
-                                                            Reject
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                @if($staff->is_active)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Inactive</span>
+                                                @endif
                                             </td>
+                                            <td class="px-6 py-4 text-gray-500 text-xs">{{ $staff->created_at->format('M d, Y') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\DispensingLog;
 use App\Models\Medicine;
 use App\Models\MedicineBatch;
+use App\Models\Role;
 use App\Models\Staff;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class RhuDashboardController extends Controller
 {
@@ -132,27 +136,32 @@ class RhuDashboardController extends Controller
             ->limit(10)
             ->get();
 
-        return view('rhu.dashboard', [
-            'groupedStatistics' => $groupedStatistics,
-            'topDiseases' => $topDiseases,
-            'filter' => $filter,
-            'appointmentsPerMonth' => $appointmentsPerMonth,
-            'patientsPerDepartment' => $patientsPerDepartment,
-            'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
-            // Overview KPIs
-            'totalPatients' => $totalPatients,
-            'appointmentsToday' => $appointmentsToday,
-            'completedToday' => $completedToday,
-            'pendingToday' => $pendingToday,
-            'activeDepartments' => $activeDepartments,
-            'diagnosesRecorded' => $diagnosesRecorded,
-            // Pending registrations
-            'pendingStaff' => $pendingStaff,
-            // Medicine inventory
-            'medicines' => $medicines,
-            // Medicine dispensing statistics
-            'topDispensedMedicines' => $topDispensedMedicines,
-        ]);
+            // ── Departments (for create-account form) ─────────────────
+            $departments = Department::where('is_active', true)->orderBy('name')->get();
+
+            return view('rhu.dashboard', [
+                'groupedStatistics' => $groupedStatistics,
+                'topDiseases' => $topDiseases,
+                'filter' => $filter,
+                'appointmentsPerMonth' => $appointmentsPerMonth,
+                'patientsPerDepartment' => $patientsPerDepartment,
+                'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
+                // Overview KPIs
+                'totalPatients' => $totalPatients,
+                'appointmentsToday' => $appointmentsToday,
+                'completedToday' => $completedToday,
+                'pendingToday' => $pendingToday,
+                'activeDepartments' => $activeDepartments,
+                'diagnosesRecorded' => $diagnosesRecorded,
+                // Pending registrations
+                'pendingStaff' => $pendingStaff,
+                // Medicine inventory
+                'medicines' => $medicines,
+                // Medicine dispensing statistics
+                'topDispensedMedicines' => $topDispensedMedicines,
+                // Departments
+                'departments' => $departments,
+            ]);
     }
 
     /**
@@ -316,5 +325,54 @@ class RhuDashboardController extends Controller
         $medicine->delete();
 
         return back()->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
+    }
+
+    /**
+     * Create a new staff/doctor/pharmacy account directly (admin only).
+     * The account is created as active — no approval step needed.
+     */
+    public function createStaff(Request $request)
+    {
+        $request->validate([
+            'name'          => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password'      => ['required', 'string', 'min:8', 'confirmed'],
+            'position'      => ['required', 'in:Staff,Doctor,Pharmacy'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'phone'         => ['nullable', 'string', 'max:20'],
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Try to match a role by position name
+            $role = Role::where('name', $request->position)->first();
+
+            // Auto-generate employee ID
+            $latestStaff = Staff::orderByDesc('id')->first();
+            $nextNumber  = $latestStaff ? ($latestStaff->id + 1) : 1;
+            $employeeId  = 'EMP-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+            $staffData = [
+                'user_id'       => $user->id,
+                'department_id' => $request->department_id,
+                'employee_id'   => $employeeId,
+                'position'      => $request->position,
+                'phone'         => $request->phone,
+                'is_active'     => true,  // admin-created accounts are active immediately
+            ];
+
+            if (Schema::hasColumn('staff', 'role_id') && $role) {
+                $staffData['role_id'] = $role->id;
+            }
+
+            Staff::create($staffData);
+        });
+
+        return back()->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
     }
 }

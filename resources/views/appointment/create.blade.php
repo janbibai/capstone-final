@@ -22,31 +22,7 @@
             </p>
         </div>
 
-        @if(session('success'))
-            <div class="mb-8 p-4 rounded-xl bg-emerald-50 text-emerald-800 border-l-4 border-emerald-500 shadow-sm transition-all" role="alert">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0 mt-0.5">
-                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-emerald-900">Appointment Booked Successfully!</h3>
-                            <p class="text-emerald-700 text-sm mt-1">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                    <button type="button" 
-                            onclick="this.parentElement.parentElement.style.display='none'" 
-                            class="text-emerald-600 hover:text-emerald-900 ml-4 transition-colors" 
-                            aria-label="Dismiss success message">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        @endif
+
 
         @if($errors->any())
             <div class="mb-8 p-4 rounded-xl bg-red-50 text-red-800 border-l-4 border-red-500 shadow-sm" role="alert">
@@ -500,8 +476,115 @@
             </div>
         </div>{{-- end #returning-patient-modal --}}
 
+        {{-- ===================================================== --}}
+        {{-- TICKET MODAL (Shown after successful booking)         --}}
+        {{-- ===================================================== --}}
+        @if(session('ticket'))
+        <div id="ticket-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm border-0 hide-on-print" onclick="document.getElementById('ticket-modal').remove()"></div>
+            <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col printable-ticket-container">
+                {{-- Ticket Header --}}
+                <div class="bg-emerald-600 px-6 py-6 text-center text-white printable-no-bg">
+                    <h2 class="text-2xl font-bold tracking-tight uppercase">RHU Appointment</h2>
+                    <p class="text-emerald-100 text-sm mt-1 uppercase font-semibold">Official Queue Ticket</p>
+                </div>
+                
+                {{-- Ticket Body --}}
+                <div class="p-8 text-center bg-white">
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2">Queue Number</p>
+                    <h1 class="text-6xl font-extrabold text-slate-800 mb-6 font-mono tracking-tighter">{{ session('ticket')['queue_number'] }}</h1>
+                    
+                    <div class="space-y-4 text-left border-t-2 border-dashed border-slate-200 pt-6">
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Patient Name</p>
+                            <p class="text-sm font-bold text-slate-800 uppercase">{{ session('ticket')['patient_name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Service</p>
+                            <p class="text-sm font-bold text-slate-800 uppercase">{{ session('ticket')['service_name'] }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Date</p>
+                                <p class="text-sm font-bold text-slate-800 uppercase">{{ \Carbon\Carbon::parse(session('ticket')['schedule'])->format('M d, Y') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Time</p>
+                                <p class="text-sm font-bold text-slate-800 uppercase">{{ date('h:i A', strtotime(session('ticket')['schedule_time'])) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Actions (Hidden on Print) --}}
+                <div class="p-6 bg-slate-50 border-t border-slate-100 flex flex-col gap-3 hide-on-print">
+                    <button type="button" onclick="window.print()"
+                            class="w-full px-4 py-3 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Print Ticket
+                    </button>
+                    <button type="button" onclick="document.getElementById('ticket-modal').remove()"
+                            class="w-full px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-200 transition-all focus:outline-none text-center">
+                        Close Display
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>
 </div>
+
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #ticket-modal, #ticket-modal * {
+            visibility: visible;
+        }
+        #ticket-modal {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 100%;
+            height: auto;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .hide-on-print {
+            display: none !important;
+        }
+        .printable-ticket-container {
+            box-shadow: none !important;
+            border: 2px solid #000;
+            border-radius: 0;
+            width: 80mm; /* Standard receipt width */
+            max-width: 100%;
+            margin: 0;
+        }
+        .printable-no-bg {
+            background-color: transparent !important;
+            color: #000 !important;
+            border-bottom: 2px dashed #000;
+        }
+        .printable-no-bg h2, .printable-no-bg p {
+            color: #000 !important;
+        }
+        .bg-white {
+            background-color: white !important;
+        }
+        .text-slate-800, .text-slate-500, .text-slate-400 {
+            color: #000 !important;
+        }
+        .border-slate-200 {
+            border-color: #000 !important;
+        }
+    }
+</style>
 
 <script>
     // ===================================================================

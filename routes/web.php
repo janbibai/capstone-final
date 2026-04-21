@@ -100,6 +100,10 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
             ->name('rhu.staff.reject');
         Route::post('/rhu/staff', [RhuDashboardController::class, 'createStaff'])
             ->name('rhu.staff.create');
+        Route::patch('/rhu/staff/{staff}', [RhuDashboardController::class, 'updateStaff'])
+            ->name('rhu.staff.update');
+        Route::patch('/rhu/staff/{staff}/toggle-status', [RhuDashboardController::class, 'toggleStaffStatus'])
+            ->name('rhu.staff.toggleStatus');
 
         // Medicine Inventory
         Route::post('/rhu/medicines', [RhuDashboardController::class, 'storeMedicine'])
@@ -112,6 +116,8 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
             ->name('rhu.medicines.addStock');
         Route::delete('/rhu/medicine-batches/{batch}', [RhuDashboardController::class, 'deleteBatch'])
             ->name('rhu.batches.delete');
+        Route::patch('/rhu/medicine-batches/{batch}/expiry', [RhuDashboardController::class, 'updateBatchExpiry'])
+            ->name('rhu.batches.updateExpiry');
     });
 });
 

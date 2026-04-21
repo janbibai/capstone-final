@@ -220,7 +220,7 @@ class RhuDashboardController extends Controller
     {
         $staff->update(['is_active' => true]);
 
-        return back()->with('success', $staff->user->name . ' has been approved.');
+        return back()->withFragment('staff-approvals')->with('success', $staff->user->name . ' has been approved.');
     }
 
     /**
@@ -235,7 +235,7 @@ class RhuDashboardController extends Controller
         $staff->delete();
         $user->delete();
 
-        return back()->with('success', $userName . '\'s registration has been rejected.');
+        return back()->withFragment('staff-approvals')->with('success', $userName . '\'s registration has been rejected.');
     }
 
     /**
@@ -266,7 +266,7 @@ class RhuDashboardController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
     }
 
     /**
@@ -286,7 +286,7 @@ class RhuDashboardController extends Controller
             'name', 'generic_name', 'category', 'unit', 'description',
         ]));
 
-        return back()->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
     }
 
     /**
@@ -308,7 +308,7 @@ class RhuDashboardController extends Controller
 
         $medicine->syncStockFromBatches();
 
-        return back()->with('success', $request->add_quantity . ' ' . $request->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
+        return back()->withFragment('medicine-inventory')->with('success', $request->add_quantity . ' ' . $request->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
     }
 
     /**
@@ -322,7 +322,23 @@ class RhuDashboardController extends Controller
         $batch->delete();
         $medicine->syncStockFromBatches();
 
-        return back()->with('success', 'Batch (' . $batchInfo . ') of "' . $medicine->name . '" has been removed. Remaining stock: ' . $medicine->quantity . '.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Batch (' . $batchInfo . ') of "' . $medicine->name . '" has been removed. Remaining stock: ' . $medicine->quantity . '.');
+    }
+
+    /**
+     * Update the expiry date of a specific batch.
+     */
+    public function updateBatchExpiry(Request $request, MedicineBatch $batch)
+    {
+        $request->validate([
+            'expiry_date' => ['nullable', 'date'],
+        ]);
+
+        $batch->update([
+            'expiry_date' => $request->expiry_date,
+        ]);
+
+        return back()->withFragment('medicine-inventory')->with('success', 'Batch expiry date updated successfully.');
     }
 
     /**
@@ -333,7 +349,7 @@ class RhuDashboardController extends Controller
         $name = $medicine->name;
         $medicine->delete();
 
-        return back()->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
     }
 
     /**
@@ -382,6 +398,48 @@ class RhuDashboardController extends Controller
             Staff::create($staffData);
         });
 
-        return back()->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
+    }
+
+    /**
+     * Update an existing staff account (position, department, phone).
+     */
+    public function updateStaff(Request $request, Staff $staff)
+    {
+        $request->validate([
+            'position'      => ['required', 'in:Staff,Doctor,Pharmacy', 'string'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'phone'         => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $role = Role::where('name', $request->position)->first();
+
+        $staffData = [
+            'department_id' => $request->department_id,
+            'position'      => $request->position,
+            'phone'         => $request->phone,
+        ];
+
+        if (Schema::hasColumn('staff', 'role_id') && $role) {
+            $staffData['role_id'] = $role->id;
+        }
+
+        $staff->update($staffData);
+
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $staff->user->name . '" has been updated successfully.');
+    }
+
+    /**
+     * Toggle the active status of a staff account.
+     */
+    public function toggleStaffStatus(Staff $staff)
+    {
+        $staff->update([
+            'is_active' => !$staff->is_active,
+        ]);
+
+        $status = $staff->is_active ? 'activated' : 'deactivated';
+
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $staff->user->name . '" has been ' . $status . '.');
     }
 }

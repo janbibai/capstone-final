@@ -148,22 +148,22 @@
 
             {{-- ─── TAB NAVIGATION ─────────────────────────────── --}}
             <div class="flex items-center gap-2 border-b border-slate-200">
-                <button type="button" onclick="switchTab('inventory')" id="tab-inventory"
-                    class="tab-btn active px-5 py-3 text-sm font-semibold border-b-2 border-transparent transition-all rounded-t-lg flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                    Medicine Inventory
-                </button>
                 <button type="button" onclick="switchTab('prescriptions')" id="tab-prescriptions"
-                    class="tab-btn px-5 py-3 text-sm font-semibold text-slate-500 border-b-2 border-transparent transition-all rounded-t-lg flex items-center gap-2 hover:text-slate-700">
+                    class="tab-btn active px-5 py-3 text-sm font-semibold border-b-2 border-transparent transition-all rounded-t-lg flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Prescriptions
+                </button>
+                <button type="button" onclick="switchTab('inventory')" id="tab-inventory"
+                    class="tab-btn px-5 py-3 text-sm font-semibold text-slate-500 border-b-2 border-transparent transition-all rounded-t-lg flex items-center gap-2 hover:text-slate-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    Medicine Inventory
                 </button>
             </div>
 
             {{-- ═══════════════════════════════════════════════════ --}}
             {{-- TAB: MEDICINE INVENTORY                            --}}
             {{-- ═══════════════════════════════════════════════════ --}}
-            <section id="panel-inventory">
+            <section id="panel-inventory" class="hidden">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     {{-- Search --}}
                     <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
@@ -272,7 +272,7 @@
             {{-- ═══════════════════════════════════════════════════ --}}
             {{-- TAB: PRESCRIPTIONS                                 --}}
             {{-- ═══════════════════════════════════════════════════ --}}
-            <section id="panel-prescriptions" class="hidden">
+            <section id="panel-prescriptions">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     {{-- Filter Bar --}}
                     <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
@@ -327,14 +327,21 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Duration</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Instructions</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Prescribing Doctor</th>
+                                    <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Status / Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 bg-white">
                                 @forelse($prescriptions as $rx)
-                                    <tr class="hover:bg-slate-50/80 transition-colors">
+                                    @php
+                                        $isDispensed = $rx->dispensingLogs->isNotEmpty();
+                                        $patientName = $rx->medicalRecord && $rx->medicalRecord->patient
+                                            ? $rx->medicalRecord->patient->full_name : '';
+                                        $lastLog = $rx->dispensingLogs->last();
+                                    @endphp
+                                    <tr class="hover:bg-slate-50/80 transition-colors {{ $isDispensed ? 'bg-emerald-50/30' : '' }}">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="font-bold text-slate-900">
-                                                {{ $rx->medicalRecord && $rx->medicalRecord->patient ? $rx->medicalRecord->patient->full_name : '—' }}
+                                                {{ $patientName ?: '—' }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -355,10 +362,37 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-slate-600 font-medium">
                                             {{ $rx->medicalRecord && $rx->medicalRecord->creator ? $rx->medicalRecord->creator->name : '—' }}
                                         </td>
+                                        {{-- Status / Action column --}}
+                                        <td class="px-6 py-4 text-center">
+                                            @if($isDispensed)
+                                                <div class="flex flex-col items-center gap-1">
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                        Dispensed
+                                                    </span>
+                                                    @if($lastLog)
+                                                        <span class="text-[10px] text-slate-400 font-medium">{{ $lastLog->quantity_dispensed }} {{ $lastLog->unit }}</span>
+                                                    @endif
+                                                    {{-- Allow re-dispensing --}}
+                                                    <button type="button"
+                                                        onclick="openPrescriptionDispenseModal({{ $rx->id }}, '{{ addslashes($rx->medication_name) }}', '{{ addslashes($patientName) }}', '{{ $rx->dosage }}', '{{ $rx->frequency }}')"
+                                                        class="text-[10px] text-teal-600 hover:text-teal-800 underline underline-offset-2 font-semibold mt-0.5 transition-colors">
+                                                        Dispense Again
+                                                    </button>
+                                                </div>
+                                            @else
+                                                <button type="button"
+                                                    onclick="openPrescriptionDispenseModal({{ $rx->id }}, '{{ addslashes($rx->medication_name) }}', '{{ addslashes($patientName) }}', '{{ $rx->dosage }}', '{{ $rx->frequency }}')"
+                                                    class="inline-flex items-center gap-1.5 bg-teal-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-teal-700 shadow-sm transition-all focus:ring-2 focus:ring-teal-500/20">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                                    Dispense
+                                                </button>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-6 py-16 text-center">
+                                        <td colspan="9" class="px-6 py-16 text-center">
                                             <div class="mx-auto w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-slate-50/50">
                                                 <svg class="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -384,6 +418,87 @@
 
         </div>
     </main>
+
+    {{-- ═══ Dispense From Prescription Modal ═══ --}}
+    <dialog id="prescriptionDispenseModal" class="p-0 bg-transparent backdrop:bg-slate-900/50 open:animate-in open:fade-in open:zoom-in-95 rounded-2xl shadow-xl w-full max-w-lg m-auto">
+        <div class="bg-white rounded-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Dispense Medicine</h3>
+                    <p class="text-xs font-medium text-slate-500 mt-0.5">Fulfilling prescription for patient</p>
+                </div>
+                <button type="button" onclick="document.getElementById('prescriptionDispenseModal').close()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-xl transition-all focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="prescriptionDispenseForm" method="POST" class="p-6 space-y-4">
+                @csrf
+
+                {{-- Patient & Rx Info --}}
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <span class="text-sm font-bold text-blue-900" id="rxPatientName"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-teal-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        <span class="text-sm font-semibold text-teal-800" id="rxMedicationName"></span>
+                    </div>
+                    <div class="text-xs text-slate-500 flex gap-3 pl-6" id="rxMedInfo"></div>
+                </div>
+
+                {{-- Medicine picker from inventory --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Select Medicine from Inventory
+                        <span class="text-rose-500 ml-0.5">*</span>
+                    </label>
+                    <select name="medicine_id" id="rxMedicineSelect" required
+                        onchange="updateRxStock(this)"
+                        class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all shadow-sm bg-white">
+                        <option value="">— Choose medicine —</option>
+                        @foreach($medicines as $med)
+                            @php
+                                $medExpired = $med->expiry_date && $med->expiry_date->isPast();
+                            @endphp
+                            @if(!$medExpired && $med->quantity > 0)
+                                <option value="{{ $med->id }}" data-stock="{{ $med->quantity }}" data-unit="{{ $med->unit }}"
+                                    data-name="{{ $med->name }}">
+                                    {{ $med->name }} — {{ number_format($med->quantity) }} {{ $med->unit }} available
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-slate-400 mt-1.5" id="rxStockInfo"></p>
+                </div>
+
+                {{-- Quantity --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Quantity to Dispense
+                        <span class="text-rose-500 ml-0.5">*</span>
+                    </label>
+                    <input type="number" name="quantity" id="rxDispenseQtyInput" min="1" required
+                        class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all shadow-sm"
+                        placeholder="Enter quantity...">
+                    <p class="text-xs text-slate-400 mt-2">This will deduct from inventory stock using FEFO (First-Expiry, First-Out).</p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-1">
+                    <button type="button" onclick="document.getElementById('prescriptionDispenseModal').close()"
+                        class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="bg-teal-600 text-white hover:bg-teal-700 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm focus:ring-2 focus:ring-teal-500/20 inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        Confirm Dispense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
 
     {{-- ═══ Dispense Medicine Modal ═══ --}}
     <dialog id="dispenseModal" class="p-0 bg-transparent backdrop:bg-slate-900/50 open:animate-in open:fade-in open:zoom-in-95 rounded-2xl shadow-xl w-full max-w-md m-auto">
@@ -434,6 +549,56 @@
     </dialog>
 
     <script>
+        // ─── Prescription Dispense Modal ────────────────────────────
+        function openPrescriptionDispenseModal(prescriptionId, medicationName, patientName, dosage, frequency) {
+            const form = document.getElementById('prescriptionDispenseForm');
+            form.action = '/pharmacy/prescriptions/' + prescriptionId + '/dispense';
+
+            document.getElementById('rxPatientName').textContent = patientName || 'Unknown Patient';
+            document.getElementById('rxMedicationName').textContent = medicationName;
+
+            const parts = [];
+            if (dosage)     parts.push('Dosage: ' + dosage);
+            if (frequency)  parts.push('Frequency: ' + frequency);
+            document.getElementById('rxMedInfo').textContent = parts.join('  ·  ');
+
+            // Reset select and quantity
+            const sel = document.getElementById('rxMedicineSelect');
+            sel.value = '';
+            document.getElementById('rxStockInfo').textContent = '';
+            document.getElementById('rxDispenseQtyInput').value = '';
+            document.getElementById('rxDispenseQtyInput').max = '';
+
+            // Auto-select if a medicine name matches
+            const lower = medicationName.toLowerCase();
+            for (const opt of sel.options) {
+                if (opt.dataset.name && opt.dataset.name.toLowerCase().includes(lower)) {
+                    sel.value = opt.value;
+                    updateRxStock(sel);
+                    break;
+                }
+            }
+
+            document.getElementById('prescriptionDispenseModal').showModal();
+        }
+
+        function updateRxStock(sel) {
+            const opt = sel.options[sel.selectedIndex];
+            const qty = opt.dataset.stock;
+            const unit = opt.dataset.unit;
+            const info = document.getElementById('rxStockInfo');
+            const input = document.getElementById('rxDispenseQtyInput');
+            if (qty !== undefined) {
+                info.textContent = 'Available: ' + parseInt(qty).toLocaleString() + ' ' + unit;
+                input.max = qty;
+                input.placeholder = 'Max: ' + qty;
+            } else {
+                info.textContent = '';
+                input.max = '';
+                input.placeholder = 'Enter quantity...';
+            }
+        }
+
         // ─── Dispense Modal ───────────────────────────────────────
         function openDispenseModal(id, name, stock, unit) {
             document.getElementById('dispenseForm').action = '/pharmacy/medicines/' + id + '/dispense';
@@ -477,10 +642,10 @@
                 });
             }
 
-            // Auto-switch to prescriptions tab if ?tab=prescriptions in URL
+            // Auto-switch to inventory tab if ?tab=inventory in URL (prescriptions is the default)
             const params = new URLSearchParams(window.location.search);
-            if (params.get('tab') === 'prescriptions') {
-                switchTab('prescriptions');
+            if (params.get('tab') === 'inventory') {
+                switchTab('inventory');
             }
         });
     </script>

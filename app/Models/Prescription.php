@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\DispensingLog;
 
 class Prescription extends Model
 {
@@ -28,5 +29,10 @@ class Prescription extends Model
     public function medicalRecord()
     {
         return $this->belongsTo(MedicalRecord::class);
+    }
+
+    public function dispensingLogs()
+    {
+        return $this->hasMany(DispensingLog::class);
     }
 }

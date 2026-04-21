@@ -10,6 +10,7 @@ class DispensingLog extends Model
 
     protected $fillable = [
         'medicine_id',
+        'prescription_id',
         'medicine_name',
         'quantity_dispensed',
         'unit',
@@ -27,6 +28,11 @@ class DispensingLog extends Model
     public function medicine()
     {
         return $this->belongsTo(Medicine::class);
+    }
+
+    public function prescription()
+    {
+        return $this->belongsTo(Prescription::class);
     }
 
     public function dispenser()

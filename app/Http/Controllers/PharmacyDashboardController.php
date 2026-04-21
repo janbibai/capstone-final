@@ -19,7 +19,7 @@ class PharmacyDashboardController extends Controller
         $medicines = Medicine::orderBy('name')->get();
 
         // ── Prescriptions (filtered by date and optional patient search) ──
-        $prescriptionsQuery = Prescription::with(['medicalRecord.patient', 'medicalRecord.diagnosis', 'medicalRecord.creator'])
+        $prescriptionsQuery = Prescription::with(['medicalRecord.patient', 'medicalRecord.diagnosis', 'medicalRecord.creator', 'dispensingLogs'])
             ->whereHas('medicalRecord', function ($q) use ($date, $search) {
                 $q->whereDate('created_on', $date);
 
@@ -98,6 +98,55 @@ class PharmacyDashboardController extends Controller
         ]);
 
         return back()->with('success', "Dispensed {$qty} {$medicine->unit} of \"{$medicine->name}\". Remaining stock: {$medicine->quantity} {$medicine->unit}.");
+    }
+
+    /**
+     * Dispense medicine directly from a prescription row.
+     * Links the dispensing log to the prescription so we can show a "Dispensed" indicator.
+     */
+    public function dispensePrescription(Request $request, Prescription $prescription)
+    {
+        $request->validate([
+            'quantity' => ['required', 'integer', 'min:1'],
+            'medicine_id' => ['required', 'exists:medicines,id'],
+        ]);
+
+        $medicine = Medicine::findOrFail($request->medicine_id);
+        $qty = (int) $request->quantity;
+
+        if ($qty > $medicine->quantity) {
+            return back()->withErrors([
+                'quantity' => "Insufficient stock for \"{$medicine->name}\". Available: {$medicine->quantity} {$medicine->unit}.",
+            ])->withInput();
+        }
+
+        // FEFO: deduct from earliest-expiring batches first
+        $batches = $medicine->batches()
+            ->where('quantity', '>', 0)
+            ->orderByRaw('expiry_date IS NULL, expiry_date ASC')
+            ->get();
+
+        $remaining = $qty;
+        foreach ($batches as $batch) {
+            if ($remaining <= 0) break;
+            $deduct = min($remaining, $batch->quantity);
+            $batch->decrement('quantity', $deduct);
+            $remaining -= $deduct;
+        }
+
+        $medicine->syncStockFromBatches();
+
+        // Log and link to the prescription
+        DispensingLog::create([
+            'medicine_id'       => $medicine->id,
+            'prescription_id'   => $prescription->id,
+            'medicine_name'     => $medicine->name,
+            'quantity_dispensed' => $qty,
+            'unit'              => $medicine->unit,
+            'dispensed_by'      => auth()->id(),
+        ]);
+
+        return back()->with('success', "Dispensed {$qty} {$medicine->unit} of \"{$medicine->name}\" to patient. Remaining stock: {$medicine->quantity} {$medicine->unit}.");
     }
 }
 

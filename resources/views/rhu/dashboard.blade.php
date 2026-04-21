@@ -138,7 +138,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    <span>Staff Approvals</span>
+                    <span>Staff Management</span>
                     @if($pendingStaff->count() > 0)
                         <span class="ml-auto inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingStaff->count() }}</span>
                     @endif
@@ -531,9 +531,18 @@
             {{-- SECTION: Staff Approvals                   --}}
             {{-- ════════════════════════════════════════════ --}}
             <section id="section-staff-approvals" class="section-content hidden mt-2">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Staff Approvals</h2>
-                    <p class="text-gray-500 text-sm mt-1">Review and approve pending staff & doctor registrations</p>
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Staff Management</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage staff accounts and review pending registrations</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('create-staff-modal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Create Account
+                    </button>
                 </div>
 
                 @if ($pendingStaff->isEmpty())
@@ -1062,6 +1071,88 @@
                             <button type="submit"
                                 class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition shadow-sm">
                                 Add Stock
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- ════════════════════════════════════════════ --}}
+            {{-- MODAL: Create Staff Account                --}}
+            {{-- ════════════════════════════════════════════ --}}
+            <div id="create-staff-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-900/50 backdrop-blur-sm">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-md mx-4 overflow-hidden"
+                     onkeydown="if(event.key === 'Escape') document.getElementById('create-staff-modal').classList.add('hidden')">
+                    
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Create Staff Account</h3>
+                        <button type="button" onclick="document.getElementById('create-staff-modal').classList.add('hidden')"
+                            class="text-slate-400 hover:text-slate-600 transition focus:outline-none rounded-lg p-1 hover:bg-slate-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form method="POST" action="{{ route('rhu.staff.create') }}">
+                        @csrf
+                        <div class="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="name" required class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" placeholder="e.g. Juan Dela Cruz">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" required class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" placeholder="e.g. juan@example.com">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Position <span class="text-red-500">*</span></label>
+                                    <select name="position" required class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                        <option value="" disabled selected>Select...</option>
+                                        <option value="Staff">Staff</option>
+                                        <option value="Doctor">Doctor</option>
+                                        <option value="Pharmacy">Pharmacy</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Department</label>
+                                    <select name="department_id" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                        <option value="" selected>None</option>
+                                        @foreach ($departments as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                                <input type="text" name="phone" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" placeholder="09xxxxxxxxx">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Password <span class="text-red-500">*</span></label>
+                                    <input type="password" name="password" required class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Confirm <span class="text-red-500">*</span></label>
+                                    <input type="password" name="password_confirmation" required class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
+                            <button type="button" onclick="document.getElementById('create-staff-modal').classList.add('hidden')"
+                                class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 transition shadow-sm">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                                Create Account
                             </button>
                         </div>
                     </form>

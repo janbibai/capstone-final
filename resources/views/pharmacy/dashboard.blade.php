@@ -189,7 +189,7 @@
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Unit</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Expiry Date</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+                                    {{-- <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 bg-white">
@@ -237,7 +237,7 @@
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Stock</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 text-center">
+                                        {{-- <td class="px-6 py-4 text-center">
                                             @if(!$isOutOfStock && !$isExpired)
                                                 <button type="button"
                                                     onclick="openDispenseModal({{ $medicine->id }}, '{{ addslashes($medicine->name) }}', {{ $medicine->quantity }}, '{{ $medicine->unit }}')"
@@ -248,7 +248,7 @@
                                             @else
                                                 <span class="text-slate-300 text-xs">—</span>
                                             @endif
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @empty
                                     <tr>

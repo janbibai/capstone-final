@@ -90,6 +90,8 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
             ->name('rhu.staff.approve');
         Route::delete('/rhu/staff/{staff}/reject', [RhuDashboardController::class, 'rejectStaff'])
             ->name('rhu.staff.reject');
+        Route::post('/rhu/staff', [RhuDashboardController::class, 'createStaff'])
+            ->name('rhu.staff.create');
 
         // Medicine Inventory
         Route::post('/rhu/medicines', [RhuDashboardController::class, 'storeMedicine'])

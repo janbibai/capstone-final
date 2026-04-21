@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Montserrat', 'Outfit', sans-serif;
             overflow: hidden;
             background-color: #0f172a;
             /* Tailwind slate-950 */

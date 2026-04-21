@@ -18,7 +18,9 @@
     },
     "dependencies": {
         "@fontsource/inter": "^5.2.8",
+        "@fontsource/montserrat": "^5.2.8",
         "@fontsource/outfit": "^5.2.8",
+        "chart.js": "^4.5.1",
         "material-symbols": "^0.44.2"
     }
 }

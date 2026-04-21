@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="relative min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-montserrat">
     {{-- Background Image --}}
     <div class="fixed inset-0 -z-10">
         <img src="{{ asset('images/pic.jpg') }}" alt="" class="w-full h-full object-cover" />
@@ -14,7 +14,7 @@
     <div class="max-w-4xl mx-auto">
 
         <div class="mb-10 text-center">
-            <h2 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-montserrat">
                 Patient Registration
             </h2>
             <p class="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
@@ -255,7 +255,7 @@
 
                 <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
-                        <h3 class="text-lg font-semibold text-slate-800">Appointment Details</h3>
+                        <h3 class="text-lg font-semibold text-slate-800">Service Details</h3>
                         <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">

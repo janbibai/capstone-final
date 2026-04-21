@@ -8,7 +8,7 @@
     <title>Medical Records</title>
     @vite('resources/css/app.css')
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Montserrat', 'Inter', sans-serif; }
     </style>
 </head>
 
@@ -440,7 +440,7 @@
                     <style>
                         * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
-                            font-family: 'Inter', Arial, sans-serif;
+                            font-family: 'Montserrat', 'Inter', Arial, sans-serif;
                             color: #1e293b;
                             padding: 40px;
                             max-width: 800px;

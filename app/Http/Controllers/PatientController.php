@@ -13,15 +13,14 @@ use Illuminate\Http\Request;
 
 
 class PatientController extends Controller
-{   
+{
     protected AppointmentService $appointmentService;
     protected PatientService $patientService;
 
     public function __construct(
         PatientService $patientService,
         AppointmentService $appointmentService
-    ) 
-    {
+    ) {
         $this->patientService = $patientService;
         $this->appointmentService = $appointmentService;
     }
@@ -32,7 +31,7 @@ class PatientController extends Controller
 
         return view('appointment.create', compact('services'));
     }
-    
+
     public function start($id)
     {
         $appointment = Appointment::findOrFail($id);
@@ -47,12 +46,13 @@ class PatientController extends Controller
     }
 
 
-    
+
     public function storePatient(StorePatientRequest $request)
     {
         $data = $request->validated();
 
         // register patient (pass the uploaded ID file)
+        /** @var \App\Models\Patient $patient */
         $patient = $this->patientService->register($data, $request->file('valid_id'));
 
         try {
@@ -85,7 +85,7 @@ class PatientController extends Controller
             ->pluck('schedule_time')
             ->toArray();
 
-        $formattedTimes = array_map(function($time) {
+        $formattedTimes = array_map(function ($time) {
             return date('H:i', strtotime($time));
         }, $bookedTimes);
 
@@ -95,8 +95,8 @@ class PatientController extends Controller
     public function lookupPatient(Request $request)
     {
         $request->validate([
-            'first_name'    => 'required|string|max:30',
-            'last_name'     => 'required|string|max:30',
+            'first_name' => 'required|string|max:30',
+            'last_name' => 'required|string|max:30',
             'date_of_birth' => 'required|date',
         ]);
 
@@ -111,17 +111,17 @@ class PatientController extends Controller
 
         return response()->json([
             'found' => true,
-            'id'    => $patient->id,
-            'name'  => $patient->full_name,
+            'id' => $patient->id,
+            'name' => $patient->full_name,
         ]);
     }
 
     public function storeExistingPatient(Request $request)
     {
         $data = $request->validate([
-            'patient_id'    => 'required|exists:patients,id',
-            'service_id'    => 'required|exists:services,id',
-            'schedule'      => 'required|date|after_or_equal:today',
+            'patient_id' => 'required|exists:patients,id',
+            'service_id' => 'required|exists:services,id',
+            'schedule' => 'required|date|after_or_equal:today',
             'schedule_time' => 'required|date_format:H:i',
         ]);
 
@@ -138,10 +138,11 @@ class PatientController extends Controller
         }
 
         try {
+            /** @var \App\Models\Appointment $appointment */
             $appointment = $this->appointmentService->schedule([
-                'patient_id'    => $data['patient_id'],
-                'service_id'    => $data['service_id'],
-                'schedule'      => $data['schedule'],
+                'patient_id' => $data['patient_id'],
+                'service_id' => $data['service_id'],
+                'schedule' => $data['schedule'],
                 'schedule_time' => $data['schedule_time'],
             ]);
 
@@ -158,6 +159,10 @@ class PatientController extends Controller
         return view('appointment.queue-status');
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getQueueStatusData(Request $request)
     {
         $date = $request->query('date');
@@ -188,7 +193,7 @@ class PatientController extends Controller
             ->orderBy('queue_number', 'asc')
             ->paginate(15);
 
-        $appointments->getCollection()->transform(function (\App\Models\Appointment $appointment) {
+        $appointments->through(function (Appointment $appointment) {
             return [
                 'queue_number' => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
                 'status' => $appointment->status,

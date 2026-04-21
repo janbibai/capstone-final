@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\DB;
 
 class AppointmentService
 {
+    /**
+     * @param array $data
+     * @return Appointment
+     * @throws \Exception
+     */
     public function schedule(array $data)
 {
     return DB::transaction(function () use ($data) {
@@ -49,6 +54,10 @@ class AppointmentService
 }
 
 
+    /**
+     * @param string $date
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getByDate($date){
         return Appointment::where('schedule', $date)
             ->orderBy('schedule_time')

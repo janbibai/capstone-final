@@ -145,7 +145,7 @@ class StaffAuthController extends Controller
             $dashboardRoute = 'staff.dashboard';
         }
 
-        return redirect()->intended(route($dashboardRoute));
+        return redirect()->route($dashboardRoute);
     }
 
     /**
@@ -210,7 +210,7 @@ class StaffAuthController extends Controller
                 ->onlyInput('email');
         }
 
-        return redirect()->intended(route('doctor.dashboard'));
+        return redirect()->route('doctor.dashboard');
     }
 
     /**
@@ -275,7 +275,7 @@ class StaffAuthController extends Controller
                 ->onlyInput('email');
         }
 
-        return redirect()->intended(route('rhu.dashboard'));
+        return redirect()->route('rhu.dashboard');
     }
 
     public function logout(Request $request)

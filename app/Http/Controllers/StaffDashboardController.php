@@ -36,7 +36,7 @@ class StaffDashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $services = \App\Models\Service::where('department_id', $departmentId)->where('is_active', true)->get();
+        $services = Service::where('department_id', $departmentId)->where('is_active', true)->get();
 
         return view('staff.dashboard', [
             'date' => $date,

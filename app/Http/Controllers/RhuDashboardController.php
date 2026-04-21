@@ -116,6 +116,11 @@ class RhuDashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        $pendingStaff = Staff::with(['user'])
+            ->where('is_active', false)
+            ->orderByDesc('created_at')
+            ->get();
+
         // ── Medicine Inventory (with batches) ─────────────────────────
         $medicines = Medicine::with(['batches' => function ($q) {
             $q->orderBy('expiry_date', 'asc');
@@ -163,6 +168,7 @@ class RhuDashboardController extends Controller
                 'diagnosesRecorded' => $diagnosesRecorded,
                 // Staff accounts
                 'staffAccounts' => $staffAccounts,
+                'pendingStaff' => $pendingStaff,
                 // Medicine inventory
                 'medicines' => $medicines,
                 // Medicine dispensing statistics

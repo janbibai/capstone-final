@@ -237,18 +237,7 @@
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">In Stock</span>
                                             @endif
                                         </td>
-                                        {{-- <td class="px-6 py-4 text-center">
-                                            @if(!$isOutOfStock && !$isExpired)
-                                                <button type="button"
-                                                    onclick="openDispenseModal({{ $medicine->id }}, '{{ addslashes($medicine->name) }}', {{ $medicine->quantity }}, '{{ $medicine->unit }}')"
-                                                    class="inline-flex items-center gap-1.5 bg-teal-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-teal-700 shadow-sm transition-all focus:ring-2 focus:ring-teal-500/20">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                                    Dispense
-                                                </button>
-                                            @else
-                                                <span class="text-slate-300 text-xs">—</span>
-                                            @endif
-                                        </td> --}}
+                                        
                                     </tr>
                                 @empty
                                     <tr>

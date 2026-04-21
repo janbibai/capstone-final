@@ -138,14 +138,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-<<<<<<< HEAD
-                    <span>Staff Approvals</span>
-                    @if($pendingStaff->count() > 0)
-                        <span class="ml-auto inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingStaff->count() }}</span>
-                    @endif
-=======
                     <span>Staff Management</span>
->>>>>>> 703c8a7916a026183fafe9efc8d10a9361ca9889
                 </a>
                 <a href="#medicine-inventory" onclick="showSection('medicine-inventory')" id="link-medicine-inventory"
                     class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
@@ -590,11 +583,6 @@
             {{-- SECTION: Staff Approvals                   --}}
             {{-- ════════════════════════════════════════════ --}}
             <section id="section-staff-approvals" class="section-content hidden mt-2">
-<<<<<<< HEAD
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Staff Approvals</h2>
-                    <p class="text-gray-500 text-sm mt-1">Review and approve pending staff & doctor registrations</p>
-=======
                 <div class="mb-6 flex items-center justify-between">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">Staff Management</h2>
@@ -607,7 +595,6 @@
                         </svg>
                         Create Account
                     </button>
->>>>>>> 703c8a7916a026183fafe9efc8d10a9361ca9889
                 </div>
 
                 @if ($staffAccounts->isEmpty())

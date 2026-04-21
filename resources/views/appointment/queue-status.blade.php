@@ -3,7 +3,7 @@
 @section('title', 'Queue Status')
 
 @section('content')
-    <div class="relative min-h-screen py-12 px-4 font-sans">
+    <div class="relative min-h-screen py-12 px-4 font-montserrat">
         {{-- Background Image --}}
         <div class="fixed inset-0 -z-10">
             <img src="{{ asset('images/pic.jpg') }}" alt="" class="w-full h-full object-cover" />

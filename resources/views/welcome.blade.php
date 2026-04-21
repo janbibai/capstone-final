@@ -166,7 +166,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
                 <div class="group bg-white rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-slate-300/60 transition-all duration-300 border border-slate-100">
                     <div class="overflow-hidden h-72">
-                        <img alt="Dr. Louise Pinili Cas" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" src="{{ asset('images/doctor-female.svg') }}"/>
+                        <img alt="Dr. Louise Pinili Cas" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhL6n7WWraGI4o5gtPpWTDy0_3ukcGV5I2igvT39RoqM7R_t-sHa83zOpPZbOrBLDatzxcjSzyG_lN1uuKaA5LMoGaeRE3LuU5and-n0Wxnc6dhvgb897ohWtUrA0190tjayLJdzfpp3cmNAlUT467zjQYN6JWGXl1OXZH4_48mhg9q641PpbOdUNd9vurAZN6eJKYZseQQc4Etk1xYuwTZeIges_tfNtLE5VpOfWJ4Fj-yjvPl4wuWr5m6m4aZo2ehuVSlY59buk"/>
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold text-slate-900 mb-1 font-montserrat">Dr. Louise Pinili Cas</h3>
@@ -177,7 +177,7 @@
                 
                 <div class="group bg-white rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-slate-300/60 transition-all duration-300 border border-slate-100">
                     <div class="overflow-hidden h-72">
-                        <img alt="Dr. Angelo Electona" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" src="{{ asset('images/doctor-male.svg') }}"/>
+                        <img alt="Dr. Angelo Electona" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwTDCiQudy5dNxNrsc7hVM9UBrf63-V8B0IKSsnxELSqKC_zdG7P1Gw1kNYjdMGYiqHE82YdmKX5hEvPLKrpvC23D5nSbrG_cdqhQBMXd3U0CKyGBlzl157VYg9KkikxxsgiiG5t2hArLXzX2vG7RcTfX-Q22PEbFGpEa5mya_gitI3rKgMMILxVdOfLJ0reAkl9L5P3kTb2RNVP9B6KNGhItoY4p-T1vATZVpumR-lRJmWdwQjbtlGKsLhd7ai5MlAOdF2i3flQg"/>
                     </div>
                     <div class="p-8">
                         <h3 class="text-2xl font-bold text-slate-900 mb-1 font-montserrat">Dr. Angelo Electona</h3>
@@ -232,13 +232,8 @@
                         </div>
                     </div>
                     
-                    <div class="relative h-80 lg:h-auto bg-slate-200 flex flex-col items-center justify-center p-8">
-                        <div class="bg-emerald-50 p-5 rounded-2xl mb-4">
-                            <span class="material-symbols-outlined text-emerald-600 text-5xl">map</span>
-                        </div>
-                        <h4 class="font-bold text-slate-700 text-lg mb-1 font-montserrat">Zamboanguita Rural Health Unit</h4>
-                        <p class="text-slate-500 text-sm text-center">Acupanda St., Poblacion, Zamboanguita,<br>Negros Oriental, 6218</p>
-                        <p class="text-xs text-slate-400 mt-3">Map available when online</p>
+                    <div class="relative h-80 lg:h-auto bg-slate-200">
+                        <iframe class="absolute inset-0 w-full h-full" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&height=400&hl=en&q=Zamboangita%20Rural%20Health%20Unit&t=&z=14&ie=UTF8&iwloc=B&output=embed"></iframe>
                     </div>
                 </div>
             </div>

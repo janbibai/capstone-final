@@ -69,38 +69,32 @@
             </div>
         @endif
 
-        {{-- ===== TAB SWITCHER ===== --}}
-        <div class="mb-6 flex rounded-2xl overflow-hidden shadow-sm ring-1 ring-slate-200 bg-white" role="tablist" aria-label="Patient type">
-            <button type="button" id="tab-new" role="tab" aria-selected="true" aria-controls="panel-new"
-                    class="flex-1 py-3.5 text-sm font-semibold transition-all focus:outline-none tab-active">
-                <span class="inline-flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+        {{-- ===== RETURNING PATIENT BANNER ===== --}}
+        <div class="mb-6 rounded-2xl overflow-hidden shadow-sm ring-1 ring-emerald-200 bg-emerald-50 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 flex-shrink-0 shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
-                    New Patient
-                </span>
-            </button>
-            <button type="button" id="tab-returning" role="tab" aria-selected="false" aria-controls="panel-returning"
-                    class="flex-1 py-3.5 text-sm font-semibold transition-all focus:outline-none tab-inactive border-l border-slate-200">
-                <span class="inline-flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Returning Patient
-                </span>
+                </div>
+                <div>
+                    <h3 class="text-emerald-900 font-bold text-base">Already a patient?</h3>
+                    <p class="text-emerald-700 text-sm mt-0.5">Skip the forms and book an appointment instantly.</p>
+                </div>
+            </div>
+            <button type="button" onclick="openReturningModal()"
+                    class="whitespace-nowrap inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex-shrink-0">
+                Find My Record
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
             </button>
         </div>
 
-        <style>
-            .tab-active  { background: #059669; color: #fff; }
-            .tab-inactive { background: #fff; color: #475569; }
-            .tab-inactive:hover { background: #f0fdf4; color: #065f46; }
-        </style>
-
         {{-- ===================================================== --}}
-        {{-- PANEL 1 — NEW PATIENT (existing form, unchanged)       --}}
+        {{-- PATIENT REGISTRATION FORM                             --}}
         {{-- ===================================================== --}}
-        <div id="panel-new" role="tabpanel" aria-labelledby="tab-new">
+        <div id="panel-new">
 
             <form method="POST" action="{{ route('appointment.storePatient') }}" id="appointment-form" enctype="multipart/form-data" novalidate>
                 @csrf
@@ -334,9 +328,26 @@
         </div>{{-- end #panel-new --}}
 
         {{-- ===================================================== --}}
-        {{-- PANEL 2 — RETURNING PATIENT                           --}}
+        {{-- RETURNING PATIENT MODAL                               --}}
         {{-- ===================================================== --}}
-        <div id="panel-returning" role="tabpanel" aria-labelledby="tab-returning" class="hidden">
+        <div id="returning-patient-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeReturningModal()"></div>
+            <div class="relative w-full max-w-3xl max-h-[90vh] bg-slate-50 rounded-2xl shadow-2xl overflow-y-auto flex flex-col">
+                {{-- Modal Header --}}
+                <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-slate-100/80 backdrop-blur-md">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Returning Patient</h3>
+                    </div>
+                    <button type="button" onclick="closeReturningModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                
+                {{-- Modal Body --}}
+                <div class="p-6 md:p-8">
 
             {{-- Step 1 — Lookup form --}}
             <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-6 overflow-hidden">
@@ -472,7 +483,7 @@
                     <div class="flex justify-end">
                         <button type="submit" id="ret-submit-btn"
                                 class="w-full sm:w-auto inline-flex items-center justify-center bg-emerald-600 text-white px-8 py-3.5 rounded-xl shadow-sm hover:bg-emerald-700 hover:shadow transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed min-w-[200px]">
-                            <span id="ret-submit-text">Book Appointment</span>
+                            <span id="ret-submit-text">Confirm </span>
                             <span id="ret-submit-spinner" class="hidden flex items-center">
                                 <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -485,42 +496,34 @@
                 </form>
             </div>
 
-        </div>{{-- end #panel-returning --}}
+                </div>
+            </div>
+        </div>{{-- end #returning-patient-modal --}}
 
     </div>
 </div>
 
 <script>
     // ===================================================================
-    // TAB SWITCHER
+    // RETURNING PATIENT MODAL
     // ===================================================================
-    const tabNew       = document.getElementById('tab-new');
-    const tabReturning = document.getElementById('tab-returning');
-    const panelNew     = document.getElementById('panel-new');
-    const panelRet     = document.getElementById('panel-returning');
+    const returningModal = document.getElementById('returning-patient-modal');
 
-    function activateTab(active, inactive, showPanel, hidePanel) {
-        active.setAttribute('aria-selected', 'true');
-        inactive.setAttribute('aria-selected', 'false');
-        active.classList.replace('tab-inactive', 'tab-active');
-        inactive.classList.replace('tab-active', 'tab-inactive');
-        showPanel.classList.remove('hidden');
-        hidePanel.classList.add('hidden');
+    function openReturningModal() {
+        returningModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // prevent background scrolling
     }
 
-    tabNew.addEventListener('click', () => {
-        activateTab(tabNew, tabReturning, panelNew, panelRet);
+    function closeReturningModal() {
+        returningModal.classList.add('hidden');
+        document.body.style.overflow = '';
         resetLookup();
-    });
+    }
 
-    tabReturning.addEventListener('click', () => {
-        activateTab(tabReturning, tabNew, panelRet, panelNew);
-    });
-
-    // Auto-switch to Returning Patient tab if the page loaded with errors
+    // Auto-open Returning Patient modal if the page loaded with errors
     // from the returning-patient form (identified by having a patient_id in old input)
     @if($errors->any() && old('patient_id'))
-        activateTab(tabReturning, tabNew, panelRet, panelNew);
+        openReturningModal();
         // Re-populate the lookup result section with the old patient data
         document.getElementById('returning_patient_id').value = '{{ old('patient_id') }}';
         document.getElementById('returning-patient-name').textContent = '{{ old('patient_name', 'Patient') }}';

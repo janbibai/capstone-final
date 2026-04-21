@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
 
 class RhuDashboardController extends Controller
 {
@@ -243,7 +244,7 @@ class RhuDashboardController extends Controller
      */
     public function storeMedicine(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'         => ['required', 'string', 'max:255'],
             'generic_name' => ['nullable', 'string', 'max:255'],
             'category'     => ['nullable', 'string', 'max:100'],
@@ -252,6 +253,10 @@ class RhuDashboardController extends Controller
             'expiry_date'  => ['nullable', 'date'],
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $medicine = Medicine::create($request->only([
             'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
@@ -274,13 +279,17 @@ class RhuDashboardController extends Controller
      */
     public function updateMedicine(Request $request, Medicine $medicine)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'         => ['required', 'string', 'max:255'],
             'generic_name' => ['nullable', 'string', 'max:255'],
             'category'     => ['nullable', 'string', 'max:100'],
             'unit'         => ['required', 'string', 'max:50'],
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $medicine->update($request->only([
             'name', 'generic_name', 'category', 'unit', 'description',
@@ -294,11 +303,15 @@ class RhuDashboardController extends Controller
      */
     public function addStock(Request $request, Medicine $medicine)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'add_quantity' => ['required', 'integer', 'min:1'],
             'unit'         => ['required', 'string', 'max:50'],
             'expiry_date'  => ['nullable', 'date'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $medicine->batches()->create([
             'quantity'    => $request->add_quantity,
@@ -330,9 +343,13 @@ class RhuDashboardController extends Controller
      */
     public function updateBatchExpiry(Request $request, MedicineBatch $batch)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'expiry_date' => ['nullable', 'date'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $batch->update([
             'expiry_date' => $request->expiry_date,
@@ -358,7 +375,7 @@ class RhuDashboardController extends Controller
      */
     public function createStaff(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'          => ['required', 'string', 'max:255'],
             'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'      => ['required', 'string', 'min:8', 'confirmed'],
@@ -366,6 +383,10 @@ class RhuDashboardController extends Controller
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('staff-approvals')->withErrors($validator)->withInput();
+        }
 
         DB::transaction(function () use ($request) {
             $user = User::create([
@@ -406,11 +427,15 @@ class RhuDashboardController extends Controller
      */
     public function updateStaff(Request $request, Staff $staff)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'position'      => ['required', 'in:Staff,Doctor,Pharmacy', 'string'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('staff-approvals')->withErrors($validator)->withInput();
+        }
 
         $role = Role::where('name', $request->position)->first();
 

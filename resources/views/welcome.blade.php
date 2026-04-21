@@ -24,7 +24,7 @@
                     </h1>
 
                     <p class="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg mx-auto">
-                        Book appointments online and manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
+                        Manage your clinic visits with our Smart Queuing system. Experience healthcare designed for your convenience.
                     </p>
                 </div>
 
@@ -35,7 +35,7 @@
                         <div class="text-center mb-8">
                             <h3 class="text-2xl font-extrabold text-white mb-3">Skip the Waiting Room</h3>
                             <p class="text-sm text-emerald-50/90 leading-relaxed">
-                                Take control of your health journey. Register online ahead of time or track your live queue status effortlessly.
+                                Take control of your health journey. Register ahead of time or track your live queue status effortlessly.
                             </p>
                         </div>
                         

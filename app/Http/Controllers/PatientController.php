@@ -64,9 +64,16 @@ class PatientController extends Controller
                 'schedule_time' => $data['schedule_time'],
             ]);
 
+            $appointment->load(['service', 'patient']);
             return redirect()
                 ->route('appointment.create')
-                ->with('success', 'Appointment booked successfully!Your queue number is Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT));
+                ->with('ticket', [
+                    'queue_number'  => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
+                    'patient_name'  => $patient->first_name . ' ' . $patient->last_name,
+                    'service_name'  => $appointment->service->name,
+                    'schedule'      => $appointment->schedule,
+                    'schedule_time' => $appointment->schedule_time,
+                ]);
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['schedule_time' => $e->getMessage()]);
         }
@@ -146,9 +153,16 @@ class PatientController extends Controller
                 'schedule_time' => $data['schedule_time'],
             ]);
 
+            $appointment->load(['service', 'patient']);
             return redirect()
                 ->route('appointment.create')
-                ->with('success', 'Appointment booked successfully! Your queue number is Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT));
+                ->with('ticket', [
+                    'queue_number'  => 'Q-' . str_pad($appointment->queue_number, 3, '0', STR_PAD_LEFT),
+                    'patient_name'  => $appointment->patient->first_name . ' ' . $appointment->patient->last_name,
+                    'service_name'  => $appointment->service->name,
+                    'schedule'      => $appointment->schedule,
+                    'schedule_time' => $appointment->schedule_time,
+                ]);
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['schedule_time' => $e->getMessage()]);
         }

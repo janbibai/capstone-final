@@ -178,7 +178,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                     {{-- Total Patients --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('departments')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -194,7 +194,7 @@
                     </div>
 
                     {{-- Appointments Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -210,7 +210,7 @@
                     </div>
 
                     {{-- Completed Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -226,7 +226,7 @@
                     </div>
 
                     {{-- Pending Today --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -242,7 +242,7 @@
                     </div>
 
                     {{-- Active Departments --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('departments')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -258,7 +258,7 @@
                     </div>
 
                     {{-- Diagnoses Recorded --}}
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
+                    <div onclick="showSection('diseases')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
                         <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -631,6 +631,7 @@
                                         <th class="px-6 py-3">Employee ID</th>
                                         <th class="px-6 py-3">Status</th>
                                         <th class="px-6 py-3">Added</th>
+                                        <th class="px-6 py-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -656,6 +657,32 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 text-gray-500 text-xs">{{ $staff->created_at->format('M d, Y') }}</td>
+                                            <td class="px-6 py-4 text-right">
+                                                <div class="flex items-center justify-end space-x-2">
+                                                    <button type="button" title="Edit Staff" onclick="openEditStaffModal({{ $staff->id }}, '{{ addslashes($staff->position) }}', '{{ $staff->department_id }}', '{{ addslashes($staff->phone) }}', '{{ addslashes($staff->user->name) }}')"
+                                                        class="inline-flex items-center p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                        </svg>
+                                                    </button>
+                                                    <form method="POST" action="{{ route('rhu.staff.toggleStatus', $staff) }}" onsubmit="return confirm('Are you sure you want to {{ $staff->is_active ? 'deactivate' : 'activate' }} this account?')">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" title="{{ $staff->is_active ? 'Deactivate Account' : 'Activate Account' }}"
+                                                            class="inline-flex items-center p-1.5 rounded-lg {{ $staff->is_active ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-green-50 text-green-600 hover:bg-green-100' }} transition">
+                                                            @if($staff->is_active)
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                                </svg>
+                                                            @else
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                            @endif
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -874,22 +901,30 @@
                                                                         </td>
                                                                         <td class="px-4 py-2.5 text-gray-400">{{ $batch->created_at->format('M d, Y') }}</td>
                                                                         <td class="px-4 py-2.5 text-center">
-                                                                            @if($batchExpired || $batchEmpty)
-                                                                                <form method="POST" action="{{ route('rhu.batches.delete', $batch) }}"
-                                                                                    onsubmit="return confirm('Remove this batch? This will deduct {{ $batch->quantity }} {{ $batch->unit ?? $medicine->unit }} from total stock.')">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <button type="submit"
-                                                                                        class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition">
-                                                                                        <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                                        </svg>
-                                                                                        Remove
-                                                                                    </button>
-                                                                                </form>
-                                                                            @else
-                                                                                <span class="text-gray-300">—</span>
-                                                                            @endif
+                                                                            <div class="flex items-center justify-center space-x-2">
+                                                                                <button type="button" 
+                                                                                    onclick="openEditBatchModal({{ $batch->id }}, '{{ $batch->expiry_date ? $batch->expiry_date->format('Y-m-d') : '' }}')"
+                                                                                    class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition" title="Edit Expiry">
+                                                                                    <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                                                    </svg>
+                                                                                    Edit
+                                                                                </button>
+                                                                                @if($batchExpired || $batchEmpty)
+                                                                                    <form method="POST" action="{{ route('rhu.batches.delete', $batch) }}"
+                                                                                        onsubmit="return confirm('Remove this batch? This will deduct {{ $batch->quantity }} {{ $batch->unit ?? $medicine->unit }} from total stock.')">
+                                                                                        @csrf
+                                                                                        @method('DELETE')
+                                                                                        <button type="submit"
+                                                                                            class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition" title="Remove Batch">
+                                                                                            <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                            </svg>
+                                                                                            Remove
+                                                                                        </button>
+                                                                                    </form>
+                                                                                @endif
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -906,6 +941,137 @@
                     </div>
                 @endif
             </section>
+
+            {{-- ═══ Create Staff Modal ═══ --}}
+            <div id="create-staff-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('create-staff-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Create Staff Account</h3>
+                        <button type="button" onclick="document.getElementById('create-staff-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('rhu.staff.create') }}" class="p-6 space-y-4">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                                <input type="text" name="name" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                                <input type="email" name="email" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+                                <input type="password" name="password" required minlength="8"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+                                <input type="password" name="password_confirmation" required minlength="8"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Position *</label>
+                                <select name="position" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="Staff">Staff</option>
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Pharmacy">Pharmacy</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                <input type="text" name="phone"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                                <select name="department_id"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="">-- None --</option>
+                                    @foreach($departments ?? collect() as $dept)
+                                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('create-staff-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                                Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- ═══ Edit Staff Modal ═══ --}}
+            <div id="edit-staff-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('edit-staff-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Edit Staff: <span id="edit-staff-name" class="text-indigo-600"></span></h3>
+                        <button type="button" onclick="document.getElementById('edit-staff-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="edit-staff-form" method="POST" class="p-6 space-y-4">
+                        @csrf
+                        @method('PATCH')
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Position *</label>
+                                <select name="position" id="edit-staff-position" required
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="Staff">Staff</option>
+                                    <option value="Doctor">Doctor</option>
+                                    <option value="Pharmacy">Pharmacy</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                                <select name="department_id" id="edit-staff-department"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                                    <option value="">-- None --</option>
+                                    @foreach($departments ?? collect() as $dept)
+                                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                <input type="text" name="phone" id="edit-staff-phone"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('edit-staff-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             {{-- ═══ Add Medicine Modal ═══ --}}
             <div id="add-medicine-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
@@ -1107,6 +1273,42 @@
                             <button type="submit"
                                 class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition shadow-sm">
                                 Add Stock
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {{-- ═══ Edit Batch Expiry Modal ═══ --}}
+            <div id="edit-batch-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('edit-batch-modal').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-gray-800">Edit Batch Expiry</h3>
+                        <button type="button" onclick="document.getElementById('edit-batch-modal').classList.add('hidden')"
+                            class="text-gray-400 hover:text-gray-600 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="edit-batch-form" method="POST" class="p-6 space-y-4">
+                        @csrf
+                        @method('PATCH')
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                            <input type="date" name="expiry_date" id="edit-batch-expiry"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                            <p class="text-xs text-gray-400 mt-1">Leave blank for no expiry</p>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="document.getElementById('edit-batch-modal').classList.add('hidden')"
+                                class="px-4 py-2 rounded-xl text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition shadow-sm">
+                                Save Changes
                             </button>
                         </div>
                     </form>
@@ -1402,6 +1604,26 @@
         function toggleBatches(rowId) {
             const row = document.getElementById(rowId);
             if (row) row.classList.toggle('hidden');
+        }
+
+        // ── Medicine Inventory: Edit Batch Expiry modal ──────────────
+        function openEditBatchModal(batchId, currentExpiry) {
+            const form = document.getElementById('edit-batch-form');
+            form.action = `/rhu/medicine-batches/${batchId}/expiry`;
+            document.getElementById('edit-batch-expiry').value = currentExpiry;
+            document.getElementById('edit-batch-modal').classList.remove('hidden');
+        }
+        // ── Staff Management JS ──────────────
+        function openEditStaffModal(staffId, position, departmentId, phone, name) {
+            const form = document.getElementById('edit-staff-form');
+            form.action = `/rhu/staff/${staffId}`;
+            
+            document.getElementById('edit-staff-name').textContent = name;
+            document.getElementById('edit-staff-position').value = position;
+            document.getElementById('edit-staff-department').value = departmentId || '';
+            document.getElementById('edit-staff-phone').value = phone || '';
+            
+            document.getElementById('edit-staff-modal').classList.remove('hidden');
         }
     </script>
 </body>

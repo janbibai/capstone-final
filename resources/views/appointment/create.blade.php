@@ -22,31 +22,7 @@
             </p>
         </div>
 
-        @if(session('success'))
-            <div class="mb-8 p-4 rounded-xl bg-emerald-50 text-emerald-800 border-l-4 border-emerald-500 shadow-sm transition-all" role="alert">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0 mt-0.5">
-                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-emerald-900">Appointment Booked Successfully!</h3>
-                            <p class="text-emerald-700 text-sm mt-1">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                    <button type="button" 
-                            onclick="this.parentElement.parentElement.style.display='none'" 
-                            class="text-emerald-600 hover:text-emerald-900 ml-4 transition-colors" 
-                            aria-label="Dismiss success message">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        @endif
+
 
         @if($errors->any())
             <div class="mb-8 p-4 rounded-xl bg-red-50 text-red-800 border-l-4 border-red-500 shadow-sm" role="alert">
@@ -69,38 +45,32 @@
             </div>
         @endif
 
-        {{-- ===== TAB SWITCHER ===== --}}
-        <div class="mb-6 flex rounded-2xl overflow-hidden shadow-sm ring-1 ring-slate-200 bg-white" role="tablist" aria-label="Patient type">
-            <button type="button" id="tab-new" role="tab" aria-selected="true" aria-controls="panel-new"
-                    class="flex-1 py-3.5 text-sm font-semibold transition-all focus:outline-none tab-active">
-                <span class="inline-flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+        {{-- ===== RETURNING PATIENT BANNER ===== --}}
+        <div class="mb-6 rounded-2xl overflow-hidden shadow-sm ring-1 ring-emerald-200 bg-emerald-50 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 flex-shrink-0 shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
-                    New Patient
-                </span>
-            </button>
-            <button type="button" id="tab-returning" role="tab" aria-selected="false" aria-controls="panel-returning"
-                    class="flex-1 py-3.5 text-sm font-semibold transition-all focus:outline-none tab-inactive border-l border-slate-200">
-                <span class="inline-flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Returning Patient
-                </span>
+                </div>
+                <div>
+                    <h3 class="text-emerald-900 font-bold text-base">Already a patient?</h3>
+                    <p class="text-emerald-700 text-sm mt-0.5">Skip the forms and look up your name.</p>
+                </div>
+            </div>
+            <button type="button" onclick="openReturningModal()"
+                    class="whitespace-nowrap inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex-shrink-0">
+                Find My Record
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
             </button>
         </div>
 
-        <style>
-            .tab-active  { background: #059669; color: #fff; }
-            .tab-inactive { background: #fff; color: #475569; }
-            .tab-inactive:hover { background: #f0fdf4; color: #065f46; }
-        </style>
-
         {{-- ===================================================== --}}
-        {{-- PANEL 1 — NEW PATIENT (existing form, unchanged)       --}}
+        {{-- PATIENT REGISTRATION FORM                             --}}
         {{-- ===================================================== --}}
-        <div id="panel-new" role="tabpanel" aria-labelledby="tab-new">
+        <div id="panel-new">
 
             <form method="POST" action="{{ route('appointment.storePatient') }}" id="appointment-form" enctype="multipart/form-data" novalidate>
                 @csrf
@@ -334,9 +304,26 @@
         </div>{{-- end #panel-new --}}
 
         {{-- ===================================================== --}}
-        {{-- PANEL 2 — RETURNING PATIENT                           --}}
+        {{-- RETURNING PATIENT MODAL                               --}}
         {{-- ===================================================== --}}
-        <div id="panel-returning" role="tabpanel" aria-labelledby="tab-returning" class="hidden">
+        <div id="returning-patient-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeReturningModal()"></div>
+            <div class="relative w-full max-w-3xl max-h-[90vh] bg-slate-50 rounded-2xl shadow-2xl overflow-y-auto flex flex-col">
+                {{-- Modal Header --}}
+                <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-slate-100/80 backdrop-blur-md">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Returning Patient</h3>
+                    </div>
+                    <button type="button" onclick="closeReturningModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                
+                {{-- Modal Body --}}
+                <div class="p-6 md:p-8">
 
             {{-- Step 1 — Lookup form --}}
             <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-6 overflow-hidden">
@@ -416,7 +403,7 @@
 
                     <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
                         <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
-                            <h3 class="text-lg font-semibold text-slate-800">Appointment Details</h3>
+                            <h3 class="text-lg font-semibold text-slate-800">Choose Service</h3>
                             <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
                         </div>
                         <div class="p-6 md:p-8 space-y-6">
@@ -472,7 +459,7 @@
                     <div class="flex justify-end">
                         <button type="submit" id="ret-submit-btn"
                                 class="w-full sm:w-auto inline-flex items-center justify-center bg-emerald-600 text-white px-8 py-3.5 rounded-xl shadow-sm hover:bg-emerald-700 hover:shadow transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed min-w-[200px]">
-                            <span id="ret-submit-text">Book Appointment</span>
+                            <span id="ret-submit-text">Confirm </span>
                             <span id="ret-submit-spinner" class="hidden flex items-center">
                                 <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -485,42 +472,141 @@
                 </form>
             </div>
 
-        </div>{{-- end #panel-returning --}}
+                </div>
+            </div>
+        </div>{{-- end #returning-patient-modal --}}
+
+        {{-- ===================================================== --}}
+        {{-- TICKET MODAL (Shown after successful booking)         --}}
+        {{-- ===================================================== --}}
+        @if(session('ticket'))
+        <div id="ticket-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm border-0 hide-on-print" onclick="document.getElementById('ticket-modal').remove()"></div>
+            <div class="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col printable-ticket-container">
+                {{-- Ticket Header --}}
+                <div class="bg-emerald-600 px-6 py-6 text-center text-white printable-no-bg">
+                    <h2 class="text-2xl font-bold tracking-tight uppercase">RHU Appointment</h2>
+                    <p class="text-emerald-100 text-sm mt-1 uppercase font-semibold">Official Queue Ticket</p>
+                </div>
+                
+                {{-- Ticket Body --}}
+                <div class="p-8 text-center bg-white">
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2">Queue Number</p>
+                    <h1 class="text-6xl font-extrabold text-slate-800 mb-6 font-mono tracking-tighter">{{ session('ticket')['queue_number'] }}</h1>
+                    
+                    <div class="space-y-4 text-left border-t-2 border-dashed border-slate-200 pt-6">
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Patient Name</p>
+                            <p class="text-sm font-bold text-slate-800 uppercase">{{ session('ticket')['patient_name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Service</p>
+                            <p class="text-sm font-bold text-slate-800 uppercase">{{ session('ticket')['service_name'] }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Date</p>
+                                <p class="text-sm font-bold text-slate-800 uppercase">{{ \Carbon\Carbon::parse(session('ticket')['schedule'])->format('M d, Y') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Time</p>
+                                <p class="text-sm font-bold text-slate-800 uppercase">{{ date('h:i A', strtotime(session('ticket')['schedule_time'])) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Actions (Hidden on Print) --}}
+                <div class="p-6 bg-slate-50 border-t border-slate-100 flex flex-col gap-3 hide-on-print">
+                    <button type="button" onclick="window.print()"
+                            class="w-full px-4 py-3 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Print Ticket
+                    </button>
+                    <button type="button" onclick="document.getElementById('ticket-modal').remove()"
+                            class="w-full px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-200 transition-all focus:outline-none text-center">
+                        Close Display
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
 
     </div>
 </div>
 
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #ticket-modal, #ticket-modal * {
+            visibility: visible;
+        }
+        #ticket-modal {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 100%;
+            height: auto;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .hide-on-print {
+            display: none !important;
+        }
+        .printable-ticket-container {
+            box-shadow: none !important;
+            border: 2px solid #000;
+            border-radius: 0;
+            width: 80mm; /* Standard receipt width */
+            max-width: 100%;
+            margin: 0;
+        }
+        .printable-no-bg {
+            background-color: transparent !important;
+            color: #000 !important;
+            border-bottom: 2px dashed #000;
+        }
+        .printable-no-bg h2, .printable-no-bg p {
+            color: #000 !important;
+        }
+        .bg-white {
+            background-color: white !important;
+        }
+        .text-slate-800, .text-slate-500, .text-slate-400 {
+            color: #000 !important;
+        }
+        .border-slate-200 {
+            border-color: #000 !important;
+        }
+    }
+</style>
+
 <script>
     // ===================================================================
-    // TAB SWITCHER
+    // RETURNING PATIENT MODAL
     // ===================================================================
-    const tabNew       = document.getElementById('tab-new');
-    const tabReturning = document.getElementById('tab-returning');
-    const panelNew     = document.getElementById('panel-new');
-    const panelRet     = document.getElementById('panel-returning');
+    const returningModal = document.getElementById('returning-patient-modal');
 
-    function activateTab(active, inactive, showPanel, hidePanel) {
-        active.setAttribute('aria-selected', 'true');
-        inactive.setAttribute('aria-selected', 'false');
-        active.classList.replace('tab-inactive', 'tab-active');
-        inactive.classList.replace('tab-active', 'tab-inactive');
-        showPanel.classList.remove('hidden');
-        hidePanel.classList.add('hidden');
+    function openReturningModal() {
+        returningModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // prevent background scrolling
     }
 
-    tabNew.addEventListener('click', () => {
-        activateTab(tabNew, tabReturning, panelNew, panelRet);
+    function closeReturningModal() {
+        returningModal.classList.add('hidden');
+        document.body.style.overflow = '';
         resetLookup();
-    });
+    }
 
-    tabReturning.addEventListener('click', () => {
-        activateTab(tabReturning, tabNew, panelRet, panelNew);
-    });
-
-    // Auto-switch to Returning Patient tab if the page loaded with errors
+    // Auto-open Returning Patient modal if the page loaded with errors
     // from the returning-patient form (identified by having a patient_id in old input)
     @if($errors->any() && old('patient_id'))
-        activateTab(tabReturning, tabNew, panelRet, panelNew);
+        openReturningModal();
         // Re-populate the lookup result section with the old patient data
         document.getElementById('returning_patient_id').value = '{{ old('patient_id') }}';
         document.getElementById('returning-patient-name').textContent = '{{ old('patient_name', 'Patient') }}';

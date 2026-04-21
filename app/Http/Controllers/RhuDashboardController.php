@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
 
 class RhuDashboardController extends Controller
 {
@@ -226,7 +227,7 @@ class RhuDashboardController extends Controller
     {
         $staff->update(['is_active' => true]);
 
-        return back()->with('success', $staff->user->name . ' has been approved.');
+        return back()->withFragment('staff-approvals')->with('success', $staff->user->name . ' has been approved.');
     }
 
     /**
@@ -241,7 +242,7 @@ class RhuDashboardController extends Controller
         $staff->delete();
         $user->delete();
 
-        return back()->with('success', $userName . '\'s registration has been rejected.');
+        return back()->withFragment('staff-approvals')->with('success', $userName . '\'s registration has been rejected.');
     }
 
     /**
@@ -249,7 +250,7 @@ class RhuDashboardController extends Controller
      */
     public function storeMedicine(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'         => ['required', 'string', 'max:255'],
             'generic_name' => ['nullable', 'string', 'max:255'],
             'category'     => ['nullable', 'string', 'max:100'],
@@ -258,6 +259,10 @@ class RhuDashboardController extends Controller
             'expiry_date'  => ['nullable', 'date'],
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $medicine = Medicine::create($request->only([
             'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
@@ -272,7 +277,7 @@ class RhuDashboardController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $request->name . '" has been added to the inventory.');
     }
 
     /**
@@ -280,7 +285,7 @@ class RhuDashboardController extends Controller
      */
     public function updateMedicine(Request $request, Medicine $medicine)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'         => ['required', 'string', 'max:255'],
             'generic_name' => ['nullable', 'string', 'max:255'],
             'category'     => ['nullable', 'string', 'max:100'],
@@ -288,11 +293,15 @@ class RhuDashboardController extends Controller
             'description'  => ['nullable', 'string', 'max:500'],
         ]);
 
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
+
         $medicine->update($request->only([
             'name', 'generic_name', 'category', 'unit', 'description',
         ]));
 
-        return back()->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $medicine->name . '" has been updated.');
     }
 
     /**
@@ -300,11 +309,15 @@ class RhuDashboardController extends Controller
      */
     public function addStock(Request $request, Medicine $medicine)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'add_quantity' => ['required', 'integer', 'min:1'],
             'unit'         => ['required', 'string', 'max:50'],
             'expiry_date'  => ['nullable', 'date'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
 
         $medicine->batches()->create([
             'quantity'    => $request->add_quantity,
@@ -314,7 +327,7 @@ class RhuDashboardController extends Controller
 
         $medicine->syncStockFromBatches();
 
-        return back()->with('success', $request->add_quantity . ' ' . $request->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
+        return back()->withFragment('medicine-inventory')->with('success', $request->add_quantity . ' ' . $request->unit . ' of "' . $medicine->name . '" added to stock. New total: ' . $medicine->quantity . '.');
     }
 
     /**
@@ -328,7 +341,27 @@ class RhuDashboardController extends Controller
         $batch->delete();
         $medicine->syncStockFromBatches();
 
-        return back()->with('success', 'Batch (' . $batchInfo . ') of "' . $medicine->name . '" has been removed. Remaining stock: ' . $medicine->quantity . '.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Batch (' . $batchInfo . ') of "' . $medicine->name . '" has been removed. Remaining stock: ' . $medicine->quantity . '.');
+    }
+
+    /**
+     * Update the expiry date of a specific batch.
+     */
+    public function updateBatchExpiry(Request $request, MedicineBatch $batch)
+    {
+        $validator = Validator::make($request->all(), [
+            'expiry_date' => ['nullable', 'date'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('medicine-inventory')->withErrors($validator)->withInput();
+        }
+
+        $batch->update([
+            'expiry_date' => $request->expiry_date,
+        ]);
+
+        return back()->withFragment('medicine-inventory')->with('success', 'Batch expiry date updated successfully.');
     }
 
     /**
@@ -339,7 +372,7 @@ class RhuDashboardController extends Controller
         $name = $medicine->name;
         $medicine->delete();
 
-        return back()->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
+        return back()->withFragment('medicine-inventory')->with('success', 'Medicine "' . $name . '" has been removed from inventory.');
     }
 
     /**
@@ -348,7 +381,7 @@ class RhuDashboardController extends Controller
      */
     public function createStaff(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name'          => ['required', 'string', 'max:255'],
             'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'      => ['required', 'string', 'min:8', 'confirmed'],
@@ -356,6 +389,10 @@ class RhuDashboardController extends Controller
             'department_id' => ['nullable', 'exists:departments,id'],
             'phone'         => ['nullable', 'string', 'max:20'],
         ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('staff-approvals')->withErrors($validator)->withInput();
+        }
 
         DB::transaction(function () use ($request) {
             $user = User::create([
@@ -388,6 +425,52 @@ class RhuDashboardController extends Controller
             Staff::create($staffData);
         });
 
-        return back()->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
+    }
+
+    /**
+     * Update an existing staff account (position, department, phone).
+     */
+    public function updateStaff(Request $request, Staff $staff)
+    {
+        $validator = Validator::make($request->all(), [
+            'position'      => ['required', 'in:Staff,Doctor,Pharmacy', 'string'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'phone'         => ['nullable', 'string', 'max:20'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withFragment('staff-approvals')->withErrors($validator)->withInput();
+        }
+
+        $role = Role::where('name', $request->position)->first();
+
+        $staffData = [
+            'department_id' => $request->department_id,
+            'position'      => $request->position,
+            'phone'         => $request->phone,
+        ];
+
+        if (Schema::hasColumn('staff', 'role_id') && $role) {
+            $staffData['role_id'] = $role->id;
+        }
+
+        $staff->update($staffData);
+
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $staff->user->name . '" has been updated successfully.');
+    }
+
+    /**
+     * Toggle the active status of a staff account.
+     */
+    public function toggleStaffStatus(Staff $staff)
+    {
+        $staff->update([
+            'is_active' => !$staff->is_active,
+        ]);
+
+        $status = $staff->is_active ? 'activated' : 'deactivated';
+
+        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $staff->user->name . '" has been ' . $status . '.');
     }
 }

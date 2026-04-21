@@ -6,7 +6,7 @@
             <a href="{{ url('/') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/ZamboanguitaLogo.png') }}" alt="RHU Logo" class="w-10 h-10 rounded-lg object-contain">
                 <span class="font-semibold text-lg text-gray-800 font-montserrat">
-                    RuralHealth Unit
+                    Rural Health Unit
                 </span>
             </a>
 

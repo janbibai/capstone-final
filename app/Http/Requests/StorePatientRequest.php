@@ -30,7 +30,8 @@ class StorePatientRequest extends FormRequest
             'gender' => 'required|in:male,female,other',
             'phone' => 'nullable|string|max:30',
             'email' => 'nullable|email|max:30|unique:patients,email',
-            'address' => 'nullable|string|max:50',
+            'barangay' => 'nullable|string|max:50',
+            'purok' => 'nullable|string|max:10',
             'valid_id' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             // 'patient_number' => 'nullable|string|unique:patients,patient_number',
         ];

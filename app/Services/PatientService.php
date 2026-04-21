@@ -8,6 +8,13 @@ class PatientService
 {
     public function register(array $data, $validIdFile = null): Patient
     {
+      $purok = $data['purok'] ?? null;
+      $barangay = $data['barangay'] ?? null;
+      $addressParts = [];
+      if ($purok) $addressParts[] = 'Purok ' . $purok;
+      if ($barangay) $addressParts[] = $barangay;
+      $address = implode(', ', $addressParts) ?: null;
+
       $exists = Patient::where('first_name', $data['first_name'])
       ->where('middle_name', $data['middle_name'] ?? null)
       ->where('last_name', $data['last_name'])
@@ -15,7 +22,7 @@ class PatientService
       ->where('gender', $data['gender'])
       ->where('phone', $data['phone'])
       ->where('email', $data['email'] ?? null)
-      ->where('address', $data['address'])
+      ->where('address', $address)
       ->exists();
     
       if ($exists){
@@ -36,7 +43,7 @@ class PatientService
         'gender' => $data['gender'],
         'phone' => $data['phone'],
         'email' => $data['email'] ?? null,
-        'address' => $data['address'],
+        'address' => $address,
         'valid_id_path' => $validIdPath,
       ]);
         

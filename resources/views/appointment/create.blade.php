@@ -230,11 +230,25 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label for="address" class="block text-sm font-semibold text-slate-700 mb-1.5">Baranggay</label>
-                            <input type="text" id="address" name="address" value="{{ old('address') }}" maxlength="50"
-                                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
-                                   placeholder="Baranggay">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="barangay" class="block text-sm font-semibold text-slate-700 mb-1.5">Barangay</label>
+                                <select id="barangay" name="barangay"
+                                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none">
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Poblacion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="purok" class="block text-sm font-semibold text-slate-700 mb-1.5">Purok</label>
+                                <select id="purok" name="purok"
+                                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none">
+                                    <option value="" disabled {{ old('purok') ? '' : 'selected' }}>Select Purok</option>
+                                    <option value="1" {{ old('purok') == '1' ? 'selected' : '' }}>Purok 1</option>
+                                    <option value="2" {{ old('purok') == '2' ? 'selected' : '' }}>Purok 2</option>
+                                    <option value="3" {{ old('purok') == '3' ? 'selected' : '' }}>Purok 3</option>
+                                    <option value="4" {{ old('purok') == '4' ? 'selected' : '' }}>Purok 4</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

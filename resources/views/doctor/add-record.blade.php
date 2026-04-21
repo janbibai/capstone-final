@@ -145,11 +145,29 @@
                                             </svg>
                                         </button>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            @php
+                                                $medName = old("prescriptions.$i.medication_name", $rx->medication_name);
+                                                $isOther = $medName && !$medicines->contains('name', $medName);
+                                            @endphp
                                             <div class="sm:col-span-2">
                                                 <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
-                                                <input type="text" name="prescriptions[{{ $i }}][medication_name]" value="{{ old("prescriptions.$i.medication_name", $rx->medication_name) }}" required
-                                                       placeholder="e.g. Amoxicillin" list="medicine-list" autocomplete="off"
-                                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                                <div class="flex flex-col gap-2 relative">
+                                                    <select onchange="toggleCustomMedicine(this, '{{ $i }}')"
+                                                            name="{{ $isOther ? '' : "prescriptions[$i][medication_name]" }}"
+                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none medicine-select" {{ $isOther ? '' : 'required' }}>
+                                                        <option value="" disabled {{ !$medName ? 'selected' : '' }}>Select Medication</option>
+                                                        @foreach($medicines as $medicine)
+                                                            <option value="{{ $medicine->name }}" {{ ($medName === $medicine->name && !$isOther) ? 'selected' : '' }}>{{ $medicine->name }}</option>
+                                                        @endforeach
+                                                        <option value="Others" {{ $isOther ? 'selected' : '' }}>Others</option>
+                                                    </select>
+                                                    <input type="text"
+                                                           name="{{ $isOther ? "prescriptions[$i][medication_name]" : '' }}"
+                                                           value="{{ $isOther ? $medName : '' }}"
+                                                           placeholder="Type custom medicine name"
+                                                           class="custom-medicine-input {{ $isOther ? '' : 'hidden' }} border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none w-full"
+                                                           {{ $isOther ? 'required' : '' }}>
+                                                </div>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600 mb-1">Dosage</label>
@@ -185,11 +203,7 @@
                     </div>
                     {{-- ═══════════════ End Prescriptions ═══════════════ --}}
 
-                    <datalist id="medicine-list">
-                        @foreach($medicines as $medicine)
-                            <option value="{{ $medicine->name }}"></option>
-                        @endforeach
-                    </datalist>
+
 
                     <div class="flex gap-3">
                         <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition">
@@ -225,6 +239,24 @@
 
         // ── Prescriptions dynamic rows ──
         const container = document.getElementById('prescriptions-container');
+
+        function toggleCustomMedicine(selectElem, index) {
+            const containerElem = selectElem.parentElement;
+            const inputElem = containerElem.querySelector('.custom-medicine-input');
+            
+            if (selectElem.value === 'Others') {
+                inputElem.classList.remove('hidden');
+                inputElem.required = true;
+                inputElem.name = `prescriptions[${index}][medication_name]`;
+                selectElem.name = '';
+                inputElem.focus();
+            } else {
+                inputElem.classList.add('hidden');
+                inputElem.required = false;
+                inputElem.name = '';
+                selectElem.name = `prescriptions[${index}][medication_name]`;
+            }
+        }
         const addBtn = document.getElementById('add-prescription-btn');
         const noMsg = document.getElementById('no-prescriptions-msg');
 
@@ -257,9 +289,20 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
-                        <input type="text" name="prescriptions[${index}][medication_name]" required
-                               placeholder="e.g. Amoxicillin" list="medicine-list" autocomplete="off"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                        <div class="flex flex-col gap-2 relative">
+                            <select onchange="toggleCustomMedicine(this, \`${index}\`)" 
+                                    name="prescriptions[${index}][medication_name]"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none medicine-select" required>
+                                <option value="" disabled selected>Select Medication</option>
+                                @foreach($medicines as $medicine)
+                                    <option value="{{ $medicine->name }}">{{ $medicine->name }}</option>
+                                @endforeach
+                                <option value="Others">Others</option>
+                            </select>
+                            <input type="text"
+                                   placeholder="Type custom medicine name"
+                                   class="custom-medicine-input hidden border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none w-full">
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Dosage</label>

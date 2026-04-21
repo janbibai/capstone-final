@@ -4,15 +4,14 @@
             <div class="col-span-1 md:col-span-1">
                 <div class="flex items-center gap-2 mb-6">
                     <img src="{{ asset('images/ZamboanguitaLogo.png') }}" alt="RHU Logo" class="w-8 h-8 rounded-lg object-contain">
-                    <h2 class="text-xl font-bold text-white">Rural Health Unit</h2>
+                    <h2 class="text-xl font-bold text-white font-montserrat">Rural Health Unit</h2>
                 </div>
                 <p class="text-sm leading-relaxed">Dedicated to bringing world-class healthcare to our rural communities through technology and compassion.</p>
             </div>
             
             <div>
-                <h3 class="text-white font-bold mb-6">Quick Links</h3>
+                <h3 class="text-white font-bold mb-6 font-montserrat">Quick Links</h3>
                 <ul class="space-y-4 text-sm">
-                    <li><a class="hover:text-primary transition-colors" href="#">Book Online</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Our Services</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Health Tips</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Patient Portal</a></li>
@@ -20,7 +19,7 @@
             </div>
             
             <div>
-                <h3 class="text-white font-bold mb-6">Services</h3>
+                <h3 class="text-white font-bold mb-6 font-montserrat">Services</h3>
                 <ul class="space-y-4 text-sm">
                     <li><a class="hover:text-primary transition-colors" href="#">Outpatient Consultation</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Maternal and Child health</a></li>
@@ -31,7 +30,7 @@
             </div>
             
             <div>
-                <h3 class="text-white font-bold mb-6">Emergency Hotlines</h3>
+                <h3 class="text-white font-bold mb-6 font-montserrat">Emergency Hotlines</h3>
                 <div class="bg-white/5 p-4 rounded-xl border border-white/10">
                     <p class="text-primary font-black text-2xl mb-1">911</p>
                     <p class="text-xs uppercase tracking-widest text-slate-400">National Emergency</p>

@@ -8,7 +8,7 @@
     <title>Pharmacy Dashboard</title>
     @vite('resources/css/app.css')
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Montserrat', 'Inter', sans-serif; }
         .tab-btn.active {
             color: #0f766e;
             border-color: #0f766e;

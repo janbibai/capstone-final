@@ -8,7 +8,7 @@
     <title>Doctor Dashboard</title>
     @vite('resources/css/app.css')
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Montserrat', 'Inter', sans-serif; }
     </style>
 </head>
 

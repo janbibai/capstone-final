@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RHU Dashboard</title>
     @vite('resources/css/app.css')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="{{ asset('js/chart.umd.js') }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         /* Sidebar active link */

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" fill="#e2e8f0"/>
+  <circle cx="200" cy="140" r="70" fill="#94a3b8"/>
+  <ellipse cx="200" cy="340" rx="120" ry="100" fill="#94a3b8"/>
+  <circle cx="200" cy="140" r="60" fill="#cbd5e1"/>
+  <path d="M200 200 C140 200 100 260 100 320 L300 320 C300 260 260 200 200 200Z" fill="#cbd5e1"/>
+  <!-- Stethoscope hint -->
+  <circle cx="220" cy="250" r="15" stroke="#64748b" stroke-width="3" fill="none"/>
+  <path d="M220 235 Q220 210 200 210" stroke="#64748b" stroke-width="3" fill="none"/>
+  <text x="200" y="385" text-anchor="middle" fill="#64748b" font-family="Montserrat, sans-serif" font-size="14" font-weight="600">Doctor</text>
+</svg>

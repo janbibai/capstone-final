@@ -73,7 +73,11 @@
         <p class="mt-6 text-center text-sm text-gray-600">
             Not an admin?
             <a href="{{ route('staff.login') }}" class="text-green-600 font-semibold hover:underline">
-                Staff login here
+                Staff login here | 
+            </a>
+
+            <a href="{{ route('doctor.login') }}" class="text-green-600 font-semibold hover:underline">
+                Doctor login here
             </a>
         </p>
 

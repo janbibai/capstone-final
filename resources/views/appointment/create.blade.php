@@ -518,7 +518,7 @@
 
                 {{-- Actions (Hidden on Print) --}}
                 <div class="p-6 bg-slate-50 border-t border-slate-100 flex flex-col gap-3 hide-on-print">
-                    <button type="button" onclick="window.print()"
+                    <button type="button" onclick="printTicket()"
                             class="w-full px-4 py-3 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm flex justify-center items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Print Ticket
@@ -536,57 +536,157 @@
 </div>
 
 <style>
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-        #ticket-modal, #ticket-modal * {
-            visibility: visible;
-        }
-        #ticket-modal {
-            position: absolute;
-            left: 50%;
-            top: 20px;
-            transform: translateX(-50%);
-            width: 100%;
-            height: auto;
-            background: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .hide-on-print {
-            display: none !important;
-        }
-        .printable-ticket-container {
-            box-shadow: none !important;
-            border: 2px solid #000;
-            border-radius: 0;
-            width: 80mm; /* Standard receipt width */
-            max-width: 100%;
-            margin: 0;
-        }
-        .printable-no-bg {
-            background-color: transparent !important;
-            color: #000 !important;
-            border-bottom: 2px dashed #000;
-        }
-        .printable-no-bg h2, .printable-no-bg p {
-            color: #000 !important;
-        }
-        .bg-white {
-            background-color: white !important;
-        }
-        .text-slate-800, .text-slate-500, .text-slate-400 {
-            color: #000 !important;
-        }
-        .border-slate-200 {
-            border-color: #000 !important;
-        }
-    }
+    /* No @media print rules needed on this page — printing is handled via popup window */
 </style>
 
 <script>
+    // ===================================================================
+    // PRINT TICKET — Opens a dedicated popup window with only the ticket
+    // so the browser print dialog shows exactly 1 page / 1 copy.
+    // ===================================================================
+    function printTicket() {
+        const ticketEl = document.querySelector('.printable-ticket-container');
+        if (!ticketEl) return;
+
+        const ticketHTML = ticketEl.innerHTML;
+
+        const printWin = window.open('', '_blank', 'width=400,height=600,toolbar=0,menubar=0,scrollbars=0');
+        printWin.document.write(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Queue Ticket</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page {
+            size: 80mm auto;
+            margin: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            width: 80mm;
+            margin: 0 auto;
+            background: #fff;
+        }
+        /* Header */
+        .ticket-header {
+            background: #059669;
+            padding: 16px;
+            text-align: center;
+            color: #fff;
+            border-bottom: 2px dashed #000;
+        }
+        .ticket-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+        .ticket-header p {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #d1fae5;
+            margin-top: 2px;
+        }
+        /* Body */
+        .ticket-body {
+            padding: 20px 16px;
+            text-align: center;
+            background: #fff;
+        }
+        .queue-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .queue-number {
+            font-size: 56px;
+            font-weight: 900;
+            color: #1e293b;
+            font-family: monospace;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            line-height: 1;
+        }
+        .ticket-details {
+            text-align: left;
+            border-top: 2px dashed #000;
+            padding-top: 14px;
+        }
+        .detail-row {
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 1px;
+        }
+        .detail-value {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #1e293b;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media print {
+            html, body { width: 80mm; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-header">
+        <h2>RHU Appointment</h2>
+        <p>Official Queue Ticket</p>
+    </div>
+    <div class="ticket-body">
+        <p class="queue-label">Queue Number</p>
+        <p class="queue-number">{{ session('ticket')['queue_number'] ?? '' }}</p>
+        <div class="ticket-details">
+            <div class="detail-row">
+                <p class="detail-label">Patient Name</p>
+                <p class="detail-value">{{ session('ticket')['patient_name'] ?? '' }}</p>
+            </div>
+            <div class="detail-row">
+                <p class="detail-label">Service</p>
+                <p class="detail-value">{{ session('ticket')['service_name'] ?? '' }}</p>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <p class="detail-label">Date</p>
+                    <p class="detail-value">{{ isset(session('ticket')['schedule']) ? \Carbon\Carbon::parse(session('ticket')['schedule'])->format('M d, Y') : '' }}</p>
+                </div>
+                <div class="detail-row">
+                    <p class="detail-label">Time</p>
+                    <p class="detail-value">{{ isset(session('ticket')['schedule_time']) ? date('h:i A', strtotime(session('ticket')['schedule_time'])) : '' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+        `);
+        printWin.document.close();
+        printWin.focus();
+        // Small delay so the browser can render before printing
+        setTimeout(() => {
+            printWin.print();
+            printWin.close();
+        }, 300);
+    }
+
     // ===================================================================
     // RETURNING PATIENT MODAL
     // ===================================================================

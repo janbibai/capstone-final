@@ -45,6 +45,24 @@ class RhuDashboardController extends Controller
         // Departments needed for staff create/edit modals (always in DOM)
         $departments = Department::where('is_active', true)->orderBy('name')->get();
 
+        $appointmentsPerMonth = DB::table('appointments')
+            ->select(DB::raw("DATE_FORMAT(schedule, '%Y-%m') as month"), DB::raw('COUNT(*) as total'))
+            ->where('schedule', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+            ->groupBy('month')->orderBy('month')->get();
+
+        $patientsPerDepartment = DB::table('appointments')
+            ->join('services', 'appointments.service_id', '=', 'services.id')
+            ->join('departments', 'services.department_id', '=', 'departments.id')
+            ->select('departments.name as department_name', DB::raw('COUNT(DISTINCT appointments.patient_id) as patient_count'))
+            ->where('departments.is_active', true)
+            ->groupBy('departments.id', 'departments.name')->orderBy('departments.name')->get();
+
+        $topDiagnosesThisMonth = DB::table('medical_records')
+            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+            ->select('diagnoses.name as diagnosis_name', DB::raw('COUNT(medical_records.id) as total_count'))
+            ->where('medical_records.created_on', '>=', Carbon::now()->startOfMonth())
+            ->groupBy('diagnoses.id', 'diagnoses.name')->orderByDesc('total_count')->limit(10)->get();
+
         return view('rhu.dashboard', [
             'filter' => $filter,
             'totalPatients' => $totalPatients,
@@ -55,6 +73,9 @@ class RhuDashboardController extends Controller
             'diagnosesRecorded' => $diagnosesRecorded,
             'pendingStaffCount' => $pendingStaffCount,
             'departments' => $departments,
+            'appointmentsPerMonth' => $appointmentsPerMonth,
+            'patientsPerDepartment' => $patientsPerDepartment,
+            'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
         ]);
     }
 
@@ -74,26 +95,6 @@ class RhuDashboardController extends Controller
         $endDate = Carbon::now()->endOfDay();
 
         switch ($section) {
-            case 'analytics':
-                $appointmentsPerMonth = DB::table('appointments')
-                    ->select(DB::raw("DATE_FORMAT(schedule, '%Y-%m') as month"), DB::raw('COUNT(*) as total'))
-                    ->where('schedule', '>=', Carbon::now()->subMonths(11)->startOfMonth())
-                    ->groupBy('month')->orderBy('month')->get();
-
-                $patientsPerDepartment = DB::table('appointments')
-                    ->join('services', 'appointments.service_id', '=', 'services.id')
-                    ->join('departments', 'services.department_id', '=', 'departments.id')
-                    ->select('departments.name as department_name', DB::raw('COUNT(DISTINCT appointments.patient_id) as patient_count'))
-                    ->where('departments.is_active', true)
-                    ->groupBy('departments.id', 'departments.name')->orderBy('departments.name')->get();
-
-                $topDiagnosesThisMonth = DB::table('medical_records')
-                    ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
-                    ->select('diagnoses.name as diagnosis_name', DB::raw('COUNT(medical_records.id) as total_count'))
-                    ->where('medical_records.created_on', '>=', Carbon::now()->startOfMonth())
-                    ->groupBy('diagnoses.id', 'diagnoses.name')->orderByDesc('total_count')->limit(10)->get();
-
-                return view('rhu.partials.analytics', compact('appointmentsPerMonth', 'patientsPerDepartment', 'topDiagnosesThisMonth'));
 
             case 'diseases':
                 $topDiseases = DB::table('medical_records')

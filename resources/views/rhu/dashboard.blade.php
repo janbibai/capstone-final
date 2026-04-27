@@ -155,16 +155,6 @@
                     <span>Dashboard Overview</span>
                 </a>
 
-                {{-- Group: Analytics --}}
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Analytics</p>
-                <a href="#analytics" onclick="showSection('analytics')" id="link-analytics"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    <span>Appointment Analytics</span>
-                </a>
 
                 {{-- Group: Disease Statistics --}}
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Statistics</p>
@@ -257,7 +247,7 @@
                     </div>
 
                     {{-- Appointments Today --}}
-                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
                         <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -273,7 +263,7 @@
                     </div>
 
                     {{-- Completed Today --}}
-                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
                         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -289,7 +279,7 @@
                     </div>
 
                     {{-- Pending Today --}}
-                    <div onclick="showSection('analytics')" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4 cursor-pointer hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 transform">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
                         <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
                             <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -336,12 +326,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-8">
+                    @include('rhu.partials.analytics')
+                </div>
             </section>
 
             {{-- ═══ Lazy-loaded sections — content fetched via AJAX ═══ --}}
             @php
                 $lazySections = [
-                    'analytics' => 'Appointment Analytics',
                     'diseases' => 'Disease Statistics',
                     'departments' => 'By Department',
                     'dispensing' => 'Medicine Dispensing',
@@ -744,7 +737,7 @@
     {{-- ── Chart.js ─────────────────────────────────────────────── --}}
     <script>
         // ── Configuration ────────────────────────────────────
-        const sections = ['overview', 'analytics', 'diseases', 'departments', 'dispensing', 'staff-approvals', 'medicine-inventory'];
+        const sections = ['overview', 'diseases', 'departments', 'dispensing', 'staff-approvals', 'medicine-inventory'];
         const currentFilter = @json($filter);
         const sectionBaseUrl = @json(route('rhu.dashboard.section', ['section' => '__SECTION__']));
         const loadedSections = new Set(['overview']); // overview is already rendered server-side
@@ -782,7 +775,6 @@
                     loadedSections.add(id);
 
                     // Post-load hooks
-                    if (id === 'analytics') initAnalyticsCharts();
                     if (id === 'staff-approvals' && staffCreated) {
                         setTimeout(() => {
                             const row = section.querySelector('.staff-row-highlight');
@@ -1097,6 +1089,11 @@
                 cancelBtn.classList.add('opacity-50', 'cursor-not-allowed');
             });
         })();
+
+        // ── Initialize charts on page load ───────────────────
+        document.addEventListener('DOMContentLoaded', function() {
+            initAnalyticsCharts();
+        });
     </script>
 </body>
 

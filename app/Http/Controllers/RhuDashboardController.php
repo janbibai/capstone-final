@@ -31,80 +31,7 @@ class RhuDashboardController extends Controller
         };
         $endDate = Carbon::now()->endOfDay();
 
-        // Diagnosis counts per department (filtered by date)
-        $statistics = DB::table('departments')
-            ->join('staff', 'departments.id', '=', 'staff.department_id')
-            ->join('users', 'staff.user_id', '=', 'users.id')
-            ->join('medical_records', 'users.id', '=', 'medical_records.created_by')
-            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
-            ->select(
-                'departments.name as department_name',
-                'diagnoses.name as diagnosis_name',
-                DB::raw('COUNT(medical_records.id) as diagnosis_count')
-            )
-            ->where('departments.is_active', true)
-            ->whereBetween('medical_records.created_on', [$startDate, $endDate])
-            ->groupBy('departments.id', 'departments.name', 'diagnoses.id', 'diagnoses.name')
-            ->orderBy('departments.name')
-            ->orderByDesc('diagnosis_count')
-            ->get();
-
-        // Group by department
-        $groupedStatistics = $statistics->groupBy('department_name');
-
-        // Most common diseases overall (top 10, filtered by same date range)
-        $topDiseases = DB::table('medical_records')
-            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
-            ->select(
-                'diagnoses.name as diagnosis_name',
-                DB::raw('COUNT(medical_records.id) as total_count')
-            )
-            ->whereBetween('medical_records.created_on', [$startDate, $endDate])
-            ->groupBy('diagnoses.id', 'diagnoses.name')
-            ->orderByDesc('total_count')
-            ->limit(10)
-            ->get();
-
-        // ── Chart Data ─────────────────────────────────────────────────
-
-        // 1) Appointments per month (last 12 months)
-        $appointmentsPerMonth = DB::table('appointments')
-            ->select(
-                DB::raw("DATE_FORMAT(schedule, '%Y-%m') as month"),
-                DB::raw('COUNT(*) as total')
-            )
-            ->where('schedule', '>=', Carbon::now()->subMonths(11)->startOfMonth())
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        // 2) Patients per department (unique patients via appointments → services)
-        $patientsPerDepartment = DB::table('appointments')
-            ->join('services', 'appointments.service_id', '=', 'services.id')
-            ->join('departments', 'services.department_id', '=', 'departments.id')
-            ->select(
-                'departments.name as department_name',
-                DB::raw('COUNT(DISTINCT appointments.patient_id) as patient_count')
-            )
-            ->where('departments.is_active', true)
-            ->groupBy('departments.id', 'departments.name')
-            ->orderBy('departments.name')
-            ->get();
-
-        // 3) Top diagnoses this month
-        $topDiagnosesThisMonth = DB::table('medical_records')
-            ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
-            ->select(
-                'diagnoses.name as diagnosis_name',
-                DB::raw('COUNT(medical_records.id) as total_count')
-            )
-            ->where('medical_records.created_on', '>=', Carbon::now()->startOfMonth())
-            ->groupBy('diagnoses.id', 'diagnoses.name')
-            ->orderByDesc('total_count')
-            ->limit(10)
-            ->get();
-
-        // ── Overview KPIs ────────────────────────────────────────────────
+        // ── Overview KPIs (lightweight counts only) ─────────────────────
         $totalPatients = DB::table('patients')->count();
         $appointmentsToday = DB::table('appointments')->whereDate('schedule', Carbon::today())->count();
         $completedToday = DB::table('appointments')->whereDate('schedule', Carbon::today())->where('status', 'completed')->count();
@@ -112,72 +39,118 @@ class RhuDashboardController extends Controller
         $activeDepartments = DB::table('departments')->where('is_active', true)->count();
         $diagnosesRecorded = DB::table('medical_records')->whereBetween('created_on', [$startDate, $endDate])->count();
 
-        // ── Staff Accounts ───────────────────────────────
-        $staffAccounts = Staff::with(['user', 'department'])
-            ->orderByDesc('created_at')
-            ->get();
+        // Sidebar badge — just the count, not the full collection
+        $pendingStaffCount = Staff::where('is_active', false)->count();
 
-        $pendingStaff = Staff::with(['user'])
-            ->where('is_active', false)
-            ->orderByDesc('created_at')
-            ->get();
+        // Departments needed for staff create/edit modals (always in DOM)
+        $departments = Department::where('is_active', true)->orderBy('name')->get();
 
-        // ── Medicine Inventory (with batches) ─────────────────────────
-        $medicines = Medicine::with(['batches' => function ($q) {
-            $q->orderBy('expiry_date', 'asc');
-        }])->orderBy('name')->get();
+        return view('rhu.dashboard', [
+            'filter' => $filter,
+            'totalPatients' => $totalPatients,
+            'appointmentsToday' => $appointmentsToday,
+            'completedToday' => $completedToday,
+            'pendingToday' => $pendingToday,
+            'activeDepartments' => $activeDepartments,
+            'diagnosesRecorded' => $diagnosesRecorded,
+            'pendingStaffCount' => $pendingStaffCount,
+            'departments' => $departments,
+        ]);
+    }
 
-        // ── Medicine Dispensing Statistics ─────────────────────────────
-        $topDispensedMedicines = DB::table('dispensing_logs')
-            ->select(
-                'medicine_name',
-                'unit',
-                DB::raw('SUM(quantity_dispensed) as total_dispensed'),
-                DB::raw('COUNT(*) as dispense_count')
-            )
-            ->whereBetween('dispensed_at', [$startDate, $endDate])
-            ->groupBy('medicine_name', 'unit')
-            ->orderByDesc('total_dispensed')
-            ->limit(10)
-            ->get();
+    /**
+     * AJAX: Return a rendered HTML partial for a specific dashboard section.
+     */
+    public function section(Request $request, string $section)
+    {
+        $filter = $request->query('filter', 'today');
 
-        // ── Tabular Chronological Dispensing Logs ──────────────────────
-        $dispensingLogsTabular = DispensingLog::with([
-                'prescription.medicalRecord.patient',
-                'dispenser'
-            ])
-            ->whereBetween('dispensed_at', [$startDate, $endDate])
-            ->orderByDesc('dispensed_at')
-            ->get();
+        $startDate = match ($filter) {
+            'week' => Carbon::now()->startOfWeek(),
+            'month' => Carbon::now()->startOfMonth(),
+            'year' => Carbon::now()->startOfYear(),
+            default => Carbon::today(),
+        };
+        $endDate = Carbon::now()->endOfDay();
 
-            // ── Departments (for create-account form) ─────────────────
-            $departments = Department::where('is_active', true)->orderBy('name')->get();
+        switch ($section) {
+            case 'analytics':
+                $appointmentsPerMonth = DB::table('appointments')
+                    ->select(DB::raw("DATE_FORMAT(schedule, '%Y-%m') as month"), DB::raw('COUNT(*) as total'))
+                    ->where('schedule', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+                    ->groupBy('month')->orderBy('month')->get();
 
-            return view('rhu.dashboard', [
-                'groupedStatistics' => $groupedStatistics,
-                'topDiseases' => $topDiseases,
-                'filter' => $filter,
-                'appointmentsPerMonth' => $appointmentsPerMonth,
-                'patientsPerDepartment' => $patientsPerDepartment,
-                'topDiagnosesThisMonth' => $topDiagnosesThisMonth,
-                // Overview KPIs
-                'totalPatients' => $totalPatients,
-                'appointmentsToday' => $appointmentsToday,
-                'completedToday' => $completedToday,
-                'pendingToday' => $pendingToday,
-                'activeDepartments' => $activeDepartments,
-                'diagnosesRecorded' => $diagnosesRecorded,
-                // Staff accounts
-                'staffAccounts' => $staffAccounts,
-                'pendingStaff' => $pendingStaff,
-                // Medicine inventory
-                'medicines' => $medicines,
-                // Medicine dispensing statistics
-                'topDispensedMedicines' => $topDispensedMedicines,
-                'dispensingLogsTabular' => $dispensingLogsTabular,
-                // Departments
-                'departments' => $departments,
-            ]);
+                $patientsPerDepartment = DB::table('appointments')
+                    ->join('services', 'appointments.service_id', '=', 'services.id')
+                    ->join('departments', 'services.department_id', '=', 'departments.id')
+                    ->select('departments.name as department_name', DB::raw('COUNT(DISTINCT appointments.patient_id) as patient_count'))
+                    ->where('departments.is_active', true)
+                    ->groupBy('departments.id', 'departments.name')->orderBy('departments.name')->get();
+
+                $topDiagnosesThisMonth = DB::table('medical_records')
+                    ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+                    ->select('diagnoses.name as diagnosis_name', DB::raw('COUNT(medical_records.id) as total_count'))
+                    ->where('medical_records.created_on', '>=', Carbon::now()->startOfMonth())
+                    ->groupBy('diagnoses.id', 'diagnoses.name')->orderByDesc('total_count')->limit(10)->get();
+
+                return view('rhu.partials.analytics', compact('appointmentsPerMonth', 'patientsPerDepartment', 'topDiagnosesThisMonth'));
+
+            case 'diseases':
+                $topDiseases = DB::table('medical_records')
+                    ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+                    ->select('diagnoses.name as diagnosis_name', DB::raw('COUNT(medical_records.id) as total_count'))
+                    ->whereBetween('medical_records.created_on', [$startDate, $endDate])
+                    ->groupBy('diagnoses.id', 'diagnoses.name')->orderByDesc('total_count')->limit(10)->get();
+
+                return view('rhu.partials.diseases', compact('topDiseases'));
+
+            case 'departments':
+                $statistics = DB::table('departments')
+                    ->join('staff', 'departments.id', '=', 'staff.department_id')
+                    ->join('users', 'staff.user_id', '=', 'users.id')
+                    ->join('medical_records', 'users.id', '=', 'medical_records.created_by')
+                    ->join('diagnoses', 'medical_records.diagnosis_id', '=', 'diagnoses.id')
+                    ->select('departments.name as department_name', 'diagnoses.name as diagnosis_name', DB::raw('COUNT(medical_records.id) as diagnosis_count'))
+                    ->where('departments.is_active', true)
+                    ->whereBetween('medical_records.created_on', [$startDate, $endDate])
+                    ->groupBy('departments.id', 'departments.name', 'diagnoses.id', 'diagnoses.name')
+                    ->orderBy('departments.name')->orderByDesc('diagnosis_count')->get();
+
+                $groupedStatistics = $statistics->groupBy('department_name');
+
+                return view('rhu.partials.departments', compact('groupedStatistics'));
+
+            case 'dispensing':
+                $topDispensedMedicines = DB::table('dispensing_logs')
+                    ->select('medicine_name', 'unit', DB::raw('SUM(quantity_dispensed) as total_dispensed'), DB::raw('COUNT(*) as dispense_count'))
+                    ->whereBetween('dispensed_at', [$startDate, $endDate])
+                    ->groupBy('medicine_name', 'unit')->orderByDesc('total_dispensed')->limit(10)->get();
+
+                $dispensingLogsTabular = DispensingLog::with(['prescription.medicalRecord.patient', 'dispenser'])
+                    ->whereBetween('dispensed_at', [$startDate, $endDate])
+                    ->orderByDesc('dispensed_at')->get();
+
+                return view('rhu.partials.dispensing', compact('topDispensedMedicines', 'dispensingLogsTabular'));
+
+            case 'staff-approvals':
+                $staffAccounts = Staff::with(['user', 'department'])->orderByDesc('created_at')->get();
+                $highlightNewest = $request->query('highlight') === '1';
+
+                return view('rhu.partials.staff-approvals', compact('staffAccounts', 'highlightNewest'));
+
+            case 'medicine-inventory':
+                $medicines = Medicine::with(['batches' => function ($q) {
+                    $q->orderBy('expiry_date', 'asc');
+                }])->orderBy('name')->get();
+
+                $lowStockCount = $medicines->where('quantity', '<=', 10)->where('quantity', '>', 0)->count();
+                $outOfStockCount = $medicines->where('quantity', 0)->count();
+
+                return view('rhu.partials.medicine-inventory', compact('medicines', 'lowStockCount', 'outOfStockCount'));
+
+            default:
+                abort(404, 'Unknown section');
+        }
     }
 
     /**
@@ -425,7 +398,9 @@ class RhuDashboardController extends Controller
             Staff::create($staffData);
         });
 
-        return back()->withFragment('staff-approvals')->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.');
+        return back()->withFragment('staff-approvals')
+            ->with('success', 'Account for "' . $request->name . '" (' . $request->position . ') has been created successfully.')
+            ->with('staff_created', true);
     }
 
     /**

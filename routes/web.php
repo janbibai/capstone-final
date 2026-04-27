@@ -92,6 +92,8 @@ Route::middleware(['staff', 'dashboard.no-cache'])->group(function () {
     Route::middleware(['admin'])->group(function () {
         Route::get('/rhu/dashboard', [RhuDashboardController::class, 'index'])
             ->name('rhu.dashboard');
+        Route::get('/rhu/dashboard/section/{section}', [RhuDashboardController::class, 'section'])
+            ->name('rhu.dashboard.section');
         Route::get('/rhu/dashboard/diagnosis-patients', [RhuDashboardController::class, 'diagnosisPatients'])
             ->name('rhu.diagnosisPatients');
         Route::patch('/rhu/staff/{staff}/approve', [RhuDashboardController::class, 'approveStaff'])

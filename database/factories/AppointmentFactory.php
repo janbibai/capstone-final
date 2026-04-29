@@ -16,12 +16,12 @@ class AppointmentFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'patient_id' => null, // we will attach later
-            'service_id' => 1, // change if needed
-            'schedule' => Carbon::today(),
-            'schedule_time' => fake()->time(),
-            'status' => 'not started',
-        ];
+        // return [
+        //     'patient_id' => null, // we will attach later
+        //     'service_id' => 1, // change if needed
+        //     'schedule' => Carbon::today(),
+        //     'schedule_time' => fake()->time(),
+        //     'status' => 'not started',
+        // ];
     }
 }

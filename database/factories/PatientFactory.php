@@ -14,18 +14,18 @@ class PatientFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition()
     {
-        return [
-            'user_id' => null,
-            'first_name' => fake()->firstName(),
-            'middle_name' => fake()->optional()->firstName(),
-            'last_name' => fake()->lastName(),
-            'date_of_birth' => fake()->date(),
-            'gender' => fake()->randomElement(['male', 'female', 'other']),
-            'phone' => fake()->phoneNumber(),
-            'email' => fake()->safeEmail(),
-            'address' => fake()->address(),
-        ];
+    //     // return [
+    //     //     'user_id' => null,
+    //     //     'first_name' => fake()->firstName(),
+    //     //     'middle_name' => fake()->optional()->firstName(),
+    //     //     'last_name' => fake()->lastName(),
+    //     //     'date_of_birth' => fake()->date(),
+    //     //     'gender' => fake()->randomElement(['male', 'female', 'other']),
+    //     //     'phone' => fake()->phoneNumber(),
+    //     //     'email' => fake()->safeEmail(),
+    //     //     'address' => fake()->address(),
+    //     // ];
     }
 }

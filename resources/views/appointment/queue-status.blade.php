@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Queue Status')
+@section('hideFooter', true)
 
 @section('content')
     <div class="relative min-h-screen py-12 px-4 font-montserrat">

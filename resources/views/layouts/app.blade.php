@@ -9,13 +9,17 @@
 </head>
 <body class="bg-background-light text-slate-900 font-display antialiased flex flex-col min-h-screen">
 
-    @include('layouts.header')
+    @unless(View::getSection('hideHeader'))
+        @include('layouts.header')
+    @endunless
 
     <main class="flex-grow">
         @yield('content')
     </main>
 
-    @include('layouts.footer')
+    @unless(View::getSection('hideFooter'))
+        @include('layouts.footer')
+    @endunless
 
 </body>
 </html>

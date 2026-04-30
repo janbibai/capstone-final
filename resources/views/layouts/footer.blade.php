@@ -32,8 +32,8 @@
             <div>
                 <h3 class="text-white font-bold mb-6 font-montserrat">Emergency Hotlines</h3>
                 <div class="bg-white/5 p-4 rounded-xl border border-white/10">
-                    <p class="text-primary font-black text-2xl mb-1">911</p>
-                    <p class="text-xs uppercase tracking-widest text-slate-400">National Emergency</p>
+                    <p class="text-primary font-black text-2xl mb-1">09631717322</p>
+                    <p class="text-xs uppercase tracking-widest text-slate-400">Emergency</p>
                 </div>
             </div>
         </div>

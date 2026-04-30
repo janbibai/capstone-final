@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Staff Login')
+@section('hideFooter', true)
+@section('hideHeader', true)
 
 @section('content')
 <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">

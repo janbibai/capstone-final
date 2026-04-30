@@ -140,7 +140,7 @@
                             <span class="material-symbols-outlined text-emerald-600 text-4xl">qr_code_2</span>
                         </div>
                         <h4 class="text-xl font-bold text-slate-900 mb-3 font-montserrat">2. Get Number</h4>
-                        <p class="text-slate-600 px-4">Instantly receive a queue number for your appointment.</p>
+                        <p class="text-slate-600 px-4">Instantly receive a queue number.</p>
                     </div>
                     
                     <div class="flex flex-col items-center text-center relative group">
@@ -225,8 +225,8 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-900 text-lg mb-1">Contact Details</h4>
-                                    <p class="text-slate-600">Appointments: <a href="tel:5551234567" class="hover:text-emerald-600 transition-colors">(555) 123-4567</a></p>
-                                    <p class="text-red-600 font-bold mt-1">Emergency: 911</p>
+                                    <p class="text-slate-600">Phone numbers: <a href="tel:09631717322" class="hover:text-emerald-600 transition-colors">(0963) 171-7322</a></p>
+                                    <p class="text-red-600 font-bold mt-1">Emergency: 09631717322</p>
                                 </div>
                             </div>
                         </div>

@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class StaffAuthController extends Controller
 {
@@ -96,11 +98,23 @@ class StaffAuthController extends Controller
             'password' => ['required'],
         ]);
 
+        $throttleKey = Str::lower($request->email) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()
+                ->withErrors(['throttle' => $seconds])
+                ->onlyInput('email');
+        }
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($throttleKey, 60);
             return back()
                 ->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email');
         }
+
+        RateLimiter::clear($throttleKey);
 
         $request->session()->regenerate();
 
@@ -179,11 +193,23 @@ class StaffAuthController extends Controller
             'password' => ['required'],
         ]);
 
+        $throttleKey = Str::lower($request->email) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()
+                ->withErrors(['throttle' => $seconds])
+                ->onlyInput('email');
+        }
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($throttleKey, 60);
             return back()
                 ->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email');
         }
+
+        RateLimiter::clear($throttleKey);
 
         $request->session()->regenerate();
 
@@ -244,11 +270,23 @@ class StaffAuthController extends Controller
             'password' => ['required'],
         ]);
 
+        $throttleKey = Str::lower($request->email) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()
+                ->withErrors(['throttle' => $seconds])
+                ->onlyInput('email');
+        }
+
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::hit($throttleKey, 60);
             return back()
                 ->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email');
         }
+
+        RateLimiter::clear($throttleKey);
 
         $request->session()->regenerate();
 

@@ -6,6 +6,35 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $currentRecord ? 'Edit Current Diagnosis' : 'Add Medical Record' }} — {{ $patient->full_name }}</title>
     @vite('resources/css/app.css')
+    
+    <!-- Tom Select CSS for Searchable Dropdown -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        /* Tweak Tom Select to match Tailwind's rounded-xl inputs */
+        .ts-control {
+            border-radius: 0.75rem !important;
+            padding: 0.5rem 1rem !important;
+            border-color: #d1d5db !important;
+            font-size: 0.875rem !important;
+            min-height: 42px;
+            box-shadow: none !important;
+        }
+        .ts-control.focus {
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5) !important;
+        }
+        .ts-dropdown {
+            border-radius: 0.75rem !important;
+            border-color: #d1d5db !important;
+            font-size: 0.875rem !important;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        }
+        .ts-dropdown .active {
+            background-color: #eff6ff !important; /* blue-50 */
+            color: #1e3a8a !important; /* blue-900 */
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -218,7 +247,20 @@
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script>
+        // ── Initialize Tom Select for Diagnosis ──
+        document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect("#diagnosis_id", {
+                create: false,
+                maxOptions: null, // show all matching options
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                }
+            });
+        });
+
         // ── Diagnosis select/input sync ──
         const diagnosisSelect = document.getElementById('diagnosis_id');
         const diagnosisName = document.getElementById('diagnosis_name');

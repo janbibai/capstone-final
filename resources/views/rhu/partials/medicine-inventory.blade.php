@@ -23,7 +23,7 @@
         </div>
         <div>
             <p class="text-xs text-gray-500 font-medium">Total Medicines</p>
-            <p class="text-3xl font-bold text-gray-800">{{ $medicines->count() }}</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $totalMedicines }}</p>
         </div>
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center space-x-4">
@@ -64,7 +64,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
                     <tr>
                         <th class="px-6 py-3">#</th>
                         <th class="px-6 py-3">Medicine Name</th>
@@ -79,10 +79,11 @@
                 </thead>
                 <tbody>
                     @foreach ($medicines as $index => $medicine)
-                        @include('rhu.partials._medicine-row', ['medicine' => $medicine, 'index' => $index])
+                        @include('rhu.partials._medicine-row', ['medicine' => $medicine, 'index' => $medicines->firstItem() - 1 + $index])
                     @endforeach
                 </tbody>
             </table>
         </div>
+        @include('rhu.partials._pagination', ['paginator' => $medicines, 'section' => 'medicine-inventory'])
     </div>
 @endif

@@ -83,6 +83,7 @@
                         <tr>
                             <th class="px-4 py-2 text-left">Batch #</th>
                             <th class="px-4 py-2 text-right">Quantity</th>
+                            <th class="px-4 py-2 text-left">Mfg. Date</th>
                             <th class="px-4 py-2 text-left">Expiry Date</th>
                             <th class="px-4 py-2 text-left">Status</th>
                             <th class="px-4 py-2 text-left">Added</th>
@@ -100,6 +101,13 @@
                                 <td class="px-4 py-2.5 text-gray-500 font-medium">#{{ $bIndex + 1 }}</td>
                                 <td class="px-4 py-2.5 text-right font-bold {{ $batchEmpty ? 'text-gray-300' : ($batchExpired ? 'text-red-600' : 'text-gray-800') }}">
                                     {{ number_format($batch->quantity) }} {{ $batch->unit ?? $medicine->unit }}
+                                </td>
+                                <td class="px-4 py-2.5">
+                                    @if($batch->manufacturing_date)
+                                        <span class="text-gray-600">{{ $batch->manufacturing_date->format('M d, Y') }}</span>
+                                    @else
+                                        <span class="text-gray-400">—</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-2.5">
                                     @if($batch->expiry_date)

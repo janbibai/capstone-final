@@ -521,6 +521,11 @@
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
                             </div>
                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Manufacturing Date</label>
+                                <input type="date" name="manufacturing_date"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            </div>
+                            <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
                                 <input type="date" name="expiry_date"
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
@@ -676,6 +681,12 @@
                             </div>
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Batch Manufacturing Date</label>
+                            <input type="date" name="manufacturing_date" id="add-stock-manufacturing"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <p class="text-xs text-gray-400 mt-1">Set the manufacturing date for this new batch</p>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Batch Expiry Date</label>
                             <input type="date" name="expiry_date" id="add-stock-expiry"
                                 class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 focus:outline-none">
@@ -695,12 +706,12 @@
                 </div>
             </div>
 
-            {{-- ═══ Edit Batch Expiry Modal ═══ --}}
+            {{-- ═══ Edit Batch Modal ═══ --}}
             <div id="edit-batch-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
                 <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('edit-batch-modal').classList.add('hidden')"></div>
                 <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-gray-800">Edit Batch Expiry</h3>
+                        <h3 class="text-lg font-bold text-gray-800">Edit Batch</h3>
                         <button type="button" onclick="document.getElementById('edit-batch-modal').classList.add('hidden')"
                             class="text-gray-400 hover:text-gray-600 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -711,6 +722,12 @@
                     <form id="edit-batch-form" method="POST" class="p-6 space-y-4">
                         @csrf
                         @method('PATCH')
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Manufacturing Date</label>
+                            <input type="date" name="manufacturing_date" id="edit-batch-manufacturing"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                            <p class="text-xs text-gray-400 mt-1">Leave blank if unknown</p>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
                             <input type="date" name="expiry_date" id="edit-batch-expiry"
@@ -794,6 +811,34 @@
                                 Retry
                             </button>
                         </div>`;
+                });
+        }
+
+        // ── AJAX pagination for lazy-loaded sections ─────────
+        function paginateSection(sectionId, page) {
+            const section = document.getElementById('section-' + sectionId);
+            const url = sectionBaseUrl.replace('__SECTION__', sectionId)
+                + '?filter=' + encodeURIComponent(currentFilter)
+                + '&page=' + page;
+
+            section.style.opacity = '0.5';
+            section.style.pointerEvents = 'none';
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(html => {
+                    section.innerHTML = html;
+                    section.style.opacity = '1';
+                    section.style.pointerEvents = '';
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(() => {
+                    section.style.opacity = '1';
+                    section.style.pointerEvents = '';
+                    showToast('Failed to load page. Please try again.', 'error');
                 });
         }
 
@@ -991,6 +1036,7 @@
             const unitOption = Array.from(unitSelect.options).find(opt => opt.value === unit);
             unitSelect.value = unitOption ? unit : 'pcs';
             document.getElementById('add-stock-quantity').value = 1;
+            document.getElementById('add-stock-manufacturing').value = '';
             document.getElementById('add-stock-expiry').value = '';
             document.getElementById('add-stock-modal').classList.remove('hidden');
         }
@@ -1000,11 +1046,39 @@
             if (row) row.classList.toggle('hidden');
         }
 
-        function openEditBatchModal(batchId, currentExpiry) {
+        function openEditBatchModal(batchId, currentManufacturing, currentExpiry) {
             const form = document.getElementById('edit-batch-form');
             form.action = `/rhu/medicine-batches/${batchId}/expiry`;
+            document.getElementById('edit-batch-manufacturing').value = currentManufacturing;
             document.getElementById('edit-batch-expiry').value = currentExpiry;
             document.getElementById('edit-batch-modal').classList.remove('hidden');
+        }
+
+        function sortInventory(sortValue) {
+            const section = document.getElementById('section-medicine-inventory');
+            const url = sectionBaseUrl.replace('__SECTION__', 'medicine-inventory')
+                + '?filter=' + encodeURIComponent(currentFilter)
+                + '&sort=' + encodeURIComponent(sortValue);
+
+            // Show a brief loading indicator
+            section.style.opacity = '0.5';
+            section.style.pointerEvents = 'none';
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(html => {
+                    section.innerHTML = html;
+                    section.style.opacity = '1';
+                    section.style.pointerEvents = '';
+                })
+                .catch(() => {
+                    section.style.opacity = '1';
+                    section.style.pointerEvents = '';
+                    showToast('Failed to sort inventory. Please try again.', 'error');
+                });
         }
 
         // ── Staff Management JS ──────────────────────────────

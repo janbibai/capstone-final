@@ -129,12 +129,12 @@ class RhuDashboardController extends Controller
 
                 $dispensingLogsTabular = DispensingLog::with(['prescription.medicalRecord.patient', 'dispenser'])
                     ->whereBetween('dispensed_at', [$startDate, $endDate])
-                    ->orderByDesc('dispensed_at')->get();
+                    ->orderByDesc('dispensed_at')->paginate(10)->withQueryString();
 
                 return view('rhu.partials.dispensing', compact('topDispensedMedicines', 'dispensingLogsTabular'));
 
             case 'staff-approvals':
-                $staffAccounts = Staff::with(['user', 'department'])->orderByDesc('created_at')->get();
+                $staffAccounts = Staff::with(['user', 'department'])->orderByDesc('created_at')->paginate(10)->withQueryString();
                 $highlightNewest = $request->query('highlight') === '1';
 
                 return view('rhu.partials.staff-approvals', compact('staffAccounts', 'highlightNewest'));
@@ -142,12 +142,14 @@ class RhuDashboardController extends Controller
             case 'medicine-inventory':
                 $medicines = Medicine::with(['batches' => function ($q) {
                     $q->orderBy('expiry_date', 'asc');
-                }])->orderBy('name')->get();
+                }])->orderBy('name')->paginate(10)->withQueryString();
 
-                $lowStockCount = $medicines->where('quantity', '<=', 10)->where('quantity', '>', 0)->count();
-                $outOfStockCount = $medicines->where('quantity', 0)->count();
+                // Summary card counts need full data, not paginated
+                $lowStockCount = Medicine::where('quantity', '<=', 10)->where('quantity', '>', 0)->count();
+                $outOfStockCount = Medicine::where('quantity', 0)->count();
+                $totalMedicines = Medicine::count();
 
-                return view('rhu.partials.medicine-inventory', compact('medicines', 'lowStockCount', 'outOfStockCount'));
+                return view('rhu.partials.medicine-inventory', compact('medicines', 'lowStockCount', 'outOfStockCount', 'totalMedicines'));
 
             default:
                 abort(404, 'Unknown section');
@@ -225,13 +227,14 @@ class RhuDashboardController extends Controller
     public function storeMedicine(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'         => ['required', 'string', 'max:255'],
-            'generic_name' => ['nullable', 'string', 'max:255'],
-            'category'     => ['nullable', 'string', 'max:100'],
-            'quantity'     => ['required', 'integer', 'min:0'],
-            'unit'         => ['required', 'string', 'max:50'],
-            'expiry_date'  => ['nullable', 'date'],
-            'description'  => ['nullable', 'string', 'max:500'],
+            'name'               => ['required', 'string', 'max:255'],
+            'generic_name'       => ['nullable', 'string', 'max:255'],
+            'category'           => ['nullable', 'string', 'max:100'],
+            'manufacturing_date' => ['nullable', 'date'],
+            'quantity'           => ['required', 'integer', 'min:0'],
+            'unit'               => ['required', 'string', 'max:50'],
+            'expiry_date'        => ['nullable', 'date'],
+            'description'        => ['nullable', 'string', 'max:500'],
         ]);
 
         if ($validator->fails()) {
@@ -239,15 +242,16 @@ class RhuDashboardController extends Controller
         }
 
         $medicine = Medicine::create($request->only([
-            'name', 'generic_name', 'category', 'quantity', 'unit', 'expiry_date', 'description',
+            'name', 'generic_name', 'category', 'manufacturing_date', 'quantity', 'unit', 'expiry_date', 'description',
         ]));
 
         // Create the initial batch
         if ($medicine->quantity > 0 || $medicine->expiry_date) {
             $medicine->batches()->create([
-                'quantity'    => $medicine->quantity,
-                'unit'        => $medicine->unit,
-                'expiry_date' => $medicine->expiry_date,
+                'quantity'           => $medicine->quantity,
+                'unit'               => $medicine->unit,
+                'manufacturing_date' => $medicine->manufacturing_date,
+                'expiry_date'        => $medicine->expiry_date,
             ]);
         }
 
@@ -284,9 +288,10 @@ class RhuDashboardController extends Controller
     public function addStock(Request $request, Medicine $medicine)
     {
         $validator = Validator::make($request->all(), [
-            'add_quantity' => ['required', 'integer', 'min:1'],
-            'unit'         => ['required', 'string', 'max:50'],
-            'expiry_date'  => ['nullable', 'date'],
+            'add_quantity'       => ['required', 'integer', 'min:1'],
+            'unit'               => ['required', 'string', 'max:50'],
+            'manufacturing_date' => ['nullable', 'date'],
+            'expiry_date'        => ['nullable', 'date'],
         ]);
 
         if ($validator->fails()) {
@@ -294,9 +299,10 @@ class RhuDashboardController extends Controller
         }
 
         $medicine->batches()->create([
-            'quantity'    => $request->add_quantity,
-            'unit'        => $request->unit,
-            'expiry_date' => $request->expiry_date,
+            'quantity'           => $request->add_quantity,
+            'unit'               => $request->unit,
+            'manufacturing_date' => $request->manufacturing_date,
+            'expiry_date'        => $request->expiry_date,
         ]);
 
         $medicine->syncStockFromBatches();

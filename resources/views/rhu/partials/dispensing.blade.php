@@ -113,5 +113,6 @@
                 </tbody>
             </table>
         </div>
+        @include('rhu.partials._pagination', ['paginator' => $dispensingLogsTabular, 'section' => 'dispensing'])
     </div>
 @endif

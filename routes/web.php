@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\DoctorDashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PharmacyDashboardController;

@@ -10,6 +10,7 @@ class Medicine extends Model
         'name',
         'generic_name',
         'category',
+        'manufacturing_date',
         'quantity',
         'unit',
         'expiry_date',
@@ -19,6 +20,7 @@ class Medicine extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'manufacturing_date' => 'date',
         'expiry_date' => 'date',
     ];
 

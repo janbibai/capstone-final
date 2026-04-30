@@ -10,10 +10,12 @@ class MedicineBatch extends Model
         'medicine_id',
         'quantity',
         'unit',
+        'manufacturing_date',
         'expiry_date',
     ];
 
     protected $casts = [
+        'manufacturing_date' => 'date',
         'expiry_date' => 'date',
     ];
 

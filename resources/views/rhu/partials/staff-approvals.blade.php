@@ -27,7 +27,7 @@
         <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between">
             <div>
                 <h3 class="text-base font-bold text-indigo-800">Staff Accounts</h3>
-                <p class="text-xs text-indigo-600 mt-0.5">{{ $staffAccounts->count() }} account(s)</p>
+                <p class="text-xs text-indigo-600 mt-0.5">{{ $staffAccounts->total() }} account(s)</p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -49,8 +49,8 @@
                 <tbody>
                     @foreach ($staffAccounts as $index => $staff)
                         <tr id="staff-row-{{ $staff->id }}"
-                            class="border-t border-gray-100 hover:bg-gray-50 {{ $index === 0 && $highlightNewest ? 'staff-row-highlight' : '' }}">
-                            <td class="px-6 py-4 text-gray-400">{{ $index + 1 }}</td>
+                            class="border-t border-gray-100 hover:bg-gray-50 {{ $index === 0 && $staffAccounts->onFirstPage() && $highlightNewest ? 'staff-row-highlight' : '' }}">
+                            <td class="px-6 py-4 text-gray-400">{{ $staffAccounts->firstItem() + $index }}</td>
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $staff->user->name }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $staff->user->email }}</td>
                             <td class="px-6 py-4">
@@ -77,5 +77,6 @@
                 </tbody>
             </table>
         </div>
+        @include('rhu.partials._pagination', ['paginator' => $staffAccounts, 'section' => 'staff-approvals'])
     </div>
 @endif

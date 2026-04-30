@@ -12,9 +12,12 @@ class Prescription extends Model
     protected $fillable = [
         'medical_record_id',
         'medication_name',
+        'generic_name',
+        'type',
         'dosage',
         'frequency',
         'duration',
+        'quantity',
         'instructions',
         'created_on',
     ];

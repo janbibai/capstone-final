@@ -173,30 +173,34 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </button>
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                                             @php
                                                 $medName = old("prescriptions.$i.medication_name", $rx->medication_name);
-                                                $isOther = $medName && !$medicines->contains('name', $medName);
                                             @endphp
-                                            <div class="sm:col-span-2">
-                                                <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
-                                                <div class="flex flex-col gap-2 relative">
-                                                    <select onchange="toggleCustomMedicine(this, '{{ $i }}')"
-                                                            name="{{ $isOther ? '' : "prescriptions[$i][medication_name]" }}"
-                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none medicine-select" {{ $isOther ? '' : 'required' }}>
-                                                        <option value="" disabled {{ !$medName ? 'selected' : '' }}>Select Medication</option>
-                                                        @foreach($medicines as $medicine)
-                                                            <option value="{{ $medicine->name }}" {{ ($medName === $medicine->name && !$isOther) ? 'selected' : '' }}>{{ $medicine->name }}</option>
-                                                        @endforeach
-                                                        <option value="Others" {{ $isOther ? 'selected' : '' }}>Others</option>
-                                                    </select>
-                                                    <input type="text"
-                                                           name="{{ $isOther ? "prescriptions[$i][medication_name]" : '' }}"
-                                                           value="{{ $isOther ? $medName : '' }}"
-                                                           placeholder="Type custom medicine name"
-                                                           class="custom-medicine-input {{ $isOther ? '' : 'hidden' }} border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none w-full"
-                                                           {{ $isOther ? 'required' : '' }}>
-                                                </div>
+                                            <div class="sm:col-span-2 md:col-span-2">
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Brand / Medication Name *</label>
+                                                <select name="prescriptions[{{ $i }}][medication_name]"
+                                                        class="medicine-select" required>
+                                                    <option value="" disabled {{ !$medName ? 'selected' : '' }}>Select or type medication...</option>
+                                                    @foreach($medicines as $medicine)
+                                                        <option value="{{ $medicine->name }}" {{ $medName === $medicine->name ? 'selected' : '' }} data-generic="{{ $medicine->generic_name }}">{{ $medicine->name }}</option>
+                                                    @endforeach
+                                                    @if($medName && !$medicines->contains('name', $medName))
+                                                        <option value="{{ $medName }}" selected>{{ $medName }}</option>
+                                                    @endif
+                                                </select>
+                                            </div>
+                                            <div class="sm:col-span-2 md:col-span-2">
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Generic Name</label>
+                                                <input type="text" name="prescriptions[{{ $i }}][generic_name]" value="{{ old("prescriptions.$i.generic_name", $rx->generic_name) }}"
+                                                       placeholder="e.g. Amoxicillin"
+                                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none generic-input">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Type/Form</label>
+                                                <input type="text" name="prescriptions[{{ $i }}][type]" value="{{ old("prescriptions.$i.type", $rx->type) }}"
+                                                       placeholder="e.g. Tablet, Syrup"
+                                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600 mb-1">Dosage</label>
@@ -217,6 +221,12 @@
                                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                                             </div>
                                             <div>
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Quantity</label>
+                                                <input type="number" min="1" name="prescriptions[{{ $i }}][quantity]" value="{{ old("prescriptions.$i.quantity", $rx->quantity) }}"
+                                                       placeholder="e.g. 21"
+                                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                                            </div>
+                                            <div class="sm:col-span-2 md:col-span-3">
                                                 <label class="block text-xs font-medium text-gray-600 mb-1">Instructions</label>
                                                 <input type="text" name="prescriptions[{{ $i }}][instructions]" value="{{ old("prescriptions.$i.instructions", $rx->instructions) }}"
                                                        placeholder="e.g. Take after meals"
@@ -259,7 +269,36 @@
                     direction: "asc"
                 }
             });
+            
+            // Initialize Tom Select on existing medicine dropdowns
+            document.querySelectorAll('.medicine-select').forEach(el => initMedicineSelect(el));
         });
+
+        function initMedicineSelect(el) {
+            if (el.tomselect) return;
+            new TomSelect(el, {
+                create: true, // allows typing custom names
+                createOnBlur: true,
+                maxOptions: null,
+                placeholder: "Select or type medication...",
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                onChange: function(value) {
+                    const option = this.options[value];
+                    if (option && option.dataset && option.dataset.generic) {
+                        const row = el.closest('.prescription-row');
+                        if (row) {
+                            const genericInput = row.querySelector('.generic-input');
+                            if (genericInput && !genericInput.value) {
+                                genericInput.value = option.dataset.generic;
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         // ── Diagnosis select/input sync ──
         const diagnosisSelect = document.getElementById('diagnosis_id');
@@ -282,23 +321,6 @@
         // ── Prescriptions dynamic rows ──
         const container = document.getElementById('prescriptions-container');
 
-        function toggleCustomMedicine(selectElem, index) {
-            const containerElem = selectElem.parentElement;
-            const inputElem = containerElem.querySelector('.custom-medicine-input');
-            
-            if (selectElem.value === 'Others') {
-                inputElem.classList.remove('hidden');
-                inputElem.required = true;
-                inputElem.name = `prescriptions[${index}][medication_name]`;
-                selectElem.name = '';
-                inputElem.focus();
-            } else {
-                inputElem.classList.add('hidden');
-                inputElem.required = false;
-                inputElem.name = '';
-                selectElem.name = `prescriptions[${index}][medication_name]`;
-            }
-        }
         const addBtn = document.getElementById('add-prescription-btn');
         const noMsg = document.getElementById('no-prescriptions-msg');
 
@@ -328,23 +350,28 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Medication Name *</label>
-                        <div class="flex flex-col gap-2 relative">
-                            <select onchange="toggleCustomMedicine(this, \`${index}\`)" 
-                                    name="prescriptions[${index}][medication_name]"
-                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none medicine-select" required>
-                                <option value="" disabled selected>Select Medication</option>
-                                @foreach($medicines as $medicine)
-                                    <option value="{{ $medicine->name }}">{{ $medicine->name }}</option>
-                                @endforeach
-                                <option value="Others">Others</option>
-                            </select>
-                            <input type="text"
-                                   placeholder="Type custom medicine name"
-                                   class="custom-medicine-input hidden border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none w-full">
-                        </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="sm:col-span-2 md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Brand / Medication Name *</label>
+                        <select name="prescriptions[${index}][medication_name]"
+                                class="medicine-select" required>
+                            <option value="" disabled selected>Select or type medication...</option>
+                            @foreach($medicines as $medicine)
+                                <option value="{{ $medicine->name }}" data-generic="{{ $medicine->generic_name }}">{{ $medicine->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2 md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Generic Name</label>
+                        <input type="text" name="prescriptions[${index}][generic_name]"
+                               placeholder="e.g. Amoxicillin"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none generic-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Type/Form</label>
+                        <input type="text" name="prescriptions[${index}][type]"
+                               placeholder="e.g. Tablet, Syrup"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Dosage</label>
@@ -365,6 +392,12 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
                     </div>
                     <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Quantity</label>
+                        <input type="number" min="1" name="prescriptions[${index}][quantity]"
+                               placeholder="e.g. 21"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    </div>
+                    <div class="sm:col-span-2 md:col-span-3">
                         <label class="block text-xs font-medium text-gray-600 mb-1">Instructions</label>
                         <input type="text" name="prescriptions[${index}][instructions]"
                                placeholder="e.g. Take after meals"
@@ -379,7 +412,13 @@
             const row = createPrescriptionRow(getNextIndex());
             container.appendChild(row);
             noMsg.style.display = 'none';
-            row.querySelector('input').focus();
+            
+            const newSelect = row.querySelector('.medicine-select');
+            initMedicineSelect(newSelect);
+            
+            if (newSelect.tomselect) {
+                newSelect.tomselect.focus();
+            }
         });
     </script>
 

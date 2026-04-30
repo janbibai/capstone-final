@@ -262,9 +262,12 @@
                                                     data-prescriptions="{{ json_encode($record->prescriptions->map(function($p) {
                                                         return [
                                                             'name' => $p->medication_name,
+                                                            'generic_name' => $p->generic_name,
+                                                            'type' => $p->type,
                                                             'dosage' => $p->dosage,
                                                             'frequency' => $p->frequency,
                                                             'duration' => $p->duration,
+                                                            'quantity' => $p->quantity,
                                                             'instructions' => $p->instructions
                                                         ];
                                                     })) }}"
@@ -394,14 +397,17 @@
                     const row = document.createElement('div');
                     row.className = 'bg-white border border-slate-200 rounded-xl p-4 shadow-sm';
                     row.innerHTML = `
-                        <div class="font-bold text-blue-700 mb-2 flex items-center gap-2">
+                        <div class="font-bold text-blue-700 mb-1 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                             ${rx.name}
                         </div>
+                        ${rx.generic_name ? `<div class="text-xs text-slate-500 mb-2 italic">Generic: ${rx.generic_name}</div>` : ''}
                         <div class="grid grid-cols-2 gap-2 text-sm text-slate-600">
+                            ${rx.type ? `<div><span class="font-medium text-slate-500">Type:</span> ${rx.type}</div>` : ''}
                             ${rx.dosage ? `<div><span class="font-medium text-slate-500">Dosage:</span> ${rx.dosage}</div>` : ''}
                             ${rx.frequency ? `<div><span class="font-medium text-slate-500">Frequency:</span> ${rx.frequency}</div>` : ''}
                             ${rx.duration ? `<div><span class="font-medium text-slate-500">Duration:</span> ${rx.duration}</div>` : ''}
+                            ${rx.quantity ? `<div><span class="font-medium text-slate-500">Quantity:</span> ${rx.quantity}</div>` : ''}
                         </div>
                         ${rx.instructions ? `<div class="mt-2 text-sm text-slate-600"><span class="font-medium text-slate-500">Instructions:</span> ${rx.instructions}</div>` : ''}
                     `;
@@ -418,18 +424,21 @@
             let rxRows = '';
             if (prescriptions && prescriptions.length > 0) {
                 prescriptions.forEach((rx, i) => {
+                    const medNameDisplay = rx.name + (rx.generic_name ? `<br><span style="font-size:10px; color:#64748b; font-weight:normal;">(${rx.generic_name})</span>` : '');
                     rxRows += `
                         <tr>
                             <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${i + 1}</td>
-                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${rx.name || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${medNameDisplay}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.type || '—'}</td>
                             <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.dosage || '—'}</td>
                             <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.frequency || '—'}</td>
                             <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.duration || '—'}</td>
+                            <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${rx.quantity || '—'}</td>
                             <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${rx.instructions || '—'}</td>
                         </tr>`;
                 });
             } else {
-                rxRows = '<tr><td colspan="6" style="padding: 16px; text-align: center; color: #94a3b8; font-style: italic;">No prescriptions recorded.</td></tr>';
+                rxRows = '<tr><td colspan="8" style="padding: 16px; text-align: center; color: #94a3b8; font-style: italic;">No prescriptions recorded.</td></tr>';
             }
 
             const printContent = `
@@ -588,9 +597,11 @@
                             <tr>
                                 <th>#</th>
                                 <th>Medication</th>
+                                <th>Type</th>
                                 <th>Dosage</th>
                                 <th>Frequency</th>
                                 <th>Duration</th>
+                                <th>Qty</th>
                                 <th>Instructions</th>
                             </tr>
                         </thead>

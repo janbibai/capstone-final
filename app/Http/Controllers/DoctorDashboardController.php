@@ -100,9 +100,12 @@ class DoctorDashboardController extends Controller
             'details' => 'required|string|max:1000',
             'prescriptions' => 'nullable|array',
             'prescriptions.*.medication_name' => 'required_with:prescriptions|string|max:255',
+            'prescriptions.*.generic_name' => 'nullable|string|max:255',
+            'prescriptions.*.type' => 'nullable|string|max:255',
             'prescriptions.*.dosage' => 'nullable|string|max:255',
             'prescriptions.*.frequency' => 'nullable|string|max:255',
             'prescriptions.*.duration' => 'nullable|string|max:255',
+            'prescriptions.*.quantity' => 'nullable|integer|min:1',
             'prescriptions.*.instructions' => 'nullable|string|max:1000',
         ]);
 
@@ -179,9 +182,12 @@ class DoctorDashboardController extends Controller
         foreach ($prescriptions as $p) {
             $currentRecord->prescriptions()->create([
                 'medication_name' => $p['medication_name'],
+                'generic_name' => $p['generic_name'] ?? null,
+                'type' => $p['type'] ?? null,
                 'dosage' => $p['dosage'] ?? null,
                 'frequency' => $p['frequency'] ?? null,
                 'duration' => $p['duration'] ?? null,
+                'quantity' => $p['quantity'] ?? null,
                 'instructions' => $p['instructions'] ?? null,
                 'created_on' => now(),
             ]);

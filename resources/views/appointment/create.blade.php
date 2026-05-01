@@ -1,6 +1,7 @@
 @extends('welcome')
 
 @section('title', 'Book Appointment')
+@section('hideHeader', true)
 @section('hideFooter', true)
 
 @section('content')

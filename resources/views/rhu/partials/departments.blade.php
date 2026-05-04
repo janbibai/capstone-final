@@ -1,5 +1,5 @@
 <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800">By Department</h2>
+    <h2 class="text-2xl font-bold text-gray-800">By Barangay</h2>
     <p class="text-gray-500 text-sm mt-1">Diagnosis breakdown per health center</p>
 </div>
 

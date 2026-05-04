@@ -137,34 +137,52 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Valid Government ID <span class="text-red-500">*</span></label>
-                            <div id="id-upload-area" 
-                                 class="relative border-2 border-dashed border-slate-300 bg-slate-50 rounded-2xl p-8 text-center hover:bg-slate-100 hover:border-emerald-400 transition-all cursor-pointer @error('valid_id') border-red-300 bg-red-50 @enderror"
-                                 onclick="document.getElementById('valid_id').click()">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Take a selfie <span class="text-red-500">*</span></label>
+                            <div id="id-camera-area" 
+                                 class="relative border-2 border-dashed border-slate-300 bg-slate-50 rounded-2xl overflow-hidden transition-all @error('valid_id') border-red-300 bg-red-50 @enderror">
                                 
-                                <div id="upload-prompt" class="space-y-3">
-                                    <div class="w-12 h-12 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
-                                        <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                        </svg>
+                                {{-- Idle state: Take Photo button --}}
+                                <div id="camera-idle" class="p-8 text-center">
+                                    <div class="space-y-3">
+                                        <div class="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-200">
+                                            <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                        <button type="button" onclick="openCameraModal()"
+                                                class="inline-flex items-center px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-sm">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Take Photo
+                                        </button>
+                                        <p class="text-xs text-slate-500">Take a selfie for identity verification</p>
                                     </div>
-                                    <div class="text-sm text-slate-600">
-                                        <span class="font-semibold text-emerald-600 hover:text-emerald-500">Click to upload</span> or drag and drop
-                                    </div>
-                                    <p class="text-xs text-slate-500">JPEG, PNG up to 2MB</p>
                                 </div>
 
-                                <div id="id-preview-container" class="hidden">
-                                    <img id="id-preview" src="" alt="ID Preview" class="mx-auto max-h-40 rounded-lg shadow-sm ring-1 ring-slate-200">
-                                    <div id="id-file-info" class="mt-3 text-sm font-medium text-slate-700"></div>
-                                    <button type="button" id="remove-id-btn" 
-                                            class="mt-2 text-sm text-red-500 hover:text-red-700 font-medium inline-flex items-center transition-colors"
-                                            onclick="event.stopPropagation(); removeIdFile()">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        Remove File
-                                    </button>
+                                {{-- Preview state: shows captured thumbnail --}}
+                                <div id="photo-preview-inline" class="hidden relative">
+                                    <img id="photo-preview-img" src="" alt="Selfie Preview" class="w-full h-52 object-cover">
+                                    <div class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/60 to-transparent flex items-center justify-between">
+                                        <span class="text-sm text-white font-medium flex items-center">
+                                            <svg class="w-4 h-4 mr-1.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Photo captured
+                                        </span>
+                                        <button type="button" onclick="retakePhoto()" 
+                                                class="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-lg hover:bg-white/30 transition-colors flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            Retake
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
                             <input type="file" id="valid_id" name="valid_id" accept="image/jpeg,image/png" class="hidden" aria-describedby="valid_id-help valid_id-error">
                             @error('valid_id')
                                 <p id="valid_id-error" class="text-red-500 text-xs mt-2 font-medium" role="alert">{{ $message }}</p>
@@ -533,6 +551,77 @@
         </div>
         @endif
 
+    </div>
+</div>
+
+{{-- ═══ Camera Modal ═══ --}}
+<div id="camera-modal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeCameraModal()"></div>
+    <div class="relative bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden ring-1 ring-white/10 flex flex-col max-h-[90vh]">
+        
+        {{-- Modal header --}}
+        <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 z-10">
+            <h3 class="text-base font-semibold text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Take a Selfie
+            </h3>
+            <button type="button" onclick="closeCameraModal()" 
+                    class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/20 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- Camera viewfinder --}}
+        <div class="relative flex-1 bg-black min-h-[350px]">
+            <video id="camera-video" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
+            <canvas id="camera-canvas" class="hidden"></canvas>
+
+            {{-- Face guide overlay --}}
+            <div id="camera-guide" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-56 h-64 border-2 border-white/50 border-dashed rounded-[3rem] shadow-[0_0_0_9999px_rgba(0,0,0,0.4)] transition-all"></div>
+            </div>
+
+            {{-- Loading overlay --}}
+            <div id="camera-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-20">
+                <div class="w-12 h-12 mb-3 bg-slate-800 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-slate-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    </svg>
+                </div>
+                <p class="text-sm font-medium text-slate-400">Starting camera...</p>
+            </div>
+
+            {{-- Error overlay --}}
+            <div id="camera-error" class="absolute inset-0 hidden flex-col items-center justify-center bg-slate-900 px-6 text-center z-20">
+                <div class="w-14 h-14 mb-4 bg-red-500/10 rounded-full flex items-center justify-center">
+                    <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <p class="text-base font-semibold text-white mb-2">Camera Access Denied</p>
+                <p class="text-sm text-slate-400">Please allow camera permissions in your browser settings to take a selfie.</p>
+            </div>
+            
+            {{-- Helper text --}}
+            <div class="absolute top-4 inset-x-0 text-center z-10">
+                <span class="inline-block px-3 py-1 bg-black/50 backdrop-blur-md rounded-full text-xs font-medium text-white tracking-wide">
+                    Position your face within the frame
+                </span>
+            </div>
+        </div>
+
+        {{-- Modal footer with controls --}}
+        <div id="camera-controls" class="flex flex-col items-center justify-center py-6 px-4 bg-slate-900 border-t border-white/5 relative z-10">
+            <button type="button" id="capture-btn" onclick="capturePhoto()"
+                    class="w-[72px] h-[72px] bg-white rounded-full p-1.5 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                <div class="w-full h-full bg-white rounded-full border-[3px] border-slate-900"></div>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -975,61 +1064,130 @@
         if (scheduleDateInput.value) fetchBookedTimes(scheduleDateInput.value);
     }, 100);
 
-    // === Valid ID Upload Preview ===
-    const validIdInput      = document.getElementById('valid_id');
-    const uploadArea        = document.getElementById('id-upload-area');
-    const uploadPrompt      = document.getElementById('upload-prompt');
-    const previewContainer  = document.getElementById('id-preview-container');
-    const previewImg        = document.getElementById('id-preview');
-    const fileInfo          = document.getElementById('id-file-info');
+    // === Valid ID Camera Capture ===
+    const cameraVideo     = document.getElementById('camera-video');
+    const cameraCanvas    = document.getElementById('camera-canvas');
+    const cameraLoading   = document.getElementById('camera-loading');
+    const cameraError     = document.getElementById('camera-error');
+    const cameraControls  = document.getElementById('camera-controls');
+    const cameraModal     = document.getElementById('camera-modal');
+    
+    const cameraIdle      = document.getElementById('camera-idle');
+    const photoPreviewInl = document.getElementById('photo-preview-inline');
+    const photoPreviewImg = document.getElementById('photo-preview-img');
+    const validIdInput    = document.getElementById('valid_id');
+    const idCameraArea    = document.getElementById('id-camera-area');
+    let cameraStream      = null;
 
-    validIdInput.addEventListener('change', function() { handleIdFile(this.files[0]); });
-
-    function handleIdFile(file) {
-        if (!file) return;
-        const validTypes = ['image/jpeg', 'image/png'];
-        if (!validTypes.includes(file.type)) { alert('Please upload a JPEG or PNG image.'); validIdInput.value = ''; return; }
-        if (file.size > 2 * 1024 * 1024) { alert('File size must not exceed 2MB.'); validIdInput.value = ''; return; }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            uploadPrompt.classList.add('hidden');
-            previewContainer.classList.remove('hidden');
-            uploadArea.classList.remove('border-slate-300', 'border-dashed', 'bg-slate-50', 'hover:bg-slate-100');
-            uploadArea.classList.add('border-emerald-400', 'border-solid', 'bg-white');
-            fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-        };
-        reader.readAsDataURL(file);
+    // Open camera modal when user clicks "Take Photo"
+    function openCameraModal() {
+        cameraModal.classList.remove('hidden');
+        startCamera();
     }
 
-    function removeIdFile() {
-        validIdInput.value = '';
-        previewImg.src = '';
-        uploadPrompt.classList.remove('hidden');
-        previewContainer.classList.add('hidden');
-        uploadArea.classList.add('border-slate-300', 'border-dashed', 'bg-slate-50', 'hover:bg-slate-100');
-        uploadArea.classList.remove('border-emerald-400', 'border-solid', 'bg-white');
-        fileInfo.textContent = '';
+    // Close camera modal
+    function closeCameraModal() {
+        stopCamera();
+        cameraModal.classList.add('hidden');
+        // Reset loading/error states for next attempt
+        cameraLoading.classList.remove('hidden');
+        cameraError.classList.add('hidden');
+        cameraError.classList.remove('flex');
     }
 
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('border-emerald-400', 'bg-emerald-50/50');
-    });
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('border-emerald-400', 'bg-emerald-50/50');
-    });
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('border-emerald-400', 'bg-emerald-50/50');
-        const file = e.dataTransfer.files[0];
-        if (file) {
+    async function startCamera() {
+        try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }
+            });
+            cameraVideo.srcObject = cameraStream;
+            cameraVideo.onloadedmetadata = () => {
+                cameraLoading.classList.add('hidden');
+                cameraControls.style.display = '';
+            };
+        } catch (err) {
+            console.warn('Camera access denied or unavailable:', err);
+            cameraLoading.classList.add('hidden');
+            cameraControls.style.display = 'none';
+            cameraError.classList.remove('hidden');
+            cameraError.classList.add('flex');
+        }
+    }
+
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+    }
+
+    function capturePhoto() {
+        if (!cameraStream) return;
+
+        // Set canvas to video dimensions for full-quality capture
+        cameraCanvas.width  = cameraVideo.videoWidth;
+        cameraCanvas.height = cameraVideo.videoHeight;
+        const ctx = cameraCanvas.getContext('2d');
+        // Apply mirroring since it's a front-facing camera
+        ctx.translate(cameraCanvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(cameraVideo, 0, 0);
+
+        // Show preview
+        const dataUrl = cameraCanvas.toDataURL('image/jpeg', 0.85);
+        photoPreviewImg.src = dataUrl;
+        
+        cameraIdle.classList.add('hidden');
+        photoPreviewInl.classList.remove('hidden');
+
+        // Convert to file and attach to hidden input
+        cameraCanvas.toBlob(function(blob) {
+            const file = new File([blob], 'valid_id_photo.jpg', { type: 'image/jpeg' });
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             validIdInput.files = dataTransfer.files;
-            handleIdFile(file);
-        }
+        }, 'image/jpeg', 0.85);
+
+        // Update border to success state
+        idCameraArea.classList.remove('border-slate-300', 'border-dashed', 'bg-slate-50', 'bg-slate-900');
+        idCameraArea.classList.add('border-emerald-400', 'border-solid');
+
+        closeCameraModal();
+    }
+
+    function retakePhoto() {
+        photoPreviewInl.classList.add('hidden');
+        photoPreviewImg.src = '';
+        validIdInput.value = '';
+
+        // Reset border back to idle
+        idCameraArea.classList.remove('border-emerald-400', 'border-solid');
+        idCameraArea.classList.add('border-slate-300', 'border-dashed', 'bg-slate-50');
+
+        cameraIdle.classList.remove('hidden');
+        
+        // Directly open the modal again to retake
+        openCameraModal();
+    }
+
+    // Handle fallback file upload — show preview same as camera capture
+    validIdInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) { alert('Please upload a JPEG or PNG image.'); this.value = ''; return; }
+        if (file.size > 2 * 1024 * 1024) { alert('File size must not exceed 2MB.'); this.value = ''; return; }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            photoPreviewImg.src = e.target.result;
+            cameraIdle.classList.add('hidden');
+            photoPreviewInl.classList.remove('hidden');
+            idCameraArea.classList.remove('border-slate-300', 'border-dashed', 'bg-slate-50', 'bg-slate-900');
+            idCameraArea.classList.add('border-emerald-400', 'border-solid');
+            stopCamera();
+        };
+        reader.readAsDataURL(file);
     });
 </script>
 

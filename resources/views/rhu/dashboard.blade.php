@@ -11,13 +11,13 @@
     <style>
         /* Sidebar active link */
         .sidebar-link.active {
-            background-color: rgba(99, 102, 241, 0.12);
-            color: #4f46e5;
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #ffffff;
             font-weight: 600;
         }
 
         .sidebar-link.active svg {
-            color: #4f46e5;
+            color: #378ef8ff;
         }
 
         /* Toast notification */
@@ -91,11 +91,8 @@
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div class="flex justify-between items-center h-16 px-6">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2.5 rounded-lg shadow-sm">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
+                <div>
+                    <img src="{{ asset('images/ZamboanguitaLogo.png') }}" alt="RHU Logo" class="w-10 h-10 rounded-lg object-contain">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-gray-800">RHU Admin Dashboard</h1>
@@ -142,13 +139,13 @@
 
         {{-- SIDEBAR --}}
         <aside
-            class="w-56 bg-white border-r border-gray-200 sticky top-16 h-[calc(100vh-4rem)] flex flex-col py-6 px-3 shrink-0">
+            class="w-56 bg-slate-800 sticky top-16 h-[calc(100vh-4rem)] flex flex-col py-6 px-3 shrink-0">
             <nav class="space-y-1">
                 {{-- Group: Overview --}}
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-1">Overview</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-1">Overview</p>
                 <a href="#overview" onclick="showSection('overview')" id="link-overview"
-                    class="sidebar-link active flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link active flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
@@ -157,26 +154,26 @@
 
 
                 {{-- Group: Disease Statistics --}}
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Statistics</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-1">Statistics</p>
                 <a href="#diseases" onclick="showSection('diseases')" id="link-diseases"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span>Disease Statistics</span>
                 </a>
                 <a href="#departments" onclick="showSection('departments')" id="link-departments"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span>By Department</span>
+                    <span>By Barangay</span>
                 </a>
                 <a href="#dispensing" onclick="showSection('dispensing')" id="link-dispensing"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                     </svg>
@@ -184,10 +181,10 @@
                 </a>
 
                 {{-- Group: Management --}}
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-4 mb-1">Management</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mt-4 mb-1">Management</p>
                 <a href="#staff-approvals" onclick="showSection('staff-approvals')" id="link-staff-approvals"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
@@ -197,8 +194,8 @@
                     @endif
                 </a>
                 <a href="#medicine-inventory" onclick="showSection('medicine-inventory')" id="link-medicine-inventory"
-                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition cursor-pointer">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="sidebar-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-slate-700 transition cursor-pointer">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                     </svg>
@@ -304,7 +301,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 font-medium">Active Departments</p>
+                            <p class="text-xs text-gray-500 font-medium">Active Barangay</p>
                             <p class="text-3xl font-bold text-gray-800">{{ number_format($activeDepartments) }}</p>
                             <p class="text-xs text-gray-400 mt-0.5">Health centers</p>
                         </div>
@@ -336,7 +333,7 @@
             @php
                 $lazySections = [
                     'diseases' => 'Disease Statistics',
-                    'departments' => 'By Department',
+                    'departments' => 'By Barangay',
                     'dispensing' => 'Medicine Dispensing',
                     'staff-approvals' => 'Staff Management',
                     'medicine-inventory' => 'Medicine Inventory',
@@ -408,7 +405,7 @@
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
                             </div>
                             <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
                                 <select name="department_id"
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
                                     <option value="">-- None --</option>
@@ -460,7 +457,7 @@
                                 </select>
                             </div>
                             <div class="col-span-2 sm:col-span-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
                                 <select name="department_id" id="edit-staff-department"
                                     class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
                                     <option value="">-- None --</option>

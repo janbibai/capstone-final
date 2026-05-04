@@ -18,14 +18,7 @@ class StorePatientRequest extends FormRequest
             'middle_name' => 'nullable|string|max:30',
             'last_name' => 'required|string|max:30',
             'service_id' => 'required|exists:services,id',
-            'schedule' => 'required|date|after_or_equal:today',
-            'schedule_time' => [
-                'required',
-                'date_format:H:i',
-                \Illuminate\Validation\Rule::unique('appointments', 'schedule_time')->where(function ($query) {
-                    return $query->where('schedule', request('schedule'))->where('status', '!=', 'cancelled');
-                })
-            ],
+            // Removed schedule and schedule_time as they are auto-generated for onsite registration
             'date_of_birth' => 'required|date|before:today',
             'gender' => 'required|in:male,female,other',
             'phone' => 'nullable|string|max:30',

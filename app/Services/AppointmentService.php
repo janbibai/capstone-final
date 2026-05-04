@@ -14,25 +14,14 @@ class AppointmentService
 {
     return DB::transaction(function () use ($data) {
 
-        // check if exist na ang booking for the SAME patient
+        // check if exist na ang booking for the SAME patient today
         $existsForPatient = Appointment::where('patient_id', '=', $data['patient_id'])
             ->where('schedule', '=', $data['schedule'])
-            ->where('schedule_time', '=', $data['schedule_time'])
             ->where('status', '=', 'not started')
             ->exists();
 
         if ($existsForPatient) {
-            throw new \Exception('You have already booked this exact slot.');
-        }
-
-        // check if slot is taken by ANY patient
-        $slotTaken = Appointment::where('schedule', '=', $data['schedule'])
-            ->where('schedule_time', '=', $data['schedule_time'])
-            ->where('status', '!=', 'cancelled')
-            ->exists();
-
-        if ($slotTaken) {
-            throw new \Exception('This schedule slot is already taken by another patient.');
+            throw new \Exception('You already have an active queue today.');
         }
 
         // Get last queue number for that date

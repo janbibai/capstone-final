@@ -60,8 +60,8 @@ class PatientController extends Controller
             $appointment = $this->appointmentService->schedule([
                 'patient_id' => $patient->id,
                 'service_id' => $data['service_id'],
-                'schedule' => $data['schedule'],
-                'schedule_time' => $data['schedule_time'],
+                'schedule' => now()->toDateString(),
+                'schedule_time' => now()->format('H:i'),
             ]);
 
             $appointment->load(['service', 'patient']);
@@ -128,19 +128,20 @@ class PatientController extends Controller
         $data = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'service_id' => 'required|exists:services,id',
-            'schedule' => 'required|date|after_or_equal:today',
-            'schedule_time' => 'required|date_format:H:i',
         ]);
+
+        $currentDate = now()->toDateString();
+        $currentTime = now()->format('H:i');
 
         // Block if patient already has an active appointment on the chosen date
         $alreadyBooked = Appointment::where('patient_id', $data['patient_id'])
-            ->where('schedule', $data['schedule'])
+            ->where('schedule', $currentDate)
             ->where('status', '!=', 'cancelled')
             ->exists();
 
         if ($alreadyBooked) {
             return back()->withInput()->withErrors([
-                'schedule' => 'You already have an active appointment on this date. Please choose a different date.',
+                'service_id' => 'You already have an active appointment today.',
             ]);
         }
 
@@ -149,8 +150,8 @@ class PatientController extends Controller
             $appointment = $this->appointmentService->schedule([
                 'patient_id' => $data['patient_id'],
                 'service_id' => $data['service_id'],
-                'schedule' => $data['schedule'],
-                'schedule_time' => $data['schedule_time'],
+                'schedule' => $currentDate,
+                'schedule_time' => $currentTime,
             ]);
 
             $appointment->load(['service', 'patient']);

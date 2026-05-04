@@ -19,12 +19,52 @@ class DepartmentSeeder extends Seeder
                 'description' => 'poblacion Health Center',
                 'is_active'   => true,
             ],
+            [
+                'name'=> 'Calango',
+                'description'=> 'Calango Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Lotuban',
+                'description'=> 'Lotuban Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Malongcay Diot',
+                'description'=> 'Malongcay Diot Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Maluay',
+                'description'=> 'Maluay Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Mayabon',
+                'description'=> 'Mayabon Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Nabago',
+                'description'=> 'Nabago Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Nasig-id',
+                'description'=> 'Nasig-id Health Center',
+                'is_active' => true,
+            ],
+            [
+                'name'=> 'Najandig',
+                'description'=> 'Najandig Health Center',
+                'is_active' => true,
+            ],    
         ];
 
         foreach ($departments as $dept) {
-            Department::firstOrCreate(
-                ['name' => $dept['name']],   // search criteria
-                $dept                          // values to fill if not found
+            Department::updateOrCreate(
+                ['name' => $dept['name']], // unique identifier
+                $dept
             );
         }
 

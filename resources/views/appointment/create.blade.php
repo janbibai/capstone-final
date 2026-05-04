@@ -226,6 +226,15 @@
                                 <select id="barangay" name="barangay"
                                         class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none">
                                     <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Poblacion</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Basac</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Calango</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Lotuban</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Malungay Diot</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Maluay</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Mayabon</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Nabago</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Nasig-id</option>
+                                    <option value="Barangay Poblacion" {{ old('barangay') == 'Barangay Poblacion' ? 'selected' : '' }}>Barangay Najandig</option>
                                 </select>
                             </div>
                             <div>
@@ -237,6 +246,8 @@
                                     <option value="2" {{ old('purok') == '2' ? 'selected' : '' }}>Purok 2</option>
                                     <option value="3" {{ old('purok') == '3' ? 'selected' : '' }}>Purok 3</option>
                                     <option value="4" {{ old('purok') == '4' ? 'selected' : '' }}>Purok 4</option>
+                                    <option value="5" {{ old('purok') == '5' ? 'selected' : '' }}>Purok 5</option>
+                                    <option value="6" {{ old('purok') == '6' ? 'selected' : '' }}>Purok 6</option>
                                 </select>
                             </div>
                         </div>
@@ -246,7 +257,7 @@
                 <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
                         <h3 class="text-lg font-semibold text-slate-800">Service Details</h3>
-                        <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
+                        <p class="text-sm text-slate-500 mt-1">Select your Service type</p>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
                         <div>
@@ -263,45 +274,6 @@
                             @error('service_id')
                                 <p id="service_id-error" class="text-red-500 text-xs mt-2 font-medium" role="alert">{{ $message }}</p>
                             @enderror
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div>
-                                <label for="schedule" class="block text-sm font-semibold text-slate-700 mb-1.5">Preferred Date <span class="text-red-500">*</span></label>
-                                <input type="date" id="schedule" name="schedule" value="{{ old('schedule') }}" min="{{ date('Y-m-d') }}" required aria-describedby="schedule-error schedule-help"
-                                       class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 @error('schedule') border-red-300 focus:border-red-500 focus:ring-red-500/10 @enderror">
-                                <p id="schedule-help" class="text-xs text-slate-500 mt-1.5">Select today or a future date</p>
-                                @error('schedule')
-                                    <p id="schedule-error" class="text-red-500 text-xs mt-1.5 font-medium" role="alert">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="schedule_time" class="block text-sm font-semibold text-slate-700 mb-1.5">Preferred Time <span class="text-red-500">*</span></label>
-                                <select id="schedule_time" name="schedule_time" required aria-describedby="schedule_time-error schedule_time-help"
-                                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none @error('schedule_time') border-red-300 focus:border-red-500 focus:ring-red-500/10 @enderror">
-                                    <option value="" disabled {{ old('schedule_time') ? '' : 'selected' }}>-- Choose a Time --</option>
-                                    @php
-                                        $start = strtotime('08:00');
-                                        $end = strtotime('17:00');
-                                        $oldTime = old('schedule_time');
-                                    @endphp
-                                    @for ($i = $start; $i <= $end; $i += 900)
-                                        @php
-                                            if ($i >= strtotime('12:00') && $i < strtotime('13:00')) { continue; }
-                                            $timeValue = date('H:i', $i);
-                                            $timeLabel = date('h:i A', $i);
-                                        @endphp
-                                        <option value="{{ $timeValue }}" {{ $oldTime == $timeValue ? 'selected' : '' }}>
-                                            {{ $timeLabel }}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <p id="schedule_time-help" class="text-xs text-slate-500 mt-1.5">Business hours: 8:00 AM - 5:00 PM</p>
-                                @error('schedule_time')
-                                    <p id="schedule_time-error" class="text-red-500 text-xs mt-1.5 font-medium" role="alert">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -438,7 +410,7 @@
                     <div class="bg-white shadow-sm ring-1 ring-slate-200 rounded-2xl mb-8 overflow-hidden">
                         <div class="px-6 py-5 border-b border-slate-100 bg-green-50/80">
                             <h3 class="text-lg font-semibold text-slate-800">Choose Service</h3>
-                            <p class="text-sm text-slate-500 mt-1">Select your service and preferred schedule.</p>
+                            <p class="text-sm text-slate-500 mt-1">Select your Service Type</p>
                         </div>
                         <div class="p-6 md:p-8 space-y-6">
                             <div>
@@ -452,40 +424,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                <div>
-                                    <label for="ret_schedule" class="block text-sm font-semibold text-slate-700 mb-1.5">Preferred Date <span class="text-red-500">*</span></label>
-                                    <input type="date" id="ret_schedule" name="schedule" min="{{ date('Y-m-d') }}" required
-                                           value="{{ old('schedule') }}"
-                                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 @error('schedule') border-red-300 @enderror">
-                                    <p class="text-xs text-slate-500 mt-1.5">Select today or a future date</p>
-                                    @error('schedule')
-                                        <p class="text-red-500 text-xs mt-1.5 font-medium" role="alert">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="ret_schedule_time" class="block text-sm font-semibold text-slate-700 mb-1.5">Preferred Time <span class="text-red-500">*</span></label>
-                                    <select id="ret_schedule_time" name="schedule_time" required
-                                            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 appearance-none">
-                                        <option value="" disabled selected>-- Choose a Time --</option>
-                                        @php
-                                            $start2 = strtotime('08:00');
-                                            $end2   = strtotime('17:00');
-                                        @endphp
-                                        @for ($j = $start2; $j <= $end2; $j += 900)
-                                            @php
-                                                if ($j >= strtotime('12:00') && $j < strtotime('13:00')) { continue; }
-                                                $tv2 = date('H:i', $j);
-                                                $tl2 = date('h:i A', $j);
-                                            @endphp
-                                            <option value="{{ $tv2 }}">{{ $tl2 }}</option>
-                                        @endfor
-                                    </select>
-                                    <p class="text-xs text-slate-500 mt-1.5">Business hours: 8:00 AM - 5:00 PM</p>
-                                </div>
                             </div>
                         </div>
                     </div>

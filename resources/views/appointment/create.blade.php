@@ -306,6 +306,20 @@
                     </div>
                 </div>
 
+                {{-- Data Privacy Consent --}}
+                <div class="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                        <div class="flex items-center h-5 mt-0.5">
+                            <input type="checkbox" name="data_privacy_consent" id="data_privacy_consent" required
+                                   class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 transition-colors cursor-pointer">
+                        </div>
+                        <div class="text-sm">
+                            <span class="font-semibold text-slate-800 group-hover:text-emerald-700 transition-colors">I agree to the Data Privacy Policy. <span class="text-red-500">*</span></span>
+                            <p class="text-slate-500 mt-1 leading-relaxed">By proceeding, I consent to the collection and processing of my personal data and photo/selfie by the Rural Health Unit (RHU) for the purpose of registration, in accordance with the Data Privacy Act of 2012.</p>
+                        </div>
+                    </label>
+                </div>
+
                 <div class="flex justify-end">
                     <button type="submit" id="submit-btn"
                             class="w-full sm:w-auto inline-flex items-center justify-center bg-emerald-600 text-white px-8 py-3.5 rounded-xl shadow-sm hover:bg-emerald-700 hover:shadow transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed min-w-[200px]">
@@ -474,6 +488,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Data Privacy Consent --}}
+                    <div class="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <label class="flex items-start gap-3 cursor-pointer group">
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input type="checkbox" name="ret_data_privacy_consent" id="ret_data_privacy_consent" required
+                                       class="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 transition-colors cursor-pointer">
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-semibold text-slate-800 group-hover:text-emerald-700 transition-colors">I agree to the Data Privacy Policy. <span class="text-red-500">*</span></span>
+                                <p class="text-slate-500 mt-1 leading-relaxed">By proceeding, I consent to the processing of my personal data by the Rural Health Unit (RHU) for the purpose of scheduling my medical appointment, in accordance with the Data Privacy Act of 2012.</p>
+                            </div>
+                        </label>
                     </div>
 
                     <div class="flex justify-end">

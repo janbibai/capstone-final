@@ -80,7 +80,20 @@ class StaffDashboardController extends Controller
             'temperature'    => 'nullable|numeric|min:25|max:45',
         ]);
 
-        $appointment->update($validated);
+        $updateData = $validated;
+        $statusChanged = false;
+
+        // Automatically start the appointment if it hasn't been started yet
+        if ($appointment->status === 'not started') {
+            $updateData['status'] = 'started';
+            $statusChanged = true;
+        }
+
+        $appointment->update($updateData);
+
+        if ($statusChanged) {
+            broadcast(new QueueUpdated($appointment->queue_number))->toOthers();
+        }
 
         return redirect()
             ->route('staff.dashboard', ['date' => $appointment->schedule])

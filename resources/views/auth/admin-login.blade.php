@@ -18,10 +18,8 @@
 
 <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <div class="flex items-center justify-center mb-2">
-            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-slate-700 text-2xl">admin_panel_settings</span>
-            </div>
+        <div class="flex justify-center mb-4">
+            <img src="{{ asset('assets/background/ZamboanguitaLogo.png') }}" alt="Zamboanguita Logo" class="h-24 w-auto drop-shadow-md">
         </div>
         <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
             Admin Login

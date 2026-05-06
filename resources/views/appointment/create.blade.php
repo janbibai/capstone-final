@@ -842,73 +842,11 @@
         retPatientName.textContent = '';
         // Reset returning form selects
         document.getElementById('ret_service_id').value      = '';
-        document.getElementById('ret_schedule').value        = '';
-        document.getElementById('ret_schedule_time').value   = '';
-        resetRetTimeOptions();
     }
 
     resetLookupBtn.addEventListener('click', resetLookup);
 
-    // ===================================================================
-    // RETURNING PATIENT — BOOKED / PAST TIMES (mirrors new-patient logic)
-    // ===================================================================
-    const retDateInput = document.getElementById('ret_schedule');
-    const retTimeSelect = document.getElementById('ret_schedule_time');
 
-    function resetRetTimeOptions() {
-        Array.from(retTimeSelect.options).forEach(o => {
-            if (!o.value) return;
-            o.disabled = false;
-            o.text = o.text.replace(' (Booked)', '').replace(' (Passed)', '');
-        });
-    }
-
-    function isRetDateToday() {
-        const v = retDateInput.value;
-        if (!v) return false;
-        const t = new Date();
-        const todayStr = t.getFullYear() + '-' +
-            String(t.getMonth() + 1).padStart(2, '0') + '-' +
-            String(t.getDate()).padStart(2, '0');
-        return v === todayStr;
-    }
-
-    function isTimePassed(val) {
-        const now = new Date();
-        const [h, m] = val.split(':').map(Number);
-        return (h < now.getHours()) || (h === now.getHours() && m <= now.getMinutes());
-    }
-
-    function updateRetTimeOptions(booked) {
-        resetRetTimeOptions();
-        const isToday = isRetDateToday();
-        Array.from(retTimeSelect.options).forEach(o => {
-            if (!o.value) return;
-            if (isToday && isTimePassed(o.value)) {
-                o.disabled = true;
-                if (!o.text.includes('(Passed)')) o.text += ' (Passed)';
-                if (o.selected) retTimeSelect.value = '';
-                return;
-            }
-            if (booked.includes(o.value)) {
-                o.disabled = true;
-                if (!o.text.includes('(Booked)')) o.text += ' (Booked)';
-                if (o.selected) retTimeSelect.value = '';
-            }
-        });
-    }
-
-    async function fetchRetBookedTimes(date) {
-        if (!date) { resetRetTimeOptions(); return; }
-        let booked = [];
-        try {
-            const res = await fetch(`/appointments/booked-times?date=${date}`);
-            booked = await res.json();
-        } catch (e) { console.error(e); }
-        updateRetTimeOptions(booked);
-    }
-
-    retDateInput.addEventListener('change', () => fetchRetBookedTimes(retDateInput.value));
 
     // ===================================================================
     // RETURNING PATIENT — FORM SUBMISSION SPINNER
@@ -969,67 +907,7 @@
         });
     });
 
-    const scheduleDateInput = document.getElementById('schedule');
-    const scheduleTimeSelect = document.getElementById('schedule_time');
 
-    async function fetchBookedTimes(date) {
-        if (!date) { resetTimeOptions(); return; }
-        let bookedTimes = [];
-        try {
-            const response = await fetch(`/appointments/booked-times?date=${date}`);
-            bookedTimes = await response.json();
-        } catch (error) { console.error('Error fetching booked times:', error); }
-        updateTimeOptions(bookedTimes);
-    }
-
-    function isSelectedDateToday() {
-        const selectedDate = scheduleDateInput.value;
-        if (!selectedDate) return false;
-        const today = new Date();
-        const todayStr = today.getFullYear() + '-' +
-            String(today.getMonth() + 1).padStart(2, '0') + '-' +
-            String(today.getDate()).padStart(2, '0');
-        return selectedDate === todayStr;
-    }
-
-    function isTimePast(timeValue) {
-        const now = new Date();
-        const [hours, minutes] = timeValue.split(':').map(Number);
-        return (hours < now.getHours()) || (hours === now.getHours() && minutes <= now.getMinutes());
-    }
-
-    function resetTimeOptions() {
-        Array.from(scheduleTimeSelect.options).forEach(option => {
-            if (option.value === '') return;
-            option.disabled = false;
-            option.text = option.text.replace(' (Booked)', '').replace(' (Passed)', '');
-        });
-    }
-
-    function updateTimeOptions(bookedTimes) {
-        resetTimeOptions();
-        const isToday = isSelectedDateToday();
-        Array.from(scheduleTimeSelect.options).forEach(option => {
-            if (!option.value) return;
-            if (isToday && isTimePast(option.value)) {
-                option.disabled = true;
-                if (!option.text.includes('(Passed)')) option.text += ' (Passed)';
-                if (option.selected) scheduleTimeSelect.value = '';
-                return;
-            }
-            if (bookedTimes.includes(option.value)) {
-                option.disabled = true;
-                if (!option.text.includes('(Booked)')) option.text += ' (Booked)';
-                if (option.selected) scheduleTimeSelect.value = '';
-            }
-        });
-    }
-
-    scheduleDateInput.addEventListener('change', function() { fetchBookedTimes(this.value); });
-
-    setTimeout(() => {
-        if (scheduleDateInput.value) fetchBookedTimes(scheduleDateInput.value);
-    }, 100);
 
     // === Valid ID Camera Capture ===
     const cameraVideo     = document.getElementById('camera-video');
